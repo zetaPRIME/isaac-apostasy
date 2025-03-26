@@ -1,6 +1,6 @@
 redirect contact damage from item wisps into random normal wisp if present
-base stats
-slight tear delay down per wisp
+- base stats
+- slight tear delay down per wisp
 
 what for half soul heart?
 - homing tear wisp for eternal heart

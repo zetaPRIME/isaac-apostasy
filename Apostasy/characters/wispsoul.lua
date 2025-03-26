@@ -182,20 +182,26 @@ function chr:InitActiveData(player, ad)
 end
 
 function chr:OnEvaluateCache(player, cacheFlag)
+    local wispAttenuation = 0.0
+    if cacheFlag == CacheFlag.CACHE_DAMAGE
+    or cacheFlag == CacheFlag.CACHE_FIREDELAY then
+        local normalWisps = getWispsFor(player, false)
+        local itemWisps = getWispsFor(player, true)
+        wispAttenuation = (#normalWisps-3) * .05 + #itemWisps * .075
+    end
+    
     if cacheFlag == CacheFlag.CACHE_SPEED then
         -- being mostly made of energy makes you pretty fast
         -- thus, we give a *multiplier*
         player.MoveSpeed = player.MoveSpeed * 1.25
     elseif cacheFlag == CacheFlag.CACHE_DAMAGE then
-        -- not the greatest base damage, to compensate for the fire rate ramp-up
-        local normalWisps = getWispsFor(player, false)
-        local itemWisps = getWispsFor(player, true)
-        local div = 1.0 + (#normalWisps-3) * .0333 + #itemWisps * .05
+        -- slightly reduced base damage, to compensate for the fire rate ramp-up
+        -- we also taper off the damage roughly proportional to the fire rate increase but slightly less
+        local div = 1.0 + wispAttenuation * 0.666
         player.Damage = (player.Damage - 0.5) / div
     elseif cacheFlag == CacheFlag.CACHE_FIREDELAY then
-        local normalWisps = getWispsFor(player, false)
-        local itemWisps = getWispsFor(player, true)
-        local div = 1.0 + (#normalWisps-3) * .05 + #itemWisps * .075
+        -- more wisps, faster shots
+        local div = 1.0 + wispAttenuation
         player.MaxFireDelay = player.MaxFireDelay / div
     elseif cacheFlag == CacheFlag.CACHE_FAMILIARS then
         self:EvaluateWispStats(player, true)
