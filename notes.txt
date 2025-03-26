@@ -1,0 +1,24 @@
+redirect contact damage from item wisps into random normal wisp if present
+base stats
+slight tear delay down per wisp
+
+what for half soul heart?
+- homing tear wisp for eternal heart
+
+probably move the heart management into its own function and be a bit smarter on when to call it
+consider reworking how damage to wisps from body getting hit works?
+maybe just sort by lowest hit points to zap
+
+make black hearts give the big brim wisps from mega blast if player has missing page 2?
+
+give wisps a 1 in 5 or so chance to block shots without taking damage??
+
+pocket active: tear shield? timed recharge, gives 3-5sec of wisps being invulnerable and blocking all shots
+
+what should birthright do?
+
+figure out a final name! "wisp soul" is kind of eh,
+
+
+built out of the skeleton of https://github.com/catinsurance/isaac-character-template/
+bits may remain
