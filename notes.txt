@@ -3,10 +3,12 @@ The Binding of Isaac: Apostasy
 
 - - - - - Characters - - - - -
 
-The Seeker {
+The Seeker ~lost soul, guiding light~ {
     - remove some lingering non-functional bits from the template
     
     redirect contact damage from item wisps into random normal wisp if present
+    confer slight iframes on body for a wisp taking contact damage?
+    though the power-yet-fragility is kind of part of the charm
     
     what for half soul heart?
     
@@ -24,17 +26,31 @@ The Seeker {
     
     what should birthright do?
     
-} Tainted Seeker {
+} "Tainted" Seeker {
     overall want to follow the vanilla design pattern of Tainted characters being "hard mode with a spicy twist" versions of their A-sides
+    thematically and unlock-wise, however, they should be a hard pivot away
+    enlightened? ascended?
     
     something to do with custom pickups that give decaying buffs maybe?
+    perhaps make this the blindfolded one
 }
 
 - - - - - Items/Trinkets - - - - -
 
 - - - - - World Content? - - - - -
 
+phase 1: alternative blessings {
+    quest item (a la key/knife/polaroid/negative) found in a hidden place early on that turns angel/devil rooms into Something Else
+    "Sigil from Elsewhere": "You've grown weary of the same tired old stories."
+    thematically, these rooms should be a glimpse into worlds far beyond the mundane realm of the surface
+}
 
+phase 2: the path untaken {
+    eventually this all would lead to a full alternative to Sheol/Cathedral, Chest/Dark Room and perhaps additional floors?
+    
+    progressing in the unique alt path should be related to The Seeker.
+    perhaps only they can open the way at first? certainly befits the name and theme.
+}
 
 - - - - -
 
