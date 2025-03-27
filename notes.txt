@@ -61,3 +61,5 @@ phase 2: the path untaken {
 
 built out of the skeleton of https://github.com/catinsurance/isaac-character-template/
 bits may remain
+
+this may contain useful https://github.com/manaphoenix/IsaacTemplates/blob/main/template_character/lib/CharacterTemplateLib.lua
