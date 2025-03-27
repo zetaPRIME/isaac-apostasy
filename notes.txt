@@ -4,7 +4,7 @@ The Binding of Isaac: Apostasy
 - - - - - Characters - - - - -
 
 The Seeker {
-    remove some lingering non-functional bits from the template
+    - remove some lingering non-functional bits from the template
     
     redirect contact damage from item wisps into random normal wisp if present
     
