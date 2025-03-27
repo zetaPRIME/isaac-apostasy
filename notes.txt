@@ -1,9 +1,12 @@
+The Binding of Isaac: Apostasy
+
+- - - - - TODO - - - - -
+
+remove some lingering non-functional bits from the template
+
 redirect contact damage from item wisps into random normal wisp if present
-- base stats
-- slight tear delay down per wisp
 
 what for half soul heart?
-- homing tear wisp for eternal heart
 
 use maybe more efficient but definitely more compact table sort method for item wisp priority
 
@@ -19,9 +22,10 @@ pocket active: tear shield? timed recharge, gives 3-5sec of wisps being invulner
 
 what should birthright do?
 
-figure out a final name! "wisp soul" is kind of eh,
-"Spirit Lantern" / "Spirit-Lantern"?
-The Seeker!
+
+
+- - - - -
+
 
 
 built out of the skeleton of https://github.com/catinsurance/isaac-character-template/

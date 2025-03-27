@@ -1,3 +1,6 @@
+-- Character: The Seeker
+-- working names: "Wisp Soul", "Spirit Lantern"
+
 local Apostasy = _ENV["::Apostasy"]
 local tableUtil = Apostasy:require "util.table"
 
