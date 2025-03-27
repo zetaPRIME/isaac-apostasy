@@ -1,26 +1,38 @@
 The Binding of Isaac: Apostasy
+- Design Notes and To-do List -
 
-- - - - - TODO - - - - -
+- - - - - Characters - - - - -
 
-remove some lingering non-functional bits from the template
+The Seeker {
+    remove some lingering non-functional bits from the template
+    
+    redirect contact damage from item wisps into random normal wisp if present
+    
+    what for half soul heart?
+    
+    use maybe more efficient but definitely more compact table sort method for item wisp priority
+    
+    probably move the heart management into its own function and be a bit smarter on when to call it
+    consider reworking how damage to wisps from body getting hit works?
+    maybe just sort by lowest hit points to zap
+    
+    make black hearts give the big brim wisps from mega blast if player has missing page 2?
+    
+    give wisps a 1 in 5 or so chance to block shots without taking damage??
+    
+    pocket active: tear shield? timed recharge, gives 3-5sec of wisps being invulnerable and blocking all shots
+    
+    what should birthright do?
+    
+} Tainted Seeker {
+    overall want to follow the vanilla design pattern of Tainted characters being "hard mode with a spicy twist" versions of their A-sides
+    
+    something to do with custom pickups that give decaying buffs maybe?
+}
 
-redirect contact damage from item wisps into random normal wisp if present
+- - - - - Items/Trinkets - - - - -
 
-what for half soul heart?
-
-use maybe more efficient but definitely more compact table sort method for item wisp priority
-
-probably move the heart management into its own function and be a bit smarter on when to call it
-consider reworking how damage to wisps from body getting hit works?
-maybe just sort by lowest hit points to zap
-
-make black hearts give the big brim wisps from mega blast if player has missing page 2?
-
-give wisps a 1 in 5 or so chance to block shots without taking damage??
-
-pocket active: tear shield? timed recharge, gives 3-5sec of wisps being invulnerable and blocking all shots
-
-what should birthright do?
+- - - - - World Content? - - - - -
 
 
 
