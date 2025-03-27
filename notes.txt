@@ -5,6 +5,8 @@ redirect contact damage from item wisps into random normal wisp if present
 what for half soul heart?
 - homing tear wisp for eternal heart
 
+use maybe more efficient but definitely more compact table sort method for item wisp priority
+
 probably move the heart management into its own function and be a bit smarter on when to call it
 consider reworking how damage to wisps from body getting hit works?
 maybe just sort by lowest hit points to zap
@@ -18,6 +20,8 @@ pocket active: tear shield? timed recharge, gives 3-5sec of wisps being invulner
 what should birthright do?
 
 figure out a final name! "wisp soul" is kind of eh,
+"Spirit Lantern" / "Spirit-Lantern"?
+The Seeker!
 
 
 built out of the skeleton of https://github.com/catinsurance/isaac-character-template/

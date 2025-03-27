@@ -1,5 +1,5 @@
 <players root="gfx/characters/costumes/" portraitroot="gfx/ui/stage/" nameimageroot="gfx/ui/boss/">
-    <player name="Wisp Soul"
+    <player name="The Seeker"
         skin="character_gabriel.png"
         nameimage="playername_gabriel.png"
         hp="0"
@@ -12,7 +12,7 @@
         skinColor="0"
     />
 
-    <player name="Wisp Soul"
+    <player name="The Seeker"
         skin="character_gabriel_b.png"
         nameimage="playername_gabriel.png"
         hp="4"
@@ -20,7 +20,7 @@
         keys="1"
         portrait="playerportrait_gabriel_b.png"
         skinColor="-1"
-        bSkinParent="Wisp Soul"
+        bSkinParent="The Seeker"
         costumeSuffix="gabrielb"
         costume="104"
     />

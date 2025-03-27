@@ -3,7 +3,7 @@ local tableUtil = Apostasy:require "util.table"
 
 local itemConfig = Isaac.GetItemConfig()
 
-local CHARACTER_NAME = "Wisp Soul"
+local CHARACTER_NAME = "The Seeker"
 local chr = Apostasy:RegisterCharacter(CHARACTER_NAME)
 
 local function wispType(e)
