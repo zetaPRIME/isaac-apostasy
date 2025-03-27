@@ -25,6 +25,7 @@ The Seeker ~lost soul, guiding light~ {
     pocket active: tear shield? timed recharge, gives 3-5sec of wisps being invulnerable and blocking all shots
     
     what should birthright do?
+    perhaps a defensive benefit
     
 } "Tainted" Seeker {
     overall want to follow the vanilla design pattern of Tainted characters being "hard mode with a spicy twist" versions of their A-sides
@@ -43,6 +44,8 @@ phase 1: alternative blessings {
     quest item (a la key/knife/polaroid/negative) found in a hidden place early on that turns angel/devil rooms into Something Else
     "Sigil from Elsewhere": "You've grown weary of the same tired old stories."
     thematically, these rooms should be a glimpse into worlds far beyond the mundane realm of the surface
+    
+    unlock method: as Seeker, do... something? after having taken both an angel and a devil deal in a run
 }
 
 phase 2: the path untaken {

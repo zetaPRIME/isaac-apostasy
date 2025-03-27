@@ -1,6 +1,6 @@
 <players root="gfx/characters/costumes/" portraitroot="gfx/ui/stage/" nameimageroot="gfx/ui/boss/">
     <player name="The Seeker"
-        skin="character_gabriel.png"
+        skin="character_theseeker.png"
         nameimage="playername_gabriel.png"
         hp="0"
         armor="8"
@@ -10,6 +10,7 @@
         trinket="38"
         portrait="playerportrait_gabriel.png"
         skinColor="0"
+        birthright="I don't know yet"
     />
 
     <player name="The Seeker"
