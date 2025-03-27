@@ -49,6 +49,7 @@ do
     
     -- kill a random item out of the lowest quality item wisps
     local function killLowestItem(t)
+        if not t[1] then return end
         local lowest = 15
         local ll = { }
         local rev = { }
