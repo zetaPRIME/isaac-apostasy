@@ -3,6 +3,7 @@
 
 local Apostasy = _ENV["::Apostasy"]
 local tableUtil = Apostasy:require "util.table"
+local color = Apostasy:require "util.color"
 
 local itemConfig = Isaac.GetItemConfig()
 
@@ -39,53 +40,33 @@ local function getWispsFor(player, itemWisps)
 end
 
 local tearColors = { } do
-    local function c255(c)
-        return {c[1]/255, c[2]/255, c[3]/255}
-    end
-    
-    function invColor(p)
-        local c = Color(1,1,1)
-        
-        local bias = p.bias or c255 {13, 12, 10} -- compensate for outline not being quite white
-        
-        local im = -(p.mult or 1.0)
-        c:SetTint(im,im,im,1)
-        
-        local fc = p.fill
-        local oc = p.outline or {1,1,1}
-        
-        --c:SetColorize(1/oc[1] - fc[1], 1/oc[2] - fc[2], 1/oc[3] - fc[3], 1)
-        c:SetColorize(oc[1] - fc[1], oc[2] - fc[2], oc[3] - fc[3], 1)
-        c:SetOffset(oc[1]+bias[1], oc[2]+bias[2], oc[3]+bias[3])
-        
-        return c
-    end
+    local c255 = color.from255
     
     tearColors.null = Color(1,1,1)
-    tearColors.normal = invColor {
+    tearColors.normal = color.inverted {
         fill = c255 {105, 196, 255}, mult = 1.25,
         outline = c255 {231, 247, 255},
         bias = c255 {5, 5, 5},
     }
     
-    tearColors.item = invColor {
+    tearColors.item = color.inverted {
         fill = c255 {166, 84, 242}, mult = 1.3,
         --outline = c255 {232, 175, 255},
         outline = c255 {231, 160, 255},
         bias = c255 {10, 10, 10},
     }
     
-    tearColors.blood = invColor {
+    tearColors.blood = color.inverted {
         fill = c255 {63, 0, 0},
         outline = c255 {225, 55, 55},
     }
     
-    tearColors.brimstone = invColor {
+    tearColors.brimstone = color.inverted {
         fill = c255 {127, 0, 0},
         outline = c255 {225, 55, 55},
     }
     
-    tearColors.holy = invColor {
+    tearColors.holy = color.inverted {
         fill = c255 {245, 230, 200}, mult = 1.2,
         bias = c255 {5, 5, 5},
     }

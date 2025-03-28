@@ -11,6 +11,7 @@ The Seeker ~lost soul, guiding light~ {
     though the power-yet-fragility is kind of part of the charm
     
     what for half soul heart?
+    add a wisp type for gold hearts
     
     use maybe more efficient but definitely more compact table sort method for item wisp priority
     
