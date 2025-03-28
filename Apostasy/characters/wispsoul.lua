@@ -220,6 +220,23 @@ function chr:GiveWisps(player, amount, subtype)
     end
 end
 
+function chr:ReshuffleWisps(player)
+    --print "reshuffling wisps"
+    local wl = getWispsFor(player)
+    local ll = { }
+    for _,w in pairs(wl) do -- separate into layers
+        local l = w.OrbitLayer
+        if not ll[l] then ll[l] = {w}
+        else table.insert(ll[l], w) end
+    end
+    for l,wl in pairs(ll) do -- and shuffle offsets within each
+        local i for i = 1, #wl do
+            local j = (Random() % i) + 1
+            wl[i].OrbitAngleOffset, wl[j].OrbitAngleOffset = wl[j].OrbitAngleOffset, wl[i].OrbitAngleOffset
+        end
+    end
+end
+
 function chr:ProcessHearts(player)
     local ad = self:ActiveData(player)
     
@@ -258,6 +275,7 @@ function chr:ProcessHearts(player)
         self:GiveWisps(player, eternal, wispTypes.holy)
         self:GiveWisps(player, bone, wispTypes.bone)
         
+        self:ReshuffleWisps(player)
         self:EvaluateWispStats(player)
         
     end
@@ -444,6 +462,7 @@ function chr:OnUseItem(type, rng, player, flags, slot, data)
     if type == CollectibleType.COLLECTIBLE_LEMEGETON or player:HasCollectible(CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES) then
         local ad = self:ActiveData(player)
         self:EvaluateWispStats(player, true) -- kick wisp updates
+        self:ReshuffleWisps(player)
         ad.wispCheckTimer = math.max(ad.wispCheckTimer, 5)
         --print("spawning an wisp")
     end

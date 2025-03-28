@@ -20,16 +20,16 @@ The Seeker ~lost soul, guiding light~ {
         after damage
         on item pickup
         on item use?
+        
+        maybe just move it to peffect update and see if that fixes non-REPENTOGON heart flicker
     }
-    
-    reshuffle normal wisps on heart add via removing and readding to orbit in random order
     
     make black hearts give the big brim wisps from mega blast if player has missing page 2?
     
     give wisps a 1 in 5 or so chance to block shots without taking damage??
     
     ! early game help: chance of restoring a normal wisp on room clear if below 3
-    ! double or triple wisps from health up effects due to their rarity
+    - double or triple wisps from health up effects due to their rarity
     
     pocket active: tear shield? timed recharge, gives 3-5sec of wisps being invulnerable and blocking all shots
     
@@ -46,6 +46,10 @@ The Seeker ~lost soul, guiding light~ {
         
         figure out if there's a more efficient way of doing the Transcendence costume hack without losing collision-proofing
         
+        / reshuffle normal wisps on heart add
+        ^ probably call this both on gaining item wisps and on losing any?
+        ^ also probably try and do deterministic interleaving instead
+        
         surrounding gfx checklist {
             menu
             portrait
@@ -54,6 +58,13 @@ The Seeker ~lost soul, guiding light~ {
             controls splash
             co-op icon
         }
+    }
+    
+    known odd interactions {
+        Sprinkler tears still come from your wisps because they count as "yours".
+        honestly, I'm probably keeping this one?
+        
+        Missing Page 2 triggers on *any* direct body damage, but also *only* on direct body damage.
     }
     
 } "Tainted" Seeker {
@@ -66,6 +77,12 @@ The Seeker ~lost soul, guiding light~ {
 }
 
 - - - - - Items/Trinkets - - - - -
+
+- - - - - System Mechanics - - - - -
+
+at some point make some fancy shared HUD stuff, such as unified health hiding?
+this way things such as Dead Cat and Holy Mantle can be displayed for healthless characters in a way not tied to the specific character
+I suppose this can be done with just a: return Apostasy:DrawHealthlessHUD(player)
 
 - - - - - World Content? - - - - -
 
