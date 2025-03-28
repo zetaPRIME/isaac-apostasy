@@ -4,7 +4,7 @@ The Binding of Isaac: Apostasy
 - - - - - Characters - - - - -
 
 The Seeker ~lost soul, guiding light~ {
-    - remove some lingering non-functional bits from the template
+    -
     
     redirect contact damage from item wisps into random normal wisp if present
     confer slight iframes on body for a wisp taking contact damage?
@@ -16,8 +16,8 @@ The Seeker ~lost soul, guiding light~ {
     use maybe more efficient but definitely more compact table sort method for item wisp priority
     
     probably move the heart management into its own function and be a bit smarter on when to call it
-    ! consider reworking how damage to wisps from body getting hit works?
-    ^ maybe just sort by lowest hit points to zap
+    - consider reworking how damage to wisps from body getting hit works?
+    - maybe just sort by lowest hit points to zap
     
     reshuffle normal wisps on heart add via removing and readding to orbit in random order
     

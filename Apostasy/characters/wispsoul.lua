@@ -93,9 +93,9 @@ end
 do
     local function dmg(t)
         if not t[1] then return false end
-        local i = (Random() % #t) + 1
-        t[i]:Kill()
-        table.remove(t, i)
+        table.sort(t, function(a, b) return a.HitPoints < b.HitPoints end)
+        t[1]:Kill()
+        table.remove(t, 1)
         return true
     end
     
@@ -168,8 +168,10 @@ function chr:GiveWisps(player, amount, type)
 end
 
 chr.WispItemBlacklist = tableUtil.flagMap {
+    -- things that you probably want to keep on your actual self
     CollectibleType.COLLECTIBLE_BIRTHRIGHT,
     CollectibleType.COLLECTIBLE_MARBLES,
+    CollectibleType.COLLECTIBLE_MITRE,
     
     -- not tagged summonable but might as well make sure
     CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES,
