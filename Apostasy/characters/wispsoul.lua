@@ -10,6 +10,8 @@ local itemConfig = Isaac.GetItemConfig()
 local CHARACTER_NAME = "The Seeker"
 local chr = Apostasy:RegisterCharacter(CHARACTER_NAME)
 
+local function bflag(fd, fl) return fd & fl == fl end
+
 local function wispType(e)
     if e.Type ~= 3 then return nil end
     if     e.Variant == 206 then return 1
@@ -91,6 +93,7 @@ local function getTearColorForWisp(w)
 end
 
 do
+    -- kill the normal wisp with the lowest remaining health
     local function dmg(t)
         if not t[1] then return false end
         table.sort(t, function(a, b) return a.HitPoints < b.HitPoints end)
@@ -167,6 +170,54 @@ function chr:GiveWisps(player, amount, type)
     end
 end
 
+function chr:ProcessHearts(player)
+    local ad = self:ActiveData(player)
+    
+    local red = player:GetMaxHearts()
+    local soul = player:GetSoulHearts() - 2
+    local rotten = player:GetRottenHearts()
+    local bone = player:GetBoneHearts()
+    local eternal = player:GetEternalHearts()
+    
+    if soul == -1 then
+        soul = 0
+    elseif soul <= -2 then -- directly removed to no health at all? assume devil deal
+        self:ApplyWispSacrifice(player) -- and process the sacrifice accordingly
+        soul = 0
+    end
+    
+    local total = red + soul + bone + eternal
+    if total > 0 then -- health update needed
+        -- count up black hearts
+        local black = 0
+        local i
+        for i = 0, 20 do if player:IsBlackHeart(i) then black = black + 1 end end
+        
+        -- reset actual health
+        player:AddMaxHearts(-100)
+        player:AddEternalHearts(-100)
+        player:AddBoneHearts(-100)
+        player:AddSoulHearts(-100)
+        player:AddSoulHearts(2)
+        
+        -- and give wisps accordingly:
+        
+        -- plain old wisps
+        self:GiveWisps(player, math.floor(soul/2) - black)
+        -- short range brimstone wisps
+        self:GiveWisps(player, black, CollectibleType.COLLECTIBLE_SULFUR)
+        -- just big red drippy wisps with a ton of contact health but no tears?
+        self:GiveWisps(player, math.floor(red/2), CollectibleType.COLLECTIBLE_BERSERK)
+        -- holy homing tear wisps a la Sacred Heart
+        self:GiveWisps(player, eternal, CollectibleType.COLLECTIBLE_BIBLE)
+        -- bony wisps that spawn skeleton minions on break~
+        self:GiveWisps(player, bone, CollectibleType.COLLECTIBLE_BOOK_OF_THE_DEAD)
+        
+        self:EvaluateWispStats(player)
+        
+    end
+end
+
 chr.WispItemBlacklist = tableUtil.flagMap {
     -- things that you probably want to keep on your actual self
     CollectibleType.COLLECTIBLE_BIRTHRIGHT,
@@ -184,8 +235,6 @@ chr.WispItemWhitelist = tableUtil.flagMap {
     CollectibleType.COLLECTIBLE_QUARTER,
     CollectibleType.COLLECTIBLE_DOLLAR,
 }
-
-local function bflag(fd, fl) return fd & fl == fl end
 
 -- process item conversion
 function chr:ConvertItemsToWisps(player)
@@ -271,54 +320,7 @@ end
 function chr:OnUpdate(player)
     local ad = self:ActiveData(player)
     
-    local red = player:GetMaxHearts()
-    local soul = player:GetSoulHearts() - 2
-    local rotten = player:GetRottenHearts()
-    local bone = player:GetBoneHearts()
-    local eternal = player:GetEternalHearts()
-    
-    if soul == -1 then
-        player:AddSoulHearts(1)
-        soul = 0
-    elseif soul <= -2 then -- directly removed to no health at all? assume devil deal
-        player:AddSoulHearts(2)
-        soul = 0
-        self:ApplyWispSacrifice(player) -- we'll just assume so
-    end
-    
-    local total = red + soul + bone + eternal
-    if total > 0 then -- health update needed
-        -- count up black hearts
-        local black = 0
-        local i
-        for i = 0, 20 do if player:IsBlackHeart(i) then black = black + 1 end end
-        
-        -- reset actual health
-        player:AddMaxHearts(-100)
-        player:AddEternalHearts(-100)
-        player:AddBoneHearts(-100)
-        player:AddSoulHearts(-100)
-        player:AddSoulHearts(2)
-        
-        -- and give wisps accordingly:
-        
-        -- plain old wisps
-        self:GiveWisps(player, math.floor(soul/2) - black)
-        -- short range brimstone wisps
-        self:GiveWisps(player, black, CollectibleType.COLLECTIBLE_SULFUR)
-        -- just big red drippy wisps with a ton of contact health but no tears?
-        self:GiveWisps(player, math.floor(red/2), CollectibleType.COLLECTIBLE_BERSERK)
-        -- holy homing tear wisps a la Sacred Heart
-        self:GiveWisps(player, eternal, CollectibleType.COLLECTIBLE_BIBLE)
-        -- bony wisps that spawn skeleton minions on break~
-        self:GiveWisps(player, bone, CollectibleType.COLLECTIBLE_BOOK_OF_THE_DEAD)
-        
-        self:EvaluateWispStats(player)
-        
-    elseif total < 0 then -- negative health??
-        -- hmm.
-    end
-    
+    self:ProcessHearts(player)
     
     if not player:IsItemQueueEmpty() then
         local qd = player.QueuedItem
