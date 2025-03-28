@@ -38,6 +38,77 @@ local function getWispsFor(player, itemWisps)
     return wl
 end
 
+local tearColors = { } do
+    local function c255(c)
+        return {c[1]/255, c[2]/255, c[3]/255}
+    end
+    
+    function invColor(p)
+        local c = Color(1,1,1)
+        
+        local bias = p.bias or c255 {13, 12, 10} -- compensate for outline not being quite white
+        
+        local im = -(p.mult or 1.0)
+        c:SetTint(im,im,im,1)
+        
+        local fc = p.fill
+        local oc = p.outline or {1,1,1}
+        
+        --c:SetColorize(1/oc[1] - fc[1], 1/oc[2] - fc[2], 1/oc[3] - fc[3], 1)
+        c:SetColorize(oc[1] - fc[1], oc[2] - fc[2], oc[3] - fc[3], 1)
+        c:SetOffset(oc[1]+bias[1], oc[2]+bias[2], oc[3]+bias[3])
+        
+        return c
+    end
+    
+    tearColors.null = Color(1,1,1)
+    tearColors.normal = invColor {
+        fill = c255 {105, 196, 255}, mult = 1.25,
+        outline = c255 {231, 247, 255},
+        bias = c255 {5, 5, 5},
+    }
+    
+    tearColors.item = invColor {
+        fill = c255 {166, 84, 242}, mult = 1.3,
+        --outline = c255 {232, 175, 255},
+        outline = c255 {231, 160, 255},
+        bias = c255 {10, 10, 10},
+    }
+    
+    tearColors.blood = invColor {
+        fill = c255 {63, 0, 0},
+        outline = c255 {225, 55, 55},
+    }
+    
+    tearColors.brimstone = invColor {
+        fill = c255 {127, 0, 0},
+        outline = c255 {225, 55, 55},
+    }
+    
+    tearColors.holy = invColor {
+        fill = c255 {245, 230, 200}, mult = 1.2,
+        bias = c255 {5, 5, 5},
+    }
+end
+
+local function getTearColorForWisp(w)
+    if wispType(w) == 2 then
+        return tearColors.item
+    end
+    
+    if w.SubType == CollectibleType.COLLECTIBLE_BERSERK then -- blood wisps
+        return tearColors.blood
+    elseif w.SubType == CollectibleType.COLLECTIBLE_SULFUR then -- brim wisps
+        return tearColors.brimstone
+    elseif w.SubType == CollectibleType.COLLECTIBLE_BIBLE then -- holy wisp
+        return tearColors.holy
+    elseif w.SubType == CollectibleType.COLLECTIBLE_BOOK_OF_THE_DEAD then -- bone wisps
+        return tearColors.null, TearVariant.BONE
+    end
+    
+    return tearColors.normal
+end
+
 do
     local function dmg(t)
         if not t[1] then return false end
@@ -127,6 +198,8 @@ chr.WispItemWhitelist = tableUtil.flagMap {
     -- force enable a few things that aren't normally summonable,
     -- but kind of don't do anything to hold in your normal inventory
     CollectibleType.COLLECTIBLE_PAGEANT_BOY,
+    CollectibleType.COLLECTIBLE_QUARTER,
+    CollectibleType.COLLECTIBLE_DOLLAR,
 }
 
 local function bflag(fd, fl) return fd & fl == fl end
@@ -168,9 +241,9 @@ function chr:EvaluateWispStats(player, inEval)
     player:EvaluateItems()
 end
 
+-- -- -- -- -- --- --- --- --- -- -- -- -- --
 -- -- -- -- -- callbacks below -- -- -- -- --
-
--- TODO: slight tears boost per wisp past 1?
+-- -- -- -- -- --- --- --- --- -- -- -- -- --
 
 function chr:OnInit(player)
     local ad = self:ActiveData(player)
@@ -334,8 +407,21 @@ function chr:OnUseItem(type, rng, player, flags, slot, data)
         local ad = self:ActiveData(player)
         self:EvaluateWispStats(player, true) -- kick wisp updates
         ad.wispCheckTimer = math.max(ad.wispCheckTimer, 5)
-        print("spawning an wisp")
+        --print("spawning an wisp")
     end
+end
+
+do
+    -- accepted tear variants for theming
+    -- false to not convert, otherwise specify variant
+    local default = TearVariant.MYSTERIOUS
+    chr.TearConversionTable = {
+        [TearVariant.BLUE] = default,
+        [TearVariant.BLOOD] = default,
+        
+        [TearVariant.PUPULA] = default,--false,
+        [TearVariant.PUPULA_BLOOD] = default,--TearVariant.PUPULA,
+    }
 end
 
 function chr:OnFireTear(tear)
@@ -353,6 +439,16 @@ function chr:OnFireTear(tear)
         ad.lastTearSource = w.Index
         
         tear.Position = w.Position
+        
+        -- relatively normal tear type, theme it to the wisp firing
+        if self.TearConversionTable[tear.Variant] ~= nil then
+            local c, v = getTearColorForWisp(w)
+            v = v or self.TearConversionTable[tear.Variant] or tear.Variant
+            
+            tear.Color = c
+            if tear.Variant ~= v then tear:ChangeVariant(v) end
+        end
+        
     end
 end
 
