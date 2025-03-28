@@ -41,7 +41,7 @@ The Seeker ~lost soul, guiding light~ {
         ^ animated costume? or custom effect entity behind??
         
         - set tear color on fire to match the type of wisp it came from
-        !! rework tear color/variant/etc. into a unified structure !!
+        - rework tear color/variant/etc. into a unified structure
         also have tears' own projectiles rethemed to match
         
         surrounding gfx checklist {

@@ -41,55 +41,94 @@ local function getWispsFor(player, itemWisps)
     return wl
 end
 
-local tearColors = { } do
+local wispTypes = { } do
     local c255 = color.from255
+    local nullColor = Color(1,1,1)
     
-    tearColors.null = Color(1,1,1)
-    tearColors.normal = color.inverted {
-        fill = c255 {105, 196, 255}, mult = 1.25,
-        outline = c255 {231, 247, 255},
-        bias = c255 {5, 5, 5},
+    -- do our definitions
+    wispTypes.normal = {
+        tearColor = color.inverted {
+            fill = c255 {105, 196, 255}, mult = 1.25,
+            outline = c255 {231, 247, 255},
+            bias = c255 {5, 5, 5},
+        },
     }
     
-    tearColors.item = color.inverted {
-        fill = c255 {166, 84, 242}, mult = 1.3,
-        --outline = c255 {232, 175, 255},
-        outline = c255 {231, 160, 255},
-        bias = c255 {10, 10, 10},
+    wispTypes.item = {
+        tearColor = color.inverted {
+            fill = c255 {166, 84, 242}, mult = 1.3,
+            --outline = c255 {232, 175, 255},
+            outline = c255 {231, 160, 255},
+            bias = c255 {10, 10, 10},
+        },
     }
     
-    tearColors.blood = color.inverted {
-        fill = c255 {63, 0, 0},
-        outline = c255 {225, 55, 55},
+    wispTypes.blood = {
+        subtype = CollectibleType.COLLECTIBLE_BERSERK,
+        tearColor = color.inverted {
+            fill = c255 {63, 0, 0},
+            outline = c255 {225, 55, 55},
+        },
     }
     
-    tearColors.brimstone = color.inverted {
-        fill = c255 {127, 0, 0},
-        outline = c255 {225, 55, 55},
+    wispTypes.brimstone = {
+        subtype = CollectibleType.COLLECTIBLE_SULFUR,
+        tearColor = color.inverted {
+            fill = c255 {127, 0, 0},
+            outline = c255 {225, 55, 55},
+        },
     }
     
-    tearColors.holy = color.inverted {
-        fill = c255 {245, 230, 200}, mult = 1.2,
-        bias = c255 {5, 5, 5},
+    wispTypes.holy = {
+        subtype = CollectibleType.COLLECTIBLE_BIBLE,
+        tearColor = color.inverted {
+            fill = c255 {245, 230, 200}, mult = 1.2,
+            bias = c255 {5, 5, 5},
+        },
     }
-end
-
-local function getTearColorForWisp(w)
-    if wispType(w) == 2 then
-        return tearColors.item
+    
+    wispTypes.bone = {
+        subtype = CollectibleType.COLLECTIBLE_BOOK_OF_THE_DEAD,
+        tearColor = nullColor,
+        tearVariant = TearVariant.BONE
+    }
+    
+    -- reverse lookup table
+    local bySubtype = { } for _,v in pairs(wispTypes) do
+        if v.subtype then bySubtype[v.subtype] = v end
     end
     
-    if w.SubType == CollectibleType.COLLECTIBLE_BERSERK then -- blood wisps
-        return tearColors.blood
-    elseif w.SubType == CollectibleType.COLLECTIBLE_SULFUR then -- brim wisps
-        return tearColors.brimstone
-    elseif w.SubType == CollectibleType.COLLECTIBLE_BIBLE then -- holy wisp
-        return tearColors.holy
-    elseif w.SubType == CollectibleType.COLLECTIBLE_BOOK_OF_THE_DEAD then -- bone wisps
-        return tearColors.null, TearVariant.BONE
+    function chr:GetWispType(w)
+        local wt = wispType(w)
+        if not wt then return nil end
+        if wt == 2 then return wispTypes.item end
+        local bs = bySubtype[w.SubType] if bs then
+            return bs
+        end
+        return wispTypes.normal
     end
     
-    return tearColors.normal
+    -- accepted tear variants for theming
+    -- false to not convert, otherwise specify variant
+    local default = TearVariant.MYSTERIOUS
+    local tearConversionTable = {
+        [TearVariant.BLUE] = default,
+        [TearVariant.BLOOD] = default,
+        
+        [TearVariant.PUPULA] = default,--false,
+        [TearVariant.PUPULA_BLOOD] = default,--TearVariant.PUPULA,
+    }
+    
+    function chr:HandleTearGlamour(w, tear)
+        -- relatively normal tear type, theme it to the wisp firing
+        if tearConversionTable[tear.Variant] ~= nil then
+            local wt = self:GetWispType(w)
+            
+            tear.Color = wt.tearColor or nullColor
+            local v = wt.tearVariant or tearConversionTable[tear.Variant] or tear.Variant
+            if tear.Variant ~= v then tear:ChangeVariant(v) end
+        end
+    end
 end
 
 do
@@ -162,11 +201,14 @@ do
     end
 end
 
-function chr:GiveWisps(player, amount, type)
+function chr:GiveWisps(player, amount, subtype)
     if amount <= 0 then return nil end
+    if type(subtype) == "table" then -- we've been passed the structure
+        subtype = subtype.subtype
+    end
     local i
     for i = 1, amount do
-        player:AddWisp(type or 0, player.Position, true)
+        player:AddWisp(subtype or 0, player.Position, true)
     end
 end
 
@@ -205,13 +247,13 @@ function chr:ProcessHearts(player)
         -- plain old wisps
         self:GiveWisps(player, math.floor(soul/2) - black)
         -- short range brimstone wisps
-        self:GiveWisps(player, black, CollectibleType.COLLECTIBLE_SULFUR)
+        self:GiveWisps(player, black, wispTypes.brimstone)
         -- just big red drippy wisps with a ton of contact health but no tears?
-        self:GiveWisps(player, math.floor(red/2), CollectibleType.COLLECTIBLE_BERSERK)
+        self:GiveWisps(player, math.floor(red/2), wispTypes.blood)
         -- holy homing tear wisps a la Sacred Heart
-        self:GiveWisps(player, eternal, CollectibleType.COLLECTIBLE_BIBLE)
+        self:GiveWisps(player, eternal, wispTypes.holy)
         -- bony wisps that spawn skeleton minions on break~
-        self:GiveWisps(player, bone, CollectibleType.COLLECTIBLE_BOOK_OF_THE_DEAD)
+        self:GiveWisps(player, bone, wispTypes.bone)
         
         self:EvaluateWispStats(player)
         
@@ -396,19 +438,6 @@ function chr:OnUseItem(type, rng, player, flags, slot, data)
     end
 end
 
-do
-    -- accepted tear variants for theming
-    -- false to not convert, otherwise specify variant
-    local default = TearVariant.MYSTERIOUS
-    chr.TearConversionTable = {
-        [TearVariant.BLUE] = default,
-        [TearVariant.BLOOD] = default,
-        
-        [TearVariant.PUPULA] = default,--false,
-        [TearVariant.PUPULA_BLOOD] = default,--TearVariant.PUPULA,
-    }
-end
-
 function chr:OnFireTear(tear)
     local player = tear.SpawnerEntity:ToPlayer()
     local ad = self:ActiveData(player)
@@ -423,17 +452,11 @@ function chr:OnFireTear(tear)
         end
         ad.lastTearSource = w.Index
         
+        -- set position to match
         tear.Position = w.Position
         
-        -- relatively normal tear type, theme it to the wisp firing
-        if self.TearConversionTable[tear.Variant] ~= nil then
-            local c, v = getTearColorForWisp(w)
-            v = v or self.TearConversionTable[tear.Variant] or tear.Variant
-            
-            tear.Color = c
-            if tear.Variant ~= v then tear:ChangeVariant(v) end
-        end
-        
+        -- and change its appearance accordingly
+        self:HandleTearGlamour(w, tear)
     end
 end
 
