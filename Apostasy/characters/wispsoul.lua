@@ -351,7 +351,7 @@ function chr:OnEvaluateCache(player, cacheFlag)
     elseif cacheFlag == CacheFlag.CACHE_DAMAGE then
         -- slightly reduced base damage, to compensate for the fire rate ramp-up
         -- we also taper off the damage roughly proportional to the fire rate increase but slightly less
-        local div = 1.0 + wispAttenuation * 0.666
+        local div = 1.0 + wispAttenuation * 0.5
         player.Damage = (player.Damage - 0.5) / div
     elseif cacheFlag == CacheFlag.CACHE_FIREDELAY then
         -- more wisps, faster shots

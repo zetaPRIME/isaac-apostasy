@@ -39,6 +39,8 @@ The Seeker ~lost soul, guiding light~ {
     visuals WIP {
         flame glow effect (actual head is the "core")
         ^ animated costume? or custom effect entity behind??
+        probably a high priority (100 or more) Head costume with both an animated and a static layer
+        this way it *replaces* the head but prevents some extent of random complete design changes
         
         figure out if there's a more efficient way of doing the Transcendence costume hack without losing collision-proofing
         
