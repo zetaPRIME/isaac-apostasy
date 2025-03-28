@@ -119,14 +119,17 @@ local wispTypes = { } do
         [TearVariant.PUPULA_BLOOD] = default,--TearVariant.PUPULA,
     }
     
-    function chr:HandleTearGlamour(w, tear)
-        -- relatively normal tear type, theme it to the wisp firing
-        if tearConversionTable[tear.Variant] ~= nil then
+    -- theme a tear to whatever wisp is firing it
+    function chr:HandleTearGlamour(w, tear, isAutonomous)
+        -- only override if it's relatively normal tear type, or if it was fired autonomously
+        if tearConversionTable[tear.Variant] ~= nil or isAutonomous then
             local wt = self:GetWispType(w)
             
             tear.Color = wt.tearColor or nullColor
             local v = wt.tearVariant or tearConversionTable[tear.Variant] or tear.Variant
             if tear.Variant ~= v then tear:ChangeVariant(v) end
+        else
+            --print("tear has unsupported variant:", tear.Variant)
         end
     end
 end
@@ -458,6 +461,12 @@ function chr:OnFireTear(tear)
         -- and change its appearance accordingly
         self:HandleTearGlamour(w, tear)
     end
+end
+
+function chr:OnFamiliarFireTear(tear)
+    local w = tear.SpawnerEntity:ToFamiliar()
+    if not wispType(w) then return end
+    self:HandleTearGlamour(w, tear, true)
 end
 
 function chr:OnFireLaserAAA(laser)
