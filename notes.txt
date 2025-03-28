@@ -36,6 +36,8 @@ The Seeker ~lost soul, guiding light~ {
     what should birthright do?
     perhaps a defensive benefit
     
+    maybe give Guppy's Paw a custom action
+    
     visuals WIP {
         flame glow effect (actual head is the "core")
         ^ animated costume? or custom effect entity behind??

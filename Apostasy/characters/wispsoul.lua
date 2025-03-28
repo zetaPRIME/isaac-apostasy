@@ -45,7 +45,7 @@ local wispTypes = { } do
     local c255 = color.from255
     local nullColor = Color(1,1,1)
     
-    -- do our definitions
+    -- plain old wisps
     wispTypes.normal = {
         tearColor = color.inverted {
             fill = c255 {105, 196, 255}, mult = 1.25,
@@ -54,6 +54,7 @@ local wispTypes = { } do
         },
     }
     
+    -- picked up items as Lemegeton wisps
     wispTypes.item = {
         tearColor = color.inverted {
             fill = c255 {166, 84, 242}, mult = 1.3,
@@ -63,6 +64,7 @@ local wispTypes = { } do
         },
     }
     
+    -- just big red drippy wisps with a ton of contact health but no tears?
     wispTypes.blood = {
         subtype = CollectibleType.COLLECTIBLE_BERSERK,
         tearColor = color.inverted {
@@ -71,6 +73,7 @@ local wispTypes = { } do
         },
     }
     
+    -- short range brimstone wisps
     wispTypes.brimstone = {
         subtype = CollectibleType.COLLECTIBLE_SULFUR,
         tearColor = color.inverted {
@@ -79,6 +82,7 @@ local wispTypes = { } do
         },
     }
     
+    -- holy homing tear wisps a la Sacred Heart
     wispTypes.holy = {
         subtype = CollectibleType.COLLECTIBLE_BIBLE,
         tearColor = color.inverted {
@@ -87,6 +91,7 @@ local wispTypes = { } do
         },
     }
     
+    -- bony wisps that spawn skeleton minions on break~
     wispTypes.bone = {
         subtype = CollectibleType.COLLECTIBLE_BOOK_OF_THE_DEAD,
         tearColor = nullColor,
@@ -228,6 +233,7 @@ function chr:ProcessHearts(player)
         soul = 0
     elseif soul <= -2 then -- directly removed to no health at all? assume devil deal
         self:ApplyWispSacrifice(player) -- and process the sacrifice accordingly
+        player:AddSoulHearts(2) -- don't die
         soul = 0
     end
     
@@ -246,16 +252,10 @@ function chr:ProcessHearts(player)
         player:AddSoulHearts(2)
         
         -- and give wisps accordingly:
-        
-        -- plain old wisps
         self:GiveWisps(player, math.floor(soul/2) - black)
-        -- short range brimstone wisps
         self:GiveWisps(player, black, wispTypes.brimstone)
-        -- just big red drippy wisps with a ton of contact health but no tears?
-        self:GiveWisps(player, math.floor(red/2), wispTypes.blood)
-        -- holy homing tear wisps a la Sacred Heart
+        self:GiveWisps(player, math.floor(red/2) * 3, wispTypes.blood)
         self:GiveWisps(player, eternal, wispTypes.holy)
-        -- bony wisps that spawn skeleton minions on break~
         self:GiveWisps(player, bone, wispTypes.bone)
         
         self:EvaluateWispStats(player)
@@ -391,7 +391,7 @@ function chr:OnUpdate(player)
         
         if ad.wispCheckTimer == 0 then
             local wisps = getWispsFor(player)
-            if not wisps[1] then
+            if not wisps[1] and not ad.devilGracePeriod then
                 player:Die() -- I has a dead
             end
             
