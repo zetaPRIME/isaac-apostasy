@@ -401,6 +401,14 @@ function chr:OnUpdate(player)
     end
 end
 
+local itmTranscendence -- cache it
+function chr:OnRender(player)
+    -- for now we have to do this every frame in case Transcendence happens to be gained and then lost
+    if not itmTranscendence then -- force bodiless state using existing item
+        itmTranscendence = itemConfig:GetCollectible(CollectibleType.COLLECTIBLE_TRANSCENDENCE)
+    end   if itmTranscendence then player:AddCostume(itmTranscendence, false) end
+end
+
 function chr:OnTakeDamage(e, amount, flags, source, inv)
     local player = e:ToPlayer()
     player:AddSoulHearts(amount)

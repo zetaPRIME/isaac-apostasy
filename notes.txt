@@ -40,9 +40,7 @@ The Seeker ~lost soul, guiding light~ {
         flame glow effect (actual head is the "core")
         ^ animated costume? or custom effect entity behind??
         
-        - set tear color on fire to match the type of wisp it came from
-        - rework tear color/variant/etc. into a unified structure
-        - also have tears' own projectiles rethemed to match
+        figure out if there's a more efficient way of doing the Transcendence costume hack without losing collision-proofing
         
         surrounding gfx checklist {
             menu
