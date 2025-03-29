@@ -112,15 +112,14 @@ local wispTypes = { } do
         tearVariant = TearVariant.COIN,
         
         OnFireTear = function(wisp, tear, isAutonomous, isGlamoured)
-            wisp.MaxHitPoints = 15
-            wisp.HitPoints = wisp.MaxHitPoints -- TEMP DEBUG
             tear:AddTearFlags(TearFlags.TEAR_GREED_COIN) -- chance to drop coins on hit a la Head of the Keeper
         end,
     }
     
-    -- reverse lookup table
-    local bySubtype = { } for _,v in pairs(wispTypes) do
-        if v.subtype then bySubtype[v.subtype] = v end
+    -- reverse lookup table and the like
+    local bySubtype = { } for id,wt in pairs(wispTypes) do
+        if wt.subtype then bySubtype[wt.subtype] = wt end
+        wt.id = id
     end
     
     function chr:GetWispType(w)
@@ -268,6 +267,8 @@ function chr:RearrangeWisps(player)
         local wlc = #wl
         local i for i = 1, wlc do
             local w = wl[i]
+            --print("wisp of type:", wt.id, "layer:", w.OrbitLayer, "distance:", w.OrbitDistance, "speed:", w.OrbitSpeed)
+            -- distance proportion seems to be 4:3 naturally
             --w.OrbitLayer = 573 -- reserved number, overridden
             --w.OrbitDistance = Vector(32, 32)
             --w.OrbitSpeed = 0.1
