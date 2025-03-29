@@ -12,6 +12,10 @@ do -- we're rolling our own require() because Nicalis Code
     end
 end
 
+-- functional modules
+Apostasy:require "modules.queue"
+
+-- main dispatches
 Apostasy:require "charactercore"
 
 -- at end: list of all included content files

@@ -182,15 +182,3 @@ if false and ModCallbacks.MC_HUD_RENDER then -- REPENTOGON only
         end
     end)
 end
-
-do -- inserting this here for now
-    local postUpdQueue = { }
-    function Apostasy:QueueUpdate(f)
-        postUpdQueue[f] = true
-    end
-    
-    Apostasy:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
-        for f in pairs(postUpdQueue) do f() end
-        postUpdQueue = { }
-    end)
-end
