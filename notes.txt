@@ -13,7 +13,7 @@ The Seeker ~lost soul, guiding light~ {
     what for half soul heart?
     add a wisp type for gold hearts
     
-    use maybe more efficient but definitely more compact table sort method for item wisp priority
+    - use maybe more efficient but definitely more compact table sort method for item wisp priority
     
     - split the heart management into its own function
     refactor when hearts are evaluated? {
@@ -62,7 +62,8 @@ The Seeker ~lost soul, guiding light~ {
     
     known odd interactions {
         Sprinkler tears still come from your wisps because they count as "yours".
-        honestly, I'm probably keeping this one?
+        same goes for Incubus, interestingly enough
+        honestly, I'm probably keeping this one
         
         Missing Page 2 triggers on *any* direct body damage, but also *only* on direct body damage.
     }

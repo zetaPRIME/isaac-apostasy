@@ -149,24 +149,20 @@ do
         return true
     end
     
+    local function qualityOf(w)
+        return itemConfig:GetCollectible(w.SubType).Quality end
     -- kill a random item out of the lowest quality item wisps
     local function killLowestItem(t)
         if not t[1] then return end
-        local lowest = 15
-        local ll = { }
-        local rev = { }
-        for idx,w in pairs(t) do -- iterate through wisps
-            local itm = itemConfig:GetCollectible(w.SubType)
-            lowest = math.min(lowest, itm.Quality)
-            if not ll[itm.Quality] then ll[itm.Quality] = {w}
-            else table.insert(ll[itm.Quality], w) end
-            rev[w] = idx
-        end
-        local lt = ll[lowest]
-        local i = (Random() % #lt) + 1
-        local w = lt[i]
-        w:Kill()
-        table.remove(t, rev[w])
+        
+        table.sort(t, function(a, b) -- sort list by quality, then within by remaining health
+            local qa, qb = qualityOf(a), qualityOf(b)
+            if qa == qb then return a.HitPoints < b.HitPoints end
+            return qa < qb
+        end)
+        
+        t[1]:Kill()
+        table.remove(t, 1)
     end
     
     --- Breaks the according number of wisps, in order of priority.
