@@ -10,7 +10,7 @@ The Seeker ~lost soul, guiding light~ {
     confer slight iframes on body for a wisp taking contact damage?
     though the power-yet-fragility is kind of part of the charm
     
-    what for half soul heart?
+    - what for half soul heart? why, a full soul wisp
     - add a wisp type for gold hearts
     
     - use maybe more efficient but definitely more compact table sort method for item wisp priority
@@ -22,8 +22,15 @@ The Seeker ~lost soul, guiding light~ {
         on item use?
     }
     
+    hugely expand the wisp type system {
+        damageTransfer
+        override health etc.
+        orbitLayer, orbitSpeed
+    }
+    
     ! breakfast, dinner, stem cells
     ^ https://bindingofisaacrebirth.wiki.gg/wiki/Item_Tags_food
+    crack jacks
     
     make black hearts give the big brim wisps from mega blast if player has missing page 2?
     

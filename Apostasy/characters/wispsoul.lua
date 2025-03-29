@@ -281,7 +281,7 @@ function chr:ProcessHearts(player)
         player:AddSoulHearts(2)
         
         -- and give wisps accordingly:
-        self:GiveWisps(player, math.floor(soul/2) - black)
+        self:GiveWisps(player, math.ceil(soul/2) - black) -- we'll be a bit generous here
         self:GiveWisps(player, black, wispTypes.brimstone)
         self:GiveWisps(player, math.floor(red/2) * 3, wispTypes.blood)
         self:GiveWisps(player, eternal, wispTypes.holy)
