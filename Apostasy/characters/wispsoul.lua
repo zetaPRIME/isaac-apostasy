@@ -46,6 +46,10 @@ local wispTypes = { } do
     local c255 = color.from255
     local nullColor = Color(1,1,1)
     
+    -- events:
+    -- OnSpawn(wisp)
+    -- OnFireTear(wisp, tear, isAutonomous, isGlamoured)
+    
     -- plain old wisps
     wispTypes.normal = {
         tearColor = color.inverted {
@@ -106,6 +110,12 @@ local wispTypes = { } do
         subtype = CollectibleType.COLLECTIBLE_WOODEN_NICKEL,
         tearColor = nullColor,
         tearVariant = TearVariant.COIN,
+        
+        OnFireTear = function(wisp, tear, isAutonomous, isGlamoured)
+            wisp.MaxHitPoints = 15
+            wisp.HitPoints = wisp.MaxHitPoints -- TEMP DEBUG
+            tear:AddTearFlags(TearFlags.TEAR_GREED_COIN) -- chance to drop coins on hit a la Head of the Keeper
+        end,
     }
     
     -- reverse lookup table
@@ -145,10 +155,28 @@ local wispTypes = { } do
             tear.Color = wt.tearColor or nullColor
             local v = wt.tearVariant or tearConversionTable[tear.Variant] or tear.Variant
             if tear.Variant ~= v then tear:ChangeVariant(v) end
+            
+            if wt.OnFireTear then wt.OnFireTear(w, tear, isAutonomous, true) end
         else
             --print("tear has unsupported variant:", tear.Variant)
+            local wt = self:GetWispType(w)
+            if wt.OnFireTear then wt.OnFireTear(w, tear, isAutonomous, false) end
         end
     end
+end
+
+local function onWispSpawned(wisp, wt)
+    if not wt then wt = chr:GetWispType(wisp) end
+    if wt.maxHealth then
+        wisp.MaxHitPoints = wt.maxHealth
+        wisp.HitPoints = wt.MaxHitPoints
+    end
+    if wt.OnSpawn then wt.OnSpawn(wisp) end
+end
+
+local function onWispDeath(wisp, wt)
+    if not wt then wt = chr:GetWispType(wisp) end
+    if wt.OnDeath then wt.OnDeath(wisp) end
 end
 
 do
@@ -156,6 +184,7 @@ do
     local function dmg(t)
         if not t[1] then return false end
         table.sort(t, function(a, b) return a.HitPoints < b.HitPoints end)
+        onWispDeath(t[1])
         t[1]:Kill()
         table.remove(t, 1)
         return true
@@ -173,6 +202,7 @@ do
             return qa < qb
         end)
         
+        onWispDeath(t[1])
         t[1]:Kill()
         table.remove(t, 1)
     end
@@ -217,14 +247,11 @@ do
     end
 end
 
-function chr:GiveWisps(player, amount, subtype)
+function chr:GiveWisps(player, amount, wt)
     if amount <= 0 then return nil end
-    if type(subtype) == "table" then -- we've been passed the structure
-        subtype = subtype.subtype
-    end
-    local i
-    for i = 1, amount do
-        player:AddWisp(subtype or 0, player.Position, true)
+    wt = wt or wispTypes.normal
+    local i for i = 1, amount do
+        onWispSpawned(player:AddWisp(wt.subtype or 0, player.Position, true), wt)
     end
 end
 
@@ -330,7 +357,7 @@ function chr:ConvertItemsToWisps(player)
         if num > 0 and (bflag(itm.Tags, ItemConfig.TAG_SUMMONABLE) or self.WispItemWhitelist[id]) and not self.WispItemBlacklist[id] then
             local i
             for i = 1, num do
-                player:AddItemWisp(id, player.Position, true)
+                onWispSpawned(player:AddItemWisp(id, player.Position, true), wispTypes.item)
                 player:RemoveCollectible(id, true, ActiveSlot.SLOT_POCKET, false)
                 gainedWisps = true
             end
@@ -483,6 +510,7 @@ function chr:OnFamiliarTakeDamage(e, amount, flags, source, inv)
     local player = fam.Player
     
     if amount >= fam.HitPoints then -- a killing blow
+        onWispDeath(fam)
         self:ActiveData(player).wispCheckTimer = 3
     end
 end

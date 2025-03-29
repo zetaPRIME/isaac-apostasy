@@ -24,8 +24,13 @@ The Seeker ~lost soul, guiding light~ {
     
     hugely expand the wisp type system {
         damageTransfer
-        override health etc.
+        - override health etc.
         orbitLayer, orbitSpeed
+        
+        give them events!
+        - OnSpawn
+        - OnDeath
+        - OnFireTear
     }
     
     ! breakfast, dinner, stem cells
