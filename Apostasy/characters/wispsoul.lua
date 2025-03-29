@@ -366,6 +366,16 @@ function chr:OnRoomClear(player, rng, spawnPos)
     end
 end
 
+function chr:OnUseItem(type, rng, player, flags, slot, data)
+    if type == CollectibleType.COLLECTIBLE_LEMEGETON or player:HasCollectible(CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES) then
+        local ad = self:ActiveData(player)
+        self:EvaluateWispStats(player, true) -- kick wisp updates
+        self:RearrangeWisps(player)
+        ad.wispCheckTimer = math.max(ad.wispCheckTimer, 5)
+        --print("spawning an wisp")
+    end
+end
+
 function chr:OnEvaluateCache(player, cacheFlag)
     local wispAttenuation = 0.0
     if cacheFlag == CacheFlag.CACHE_DAMAGE
@@ -472,16 +482,6 @@ function chr:OnPreProjectileCollisionWithFamiliar(tear, with, low, var)
     local fam = with:ToFamiliar()
     local player = fam.Player
     return true -- wisps don't block enemy shots
-end
-
-function chr:OnUseItem(type, rng, player, flags, slot, data)
-    if type == CollectibleType.COLLECTIBLE_LEMEGETON or player:HasCollectible(CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES) then
-        local ad = self:ActiveData(player)
-        self:EvaluateWispStats(player, true) -- kick wisp updates
-        self:RearrangeWisps(player)
-        ad.wispCheckTimer = math.max(ad.wispCheckTimer, 5)
-        --print("spawning an wisp")
-    end
 end
 
 function chr:OnFireTear(tear)
