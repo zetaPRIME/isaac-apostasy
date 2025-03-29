@@ -155,6 +155,15 @@ local function getPlayers()
     return r
 end
 
+-- OnRoomClear
+Apostasy:AddPriorityCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, CallbackPriority.EARLY, function(_, ...)
+    local pl = getPlayers()
+    for _, player in pairs(pl) do
+        local chr = Apostasy:GetCharacterForPlayer(player)
+        if chr and chr.OnRoomClear then chr:OnRoomClear(player, ...) end
+    end
+end)
+
 if false and ModCallbacks.MC_HUD_RENDER then -- REPENTOGON only
     Apostasy:AddCallback(ModCallbacks.MC_HUD_RENDER, function()
         local pl = getPlayers()

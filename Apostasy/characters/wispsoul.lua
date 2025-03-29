@@ -6,6 +6,7 @@ local tableUtil = Apostasy:require "util.table"
 local color = Apostasy:require "util.color"
 
 local itemConfig = Isaac.GetItemConfig()
+local game = Game()
 
 local CHARACTER_NAME = "The Seeker"
 local chr = Apostasy:RegisterCharacter(CHARACTER_NAME)
@@ -122,6 +123,8 @@ local wispTypes = { } do
         
         [TearVariant.PUPULA] = default,--false,
         [TearVariant.PUPULA_BLOOD] = default,--TearVariant.PUPULA,
+        
+        [TearVariant.MYSTERIOUS] = default,
     }
     
     -- theme a tear to whatever wisp is firing it
@@ -347,6 +350,16 @@ function chr:InitActiveData(player, ad)
     ad.itemCheckTimer = 1
     
     ad.queuedItemsSeen = { }
+end
+
+function chr:OnRoomClear(player, rng, spawnPos)
+    local wl = getWispsFor(player)
+    if #wl < 3 then -- pinch recovery aid
+        local sn = math.min(game:GetLevel():GetStage(), 3)
+        if Random() % sn == 0 then -- 1 in (floor number) chance, up to 1/3 per room
+            self:GiveWisps(player, 1)
+        end
+    end
 end
 
 function chr:OnEvaluateCache(player, cacheFlag)
