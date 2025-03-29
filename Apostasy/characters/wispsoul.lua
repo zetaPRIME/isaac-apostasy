@@ -99,6 +99,15 @@ local wispTypes = { } do
         tearVariant = TearVariant.BONE
     }
     
+    -- WIP TODO
+    wispTypes.gold = {
+        -- could be magic fingers, portable slot or wooden nickel
+        -- we're using this one because best balance of damage, health and coin chance
+        subtype = CollectibleType.COLLECTIBLE_WOODEN_NICKEL,
+        tearColor = nullColor,
+        tearVariant = TearVariant.COIN,
+    }
+    
     -- reverse lookup table
     local bySubtype = { } for _,v in pairs(wispTypes) do
         if v.subtype then bySubtype[v.subtype] = v end
@@ -246,6 +255,7 @@ function chr:ProcessHearts(player)
     local rotten = player:GetRottenHearts()
     local bone = player:GetBoneHearts()
     local eternal = player:GetEternalHearts()
+    local gold = player:GetGoldenHearts()
     
     if soul == -1 then
         soul = 0
@@ -255,7 +265,7 @@ function chr:ProcessHearts(player)
         soul = 0
     end
     
-    local total = red + soul + bone + eternal
+    local total = red + soul + bone + eternal + gold
     if total > 0 then -- health update needed
         -- count up black hearts
         local black = 0
@@ -266,6 +276,7 @@ function chr:ProcessHearts(player)
         player:AddMaxHearts(-100)
         player:AddEternalHearts(-100)
         player:AddBoneHearts(-100)
+        player:AddGoldenHearts(-100)
         player:AddSoulHearts(-100)
         player:AddSoulHearts(2)
         
@@ -275,6 +286,7 @@ function chr:ProcessHearts(player)
         self:GiveWisps(player, math.floor(red/2) * 3, wispTypes.blood)
         self:GiveWisps(player, eternal, wispTypes.holy)
         self:GiveWisps(player, bone, wispTypes.bone)
+        self:GiveWisps(player, gold, wispTypes.gold)
         
         self:RearrangeWisps(player)
         self:EvaluateWispStats(player)

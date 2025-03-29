@@ -11,7 +11,7 @@ The Seeker ~lost soul, guiding light~ {
     though the power-yet-fragility is kind of part of the charm
     
     what for half soul heart?
-    add a wisp type for gold hearts
+    - add a wisp type for gold hearts
     
     - use maybe more efficient but definitely more compact table sort method for item wisp priority
     
@@ -20,8 +20,6 @@ The Seeker ~lost soul, guiding light~ {
         after damage
         on item pickup
         on item use?
-        
-        x maybe just move it to peffect update and see if that fixes non-REPENTOGON heart flicker
     }
     
     ! breakfast, dinner, stem cells
