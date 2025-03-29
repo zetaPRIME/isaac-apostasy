@@ -276,7 +276,6 @@ function chr:ProcessHearts(player)
         
         self:ReshuffleWisps(player)
         self:EvaluateWispStats(player)
-        
     end
 end
 
@@ -308,6 +307,8 @@ function chr:ConvertItemsToWisps(player)
     -- if REPENTOGON is installed, grab the full list from it
     if player.GetCollectiblesList then check = player:GetCollectiblesList() end
     
+    local gainedWisps
+    
     for id in pairs(check) do
         local itm = itemConfig:GetCollectible(id)
         local num = player:GetCollectibleNum(id, true)
@@ -317,10 +318,12 @@ function chr:ConvertItemsToWisps(player)
             for i = 1, num do
                 player:AddItemWisp(id, player.Position, true)
                 player:RemoveCollectible(id, true, ActiveSlot.SLOT_POCKET, false)
+                gainedWisps = true
             end
         end
     end
     
+    if gainedWisps then self:ReshuffleWisps(player) end
     self:EvaluateWispStats(player)
 end
 
@@ -358,6 +361,7 @@ function chr:OnRoomClear(player, rng, spawnPos)
         local sn = math.min(game:GetLevel():GetStage(), 3)
         if Random() % sn == 0 then -- 1 in (floor number) chance, up to 1/3 per room
             self:GiveWisps(player, 1)
+            self:ReshuffleWisps(player)
         end
     end
 end
@@ -449,7 +453,10 @@ function chr:OnFamiliarTakeDamage(e, amount, flags, source, inv)
     if not wispType(e) then return nil end -- only acting on wisps
     local fam = e:ToFamiliar()
     local player = fam.Player
-    self:ActiveData(player).wispCheckTimer = 3
+    
+    if amount >= fam.HitPoints then -- a killing blow
+        self:ActiveData(player).wispCheckTimer = 3
+    end
 end
 
 function chr:OnPreFamiliarCollision(fam, with, low, var)

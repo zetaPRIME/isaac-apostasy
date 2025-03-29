@@ -47,7 +47,7 @@ The Seeker ~lost soul, guiding light~ {
         ^ just make a blank null costume for it and add it on init, duh
         
         / reshuffle normal wisps on heart add
-        ^ probably call this both on gaining item wisps and on losing any?
+        - call this on gaining item wisps as well
         ^ also probably try and do deterministic interleaving instead
         
         surrounding gfx checklist {
