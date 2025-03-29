@@ -219,7 +219,7 @@ function chr:GiveWisps(player, amount, subtype)
     end
 end
 
-function chr:ReshuffleWisps(player)
+function chr:RearrangeWisps(player)
     --print "reshuffling wisps"
     local wl = getWispsFor(player)
     local ll = { }
@@ -274,7 +274,7 @@ function chr:ProcessHearts(player)
         self:GiveWisps(player, eternal, wispTypes.holy)
         self:GiveWisps(player, bone, wispTypes.bone)
         
-        self:ReshuffleWisps(player)
+        self:RearrangeWisps(player)
         self:EvaluateWispStats(player)
     end
 end
@@ -323,7 +323,7 @@ function chr:ConvertItemsToWisps(player)
         end
     end
     
-    if gainedWisps then self:ReshuffleWisps(player) end
+    if gainedWisps then self:RearrangeWisps(player) end
     self:EvaluateWispStats(player)
 end
 
@@ -361,7 +361,7 @@ function chr:OnRoomClear(player, rng, spawnPos)
         local sn = math.min(game:GetLevel():GetStage(), 3)
         if Random() % sn == 0 then -- 1 in (floor number) chance, up to 1/3 per room
             self:GiveWisps(player, 1)
-            self:ReshuffleWisps(player)
+            self:RearrangeWisps(player)
         end
     end
 end
@@ -478,7 +478,7 @@ function chr:OnUseItem(type, rng, player, flags, slot, data)
     if type == CollectibleType.COLLECTIBLE_LEMEGETON or player:HasCollectible(CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES) then
         local ad = self:ActiveData(player)
         self:EvaluateWispStats(player, true) -- kick wisp updates
-        self:ReshuffleWisps(player)
+        self:RearrangeWisps(player)
         ad.wispCheckTimer = math.max(ad.wispCheckTimer, 5)
         --print("spawning an wisp")
     end
