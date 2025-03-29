@@ -57,6 +57,7 @@ do -- callback registration
         {ModCallbacks.MC_POST_PLAYER_INIT, "OnInit", 1},
         {ModCallbacks.MC_EVALUATE_CACHE, "OnEvaluateCache", 1, priority = CallbackPriority.LATE * 5},
         
+        {ModCallbacks.MC_POST_PEFFECT_UPDATE, "OnEffectUpdate", 1},
         {ModCallbacks.MC_POST_PLAYER_UPDATE, "OnUpdate", 1},
         {ModCallbacks.MC_POST_PLAYER_RENDER, "OnRender", 1},
         
@@ -179,5 +180,17 @@ if false and ModCallbacks.MC_HUD_RENDER then -- REPENTOGON only
             local chr = Apostasy:GetCharacterForPlayer(player)
             if chr and chr.OnPostHUDRender then chr:OnPostHUDRender(player) end
         end
+    end)
+end
+
+do -- inserting this here for now
+    local postUpdQueue = { }
+    function Apostasy:QueueUpdate(f)
+        postUpdQueue[f] = true
+    end
+    
+    Apostasy:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
+        for f in pairs(postUpdQueue) do f() end
+        postUpdQueue = { }
     end)
 end

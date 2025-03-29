@@ -230,8 +230,10 @@ function chr:RearrangeWisps(player)
     end
     for l,wl in pairs(ll) do -- and shuffle offsets within each
         local i for i = 1, #wl do
-            local j = (Random() % i) + 1
-            wl[i].OrbitAngleOffset, wl[j].OrbitAngleOffset = wl[j].OrbitAngleOffset, wl[i].OrbitAngleOffset
+            --local j = (Random() % i) + 1
+            --wl[i].OrbitAngleOffset, wl[j].OrbitAngleOffset = wl[j].OrbitAngleOffset, wl[i].OrbitAngleOffset
+            wl[i].OrbitAngleOffset = (i-1) * math.pi*2 / #wl
+            --print("orbit layer " .. wl[i].OrbitLayer .. ", offset " .. wl[i].OrbitAngleOffset)
         end
     end
 end
@@ -401,6 +403,10 @@ function chr:OnEvaluateCache(player, cacheFlag)
     elseif cacheFlag == CacheFlag.CACHE_FAMILIARS then
         self:EvaluateWispStats(player, true)
     end
+end
+
+function chr:OnEffectUpdate(player)
+    --self:ProcessHearts(player)
 end
 
 function chr:OnUpdate(player)

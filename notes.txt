@@ -21,8 +21,11 @@ The Seeker ~lost soul, guiding light~ {
         on item pickup
         on item use?
         
-        maybe just move it to peffect update and see if that fixes non-REPENTOGON heart flicker
+        x maybe just move it to peffect update and see if that fixes non-REPENTOGON heart flicker
     }
+    
+    ! breakfast, dinner, stem cells
+    ^ https://bindingofisaacrebirth.wiki.gg/wiki/Item_Tags_food
     
     make black hearts give the big brim wisps from mega blast if player has missing page 2?
     
@@ -49,6 +52,7 @@ The Seeker ~lost soul, guiding light~ {
         / reshuffle normal wisps on heart add
         - call this on gaining item wisps as well
         ^ also probably try and do deterministic interleaving instead
+        ^ actually... might as well override their orbits entirely by wispType
         
         surrounding gfx checklist {
             menu
