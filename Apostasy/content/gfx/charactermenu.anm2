@@ -2,7 +2,7 @@
 	<Info CreatedBy="Unknown" CreatedOn="10/12/2023 9:02:27 PM" Version="58" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="menu gabriel.png" Id="0"/>
+			<Spritesheet Path="menu seeker.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="Background" Id="0" SpritesheetId="0"/>

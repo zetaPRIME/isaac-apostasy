@@ -72,9 +72,12 @@ The Seeker ~lost soul, guiding light~ {
     known odd interactions {
         Sprinkler tears still come from your wisps because they count as "yours".
         same goes for Incubus, interestingly enough
+        also Sad Bombs
         honestly, I'm probably keeping this one
         
         Missing Page 2 triggers on *any* direct body damage, but also *only* on direct body damage.
+        
+        Gnawed Leaf is just kind of casually incredible?
     }
     
 } "Tainted" Seeker {

@@ -2,7 +2,7 @@
 	<Info CreatedBy="catinsurance" CreatedOn="10/12/2023 8:41:27 PM" Version="23" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="menu gabriel.png" Id="0"/>
+			<Spritesheet Path="menu seeker.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="Portrait" Id="0" SpritesheetId="0"/>
