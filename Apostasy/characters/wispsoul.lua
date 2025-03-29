@@ -260,15 +260,18 @@ function chr:RearrangeWisps(player)
     local wl = getWispsFor(player)
     local ll = { }
     for _,w in pairs(wl) do -- separate into layers
-        local l = w.OrbitLayer
+        local l = self:GetWispType(w)
         if not ll[l] then ll[l] = {w}
         else table.insert(ll[l], w) end
     end
-    for l,wl in pairs(ll) do -- and shuffle offsets within each
-        local i for i = 1, #wl do
-            --local j = (Random() % i) + 1
-            --wl[i].OrbitAngleOffset, wl[j].OrbitAngleOffset = wl[j].OrbitAngleOffset, wl[i].OrbitAngleOffset
-            wl[i].OrbitAngleOffset = (i-1) * math.pi*2 / #wl
+    for wt,wl in pairs(ll) do -- and shuffle offsets within each
+        local wlc = #wl
+        local i for i = 1, wlc do
+            local w = wl[i]
+            --w.OrbitLayer = 573 -- reserved number, overridden
+            --w.OrbitDistance = Vector(32, 32)
+            --w.OrbitSpeed = 0.1
+            --w.OrbitAngleOffset = (i-1) * math.pi*2 / wlc
             --print("orbit layer " .. wl[i].OrbitLayer .. ", offset " .. wl[i].OrbitAngleOffset)
         end
     end
