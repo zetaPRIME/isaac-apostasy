@@ -8,7 +8,10 @@ do -- inserting this here for now
     end
     
     Apostasy:AddCallback(ModCallbacks.MC_POST_UPDATE, function()
-        for f in pairs(routineQueue) do coroutine.resume(f) end
-        if coroutine.status(f) == "dead" then routineQueue[f] = nil end
+        local nextQueue = { }
+        for f in pairs(routineQueue) do
+            coroutine.resume(f)
+            if coroutine.status(f) ~= "dead" then nextQueue[f] = true end
+        end routineQueue = nextQueue
     end)
 end
