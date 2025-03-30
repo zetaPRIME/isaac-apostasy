@@ -47,8 +47,8 @@ function chr:GetWispList(player, itemWisps)
     local ad = self:ActiveData(player)
     local wl = { }
     
-    for wisp, t in pairs(ad.wispTracking) do
-        if itemWisps == nil or t == itemWisps then
+    for k, wisp in pairs(ad.wispTracking) do
+        if itemWisps == nil or itemWisps == (wisp.Variant == 237) then
             table.insert(wl, wisp)
         end
     end
@@ -68,7 +68,7 @@ function chr:_ForceFetchWispList(player, ad)
             if ent.Variant == 206 or ent.Variant == 237 then
                 local wisp = ent:ToFamiliar()
                 if wisp.Player and wisp.Player.Index == player.Index and not wisp:IsDead() then
-                    wl[wisp] = (wisp.Variant == 237)
+                    wl[wisp:GetData()] = wisp
                 end
             end
         end
@@ -266,7 +266,6 @@ do
         end
         
         self:EvaluateWispStats(player)
-        self:RearrangeWisps(player)
     end
     
     --- Applies logic for a devil deal sacrifice; either three normal wisps or one item wisp.
@@ -289,7 +288,6 @@ do
         end
         
         self:EvaluateWispStats(player)
-        self:RearrangeWisps(player)
     end
 end
 
@@ -301,13 +299,32 @@ function chr:GiveWisps(player, amount, wt)
     end
 end
 
+-- actually queues it for update later this frame
+function chr:RearrangeWisps(player, frameDelay)
+    local ad = self:ActiveData(player)
+    if not ad._queuedRearrange then
+        ad._queuedRearrange = true
+        frameDelay = frameDelay or 0
+        Apostasy:QueueUpdateRoutine(function()
+            for frameDelay = frameDelay, 0 do
+                coroutine.yield()
+            end
+            print "rearranging wisps"
+            self:_RearrangeWisps(player)
+            ad._queuedRearrange = nil
+        end)
+        print("queued")
+    end
+end
+
 local orbitVMult = Vector(1, 3/4)
 local baseOrbit = 40
 local orbitLMult = 15
 local orbitSpeedMult = 0.0333 -- -0.01666
-function chr:RearrangeWisps(player)
+function chr:_RearrangeWisps(player)
     --print "reshuffling wisps"
     local wl = self:GetWispList(player)
+    table.sort(wl, function(a, b) return a.Index < b.Index end) -- consistent order
     local ll = { }
     for _,w in pairs(wl) do -- separate into layers
         local l = self:GetWispType(w)
@@ -375,7 +392,6 @@ function chr:ProcessHearts(player)
         self:GiveWisps(player, bone, wispTypes.bone)
         self:GiveWisps(player, gold, wispTypes.gold)
         
-        self:RearrangeWisps(player)
         self:EvaluateWispStats(player)
     end
 end
@@ -408,8 +424,6 @@ function chr:ConvertItemsToWisps(player)
     -- if REPENTOGON is installed, grab the full list from it
     if player.GetCollectiblesList then check = player:GetCollectiblesList() end
     
-    local gainedWisps
-    
     for id in pairs(check) do
         local itm = itemConfig:GetCollectible(id)
         local num = player:GetCollectibleNum(id, true)
@@ -424,7 +438,6 @@ function chr:ConvertItemsToWisps(player)
         end
     end
     
-    if gainedWisps then self:RearrangeWisps(player) end
     self:EvaluateWispStats(player)
 end
 
@@ -446,9 +459,7 @@ end
 function chr:OnInit(player)
     local ad = self:ActiveData(player)
     
-    Apostasy:QueueUpdateRoutine(function()
-        self:RearrangeWisps(player) -- kick this immediately
-    end)
+    self:RearrangeWisps(player) -- kick this immediately
 end
 
 local function __count(l)
@@ -458,6 +469,7 @@ local function __count(l)
 end
 
 function chr:InitActiveData(player, ad)
+    print ("init active data for player", player)
     ad.wispCheckTimer = 1
     ad.itemCheckTimer = 1
     
@@ -474,7 +486,6 @@ function chr:OnRoomClear(player, rng, spawnPos)
         local sn = math.min(game:GetLevel():GetStage(), 3)
         if Random() % sn == 0 then -- 1 in (floor number) chance, up to 1/3 per room
             self:GiveWisps(player, 1)
-            self:RearrangeWisps(player)
         end
     end
 end
@@ -483,8 +494,10 @@ function chr:OnFamiliarInit(fam)
     if not wispType(fam) then return end
     local player = fam.Player
     local ad = self:ActiveData(player)
-    ad.wispTracking[fam] = (fam.Variant == 237)
-    print("added wisp to tracking:", fam, "count", __count(ad.wispTracking))
+    local key = fam:GetData()
+    ad.wispTracking[key] = fam
+    print("added wisp to tracking:", key, "count", __count(ad.wispTracking))
+    self:RearrangeWisps(player)
 end
 
 function chr:OnFamiliarKilled(fam)
@@ -492,15 +505,16 @@ function chr:OnFamiliarKilled(fam)
     fam = fam:ToFamiliar() -- coerce
     local player = fam.Player
     local ad = self:ActiveData(player)
-    ad.wispTracking[fam] = nil
-    print("removed wisp from tracking:", fam, "count", __count(ad.wispTracking))
+    local key = fam:GetData()
+    ad.wispTracking[key] = nil
+    print("removed wisp from tracking:", key, "count", __count(ad.wispTracking))
+    self:RearrangeWisps(player)
 end
 
 function chr:OnUseItem(type, rng, player, flags, slot, data)
     if type == CollectibleType.COLLECTIBLE_LEMEGETON or player:HasCollectible(CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES) then
         local ad = self:ActiveData(player)
         self:EvaluateWispStats(player, true) -- kick wisp updates
-        self:RearrangeWisps(player)
         ad.wispCheckTimer = math.max(ad.wispCheckTimer, 5)
         --print("spawning an wisp")
     end
@@ -603,7 +617,7 @@ function chr:OnFamiliarTakeDamage(e, amount, flags, source, inv)
         self:ActiveData(player).wispCheckTimer = 3
         Apostasy:QueueUpdateRoutine(function() -- kick wisp layout
             coroutine.yield()
-            self:RearrangeWisps(player)
+            --self:RearrangeWisps(player)
         end)
     end
 end

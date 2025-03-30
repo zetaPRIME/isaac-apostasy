@@ -33,10 +33,11 @@ end
 do
     local activeData = setmetatable({ }, { __mode = "k" }) -- weakly keyed
     function Character:ActiveData(player)
-        local ad = activeData[player]
+        local key = player:GetData()
+        local ad = activeData[key]
         if not ad then
             ad = { }
-            activeData[player] = ad
+            activeData[key] = ad
             self:InitActiveData(player, ad)
         end
         return ad
@@ -45,7 +46,7 @@ do
     
     Apostasy:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.IMPORTANT,
     function(_, player)
-        activeData[player] = nil
+        activeData[player:GetData()] = nil
     end)
 end
 
