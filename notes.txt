@@ -23,7 +23,7 @@ The Seeker ~lost soul, guiding light~ {
     }
     
     > !!! UNIFY WISP FETCHING AND TRACKING
-    - fix alternation code for tear firing (it was both activedata and keying not working)
+    entityremove as backup
     
     hugely expand the wisp type system {
         damageTransfer

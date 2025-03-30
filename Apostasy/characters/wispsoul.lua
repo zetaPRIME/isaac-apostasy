@@ -210,6 +210,7 @@ local wispTypes = { } do
 end
 
 local function onWispSpawned(wisp, wt)
+    print "on wisp spawn event"
     if not wt then wt = chr:GetWispType(wisp) end
     if wt.maxHealth then
         wisp.MaxHitPoints = wt.maxHealth
@@ -219,6 +220,7 @@ local function onWispSpawned(wisp, wt)
 end
 
 local function onWispDeath(wisp, wt)
+    print "on wisp death event"
     if not wt then wt = chr:GetWispType(wisp) end
     if wt.OnDeath then wt.OnDeath(wisp) end
 end
@@ -228,7 +230,6 @@ do
     local function dmg(t)
         if not t[1] then return false end
         table.sort(t, function(a, b) return a.HitPoints < b.HitPoints end)
-        onWispDeath(t[1])
         t[1]:Kill()
         table.remove(t, 1)
         return true
@@ -246,7 +247,6 @@ do
             return qa < qb
         end)
         
-        onWispDeath(t[1])
         t[1]:Kill()
         table.remove(t, 1)
     end
@@ -295,7 +295,7 @@ function chr:GiveWisps(player, amount, wt)
     if amount <= 0 then return nil end
     wt = wt or wispTypes.normal
     local i for i = 1, amount do
-        onWispSpawned(player:AddWisp(wt.subtype or 0, player.Position, true), wt)
+        player:AddWisp(wt.subtype or 0, player.Position, true)
     end
 end
 
@@ -431,7 +431,7 @@ function chr:ConvertItemsToWisps(player)
         if num > 0 and (bflag(itm.Tags, ItemConfig.TAG_SUMMONABLE) or self.WispItemWhitelist[id]) and not self.WispItemBlacklist[id] then
             local i
             for i = 1, num do
-                onWispSpawned(player:AddItemWisp(id, player.Position, true), wispTypes.item)
+                player:AddItemWisp(id, player.Position, true)
                 player:RemoveCollectible(id, true, ActiveSlot.SLOT_POCKET, false)
                 gainedWisps = true
             end
@@ -441,12 +441,17 @@ function chr:ConvertItemsToWisps(player)
     self:EvaluateWispStats(player)
 end
 
-function chr:EvaluateWispStats(player, inEval)
-    if inEval then
-        local ad = self:ActiveData(player)
-        ad.wispCheckTimer = math.max(ad.wispCheckTimer, 1)
-        return
+function chr:EvaluateWispStats(player) -- queue function
+    local ad = self:ActiveData(player)
+    if not ad._queuedEval then
+        ad._queuedEval = true
+        Apostasy:QueueUpdateRoutine(function()
+            self:_EvaluateWispStats(player)
+            ad._queuedEval = nil
+        end)
     end
+end
+function chr:_EvaluateWispStats(player, inEval)
     player:AddCacheFlags(CacheFlag.CACHE_FIREDELAY)
     player:AddCacheFlags(CacheFlag.CACHE_DAMAGE)
     player:EvaluateItems()
@@ -497,7 +502,10 @@ function chr:OnFamiliarInit(fam)
     local key = fam:GetData()
     ad.wispTracking[key] = fam
     print("added wisp to tracking:", key, "count", __count(ad.wispTracking))
+    
+    Apostasy:QueueUpdateRoutine(function() onWispSpawned(fam) end)
     self:RearrangeWisps(player)
+    self:EvaluateWispStats(player)
 end
 
 function chr:OnFamiliarKilled(fam)
@@ -508,14 +516,18 @@ function chr:OnFamiliarKilled(fam)
     local key = fam:GetData()
     ad.wispTracking[key] = nil
     print("removed wisp from tracking:", key, "count", __count(ad.wispTracking))
+    
+    onWispDeath(fam)
+    self:ActiveData(player).wispCheckTimer = 1
     self:RearrangeWisps(player)
+    self:EvaluateWispStats(player)
 end
 
 function chr:OnUseItem(type, rng, player, flags, slot, data)
     if type == CollectibleType.COLLECTIBLE_LEMEGETON or player:HasCollectible(CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES) then
         local ad = self:ActiveData(player)
-        self:EvaluateWispStats(player, true) -- kick wisp updates
-        ad.wispCheckTimer = math.max(ad.wispCheckTimer, 5)
+        --self:EvaluateWispStats(player, true) -- kick wisp updates
+        --ad.wispCheckTimer = math.max(ad.wispCheckTimer, 5)
         --print("spawning an wisp")
     end
 end
@@ -543,7 +555,7 @@ function chr:OnEvaluateCache(player, cacheFlag)
         local div = 1.0 + wispAttenuation
         player.MaxFireDelay = player.MaxFireDelay / div
     elseif cacheFlag == CacheFlag.CACHE_FAMILIARS then
-        self:EvaluateWispStats(player, true)
+        --self:EvaluateWispStats(player, true)
     end
 end
 
@@ -613,12 +625,7 @@ function chr:OnFamiliarTakeDamage(e, amount, flags, source, inv)
     local player = fam.Player
     
     if amount >= fam.HitPoints then -- a killing blow
-        onWispDeath(fam)
-        self:ActiveData(player).wispCheckTimer = 3
-        Apostasy:QueueUpdateRoutine(function() -- kick wisp layout
-            coroutine.yield()
-            --self:RearrangeWisps(player)
-        end)
+        --
     end
 end
 
