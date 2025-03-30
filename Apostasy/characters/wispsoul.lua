@@ -98,6 +98,10 @@ local wispTypes = { } do
             fill = c255 {245, 230, 200}, mult = 1.2,
             bias = c255 {5, 5, 5},
         },
+        
+        OnFireTear = function(wisp, tear, isAutonomous, isGlamoured)
+            tear:AddTearFlags(TearFlags.TEAR_HOMING) -- to match what this wisp variant does by default
+        end,
     }
     
     -- bony wisps that spawn skeleton minions on break~
@@ -108,7 +112,6 @@ local wispTypes = { } do
         tearVariant = TearVariant.BONE
     }
     
-    -- WIP TODO
     wispTypes.gold = {
         -- could be magic fingers, portable slot or wooden nickel
         -- we're using this one because best balance of damage, health and coin chance
