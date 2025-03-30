@@ -33,18 +33,19 @@ end
 do
     local activeData = { }
     function Character:ActiveData(player)
-        if not activeData[player.Index] then
+        local idx = player:GetCollectibleRNG(1):GetSeed()
+        if not activeData[idx] then
             local ad = { }
-            activeData[player.Index] = ad
+            activeData[idx] = ad
             self:InitActiveData(player, ad)
         end
-        return activeData[player.Index]
+        return activeData[idx]
     end
     function Character:InitActiveData() end -- dummy
     
     Apostasy:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.IMPORTANT,
     function(_, player)
-        activeData[player.Index] = nil
+        activeData[player:GetCollectibleRNG(1):GetSeed()] = nil
     end)
 end
 
