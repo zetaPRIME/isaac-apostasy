@@ -33,12 +33,13 @@ end
 do
     local activeData = setmetatable({ }, { __mode = "k" }) -- weakly keyed
     function Character:ActiveData(player)
-        if not activeData[player] then
-            local ad = { }
+        local ad = activeData[player]
+        if not ad then
+            ad = { }
             activeData[player] = ad
             self:InitActiveData(player, ad)
         end
-        return activeData[player]
+        return ad
     end
     function Character:InitActiveData() end -- dummy
     
