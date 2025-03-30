@@ -5,7 +5,7 @@
         hp="0"
         armor="8"
         black="0"
-        bombs="0"
+        bombs="1"
         keys="1"
         trinket="38"
         portrait="playerportrait_gabriel.png"
