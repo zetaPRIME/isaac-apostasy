@@ -254,6 +254,7 @@ function chr:GiveWisps(player, amount, wt)
     end
 end
 
+local orbitMult = Vector(1, 3/4)
 function chr:RearrangeWisps(player)
     --print "reshuffling wisps"
     local wl = getWispsFor(player)
@@ -265,15 +266,16 @@ function chr:RearrangeWisps(player)
     end
     for wt,wl in pairs(ll) do -- and shuffle offsets within each
         local wlc = #wl
+        --print(wlc, "wisps of type", wt.id)
         local i for i = 1, wlc do
             local w = wl[i]
-            --print("wisp of type:", wt.id, "layer:", w.OrbitLayer, "distance:", w.OrbitDistance, "speed:", w.OrbitSpeed)
+            --print("wisp of type:", wt.id, "layer:", w.OrbitLayer, "distance:", w.OrbitDistance, "speed:", w.OrbitSpeed) -- DEBUG
+            
             -- distance proportion seems to be 4:3 naturally
             --w.OrbitLayer = 573 -- reserved number, overridden
-            --w.OrbitDistance = Vector(32, 32)
-            --w.OrbitSpeed = 0.1
+            --w.OrbitDistance = Vector(40, 30)
+            --w.OrbitSpeed = -0.01333
             --w.OrbitAngleOffset = (i-1) * math.pi*2 / wlc
-            --print("orbit layer " .. wl[i].OrbitLayer .. ", offset " .. wl[i].OrbitAngleOffset)
         end
     end
 end

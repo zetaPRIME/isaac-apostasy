@@ -83,6 +83,7 @@ The Seeker ~lost soul, guiding light~ {
         Missing Page 2 triggers on *any* direct body damage, but also *only* on direct body damage.
         
         Gnawed Leaf is just kind of casually incredible?
+        Unicorn Stump is also just incredibly silly once you have a bunch of wisps to deal damage for you
     }
     
 } "Tainted" Seeker {
