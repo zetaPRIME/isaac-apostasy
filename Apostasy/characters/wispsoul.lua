@@ -462,7 +462,7 @@ function chr:InitActiveData(player, ad)
     ad.itemCheckTimer = 1
     
     ad.queuedItemsSeen = { }
-    ad.wispTracking = { }
+    ad.wispTracking = setmetatable({ }, { __mode = "k" }) -- weakly keyed
     
     -- for safety, assume reload
     self:_ForceFetchWispList(player, ad)
