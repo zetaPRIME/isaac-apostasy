@@ -21,27 +21,6 @@ local function wispType(e)
 end
 
 -- itemWisps: true for only, false for only not, nil for don't care
-function chr:oldGetWispList(player, itemWisps)
-    local ents = Isaac.GetRoomEntities()
-    
-    local wl = { }
-    
-    for i, ent in ipairs(ents) do
-        if ent.Type == 3 then
-            -- 206: normal, 237: item
-            if (ent.Variant == 206 and itemWisps ~= true) or (ent.Variant == 237 and itemWisps ~= false) then
-                local wisp = ent:ToFamiliar()
-                if wisp.Player and wisp.Player.Index == player.Index and not wisp:IsDead() then
-                    table.insert(wl, wisp)
-                end
-            end
-        end
-        --print(ent.Type, ent.Variant, ent.SubType)
-    end
-    
-    return wl
-end
-
 -- TODO still working on it
 function chr:GetWispList(player, itemWisps)
     local ad = self:ActiveData(player)
@@ -72,7 +51,6 @@ function chr:_ForceFetchWispList(player, ad)
                 end
             end
         end
-        --print(ent.Type, ent.Variant, ent.SubType)
     end
     
     return wl
@@ -210,7 +188,6 @@ local wispTypes = { } do
 end
 
 local function onWispSpawned(wisp, wt)
-    print "on wisp spawn event"
     if not wt then wt = chr:GetWispType(wisp) end
     if wt.maxHealth then
         wisp.MaxHitPoints = wt.maxHealth
@@ -220,7 +197,6 @@ local function onWispSpawned(wisp, wt)
 end
 
 local function onWispDeath(wisp, wt)
-    print "on wisp death event"
     if not wt then wt = chr:GetWispType(wisp) end
     if wt.OnDeath then wt.OnDeath(wisp) end
 end
@@ -309,11 +285,9 @@ function chr:RearrangeWisps(player, frameDelay)
             for frameDelay = frameDelay, 0 do
                 coroutine.yield()
             end
-            print "rearranging wisps"
             self:_RearrangeWisps(player)
             ad._queuedRearrange = nil
         end)
-        print("queued")
     end
 end
 
@@ -474,7 +448,6 @@ local function __count(l)
 end
 
 function chr:InitActiveData(player, ad)
-    print ("init active data for player", player)
     ad.wispCheckTimer = 1
     ad.itemCheckTimer = 1
     
@@ -501,7 +474,6 @@ function chr:OnFamiliarInit(fam)
     local ad = self:ActiveData(player)
     local key = fam:GetData()
     ad.wispTracking[key] = fam
-    print("added wisp to tracking:", key, "count", __count(ad.wispTracking))
     
     Apostasy:QueueUpdateRoutine(function() onWispSpawned(fam) end)
     self:RearrangeWisps(player)
@@ -515,7 +487,6 @@ function chr:OnFamiliarKilled(fam)
     local ad = self:ActiveData(player)
     local key = fam:GetData()
     ad.wispTracking[key] = nil
-    print("removed wisp from tracking:", key, "count", __count(ad.wispTracking))
     
     onWispDeath(fam)
     self:ActiveData(player).wispCheckTimer = 1
@@ -525,10 +496,8 @@ end
 
 function chr:OnUseItem(type, rng, player, flags, slot, data)
     if type == CollectibleType.COLLECTIBLE_LEMEGETON or player:HasCollectible(CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES) then
-        local ad = self:ActiveData(player)
-        --self:EvaluateWispStats(player, true) -- kick wisp updates
-        --ad.wispCheckTimer = math.max(ad.wispCheckTimer, 5)
-        --print("spawning an wisp")
+        -- used to be some logic here but we don't need it anymore
+        -- keeping it in case we want to do something else later
     end
 end
 
@@ -554,8 +523,6 @@ function chr:OnEvaluateCache(player, cacheFlag)
         -- more wisps, faster shots
         local div = 1.0 + wispAttenuation
         player.MaxFireDelay = player.MaxFireDelay / div
-    elseif cacheFlag == CacheFlag.CACHE_FAMILIARS then
-        --self:EvaluateWispStats(player, true)
     end
 end
 
@@ -595,9 +562,6 @@ function chr:OnUpdate(player)
             if not wisps[1] and not ad.devilGracePeriod then
                 player:Die() -- I has a dead
             end
-            
-            -- force update wisp modifiers
-            self:EvaluateWispStats(player)
         end
     end
 end
@@ -619,14 +583,12 @@ function chr:OnTakeDamage(e, amount, flags, source, inv)
     return true
 end
 
-function chr:OnFamiliarTakeDamage(e, amount, flags, source, inv)
-    if not wispType(e) then return nil end -- only acting on wisps
-    local fam = e:ToFamiliar()
+function chr:OnFamiliarTakeDamage(fam, amount, flags, source, inv)
+    if not wispType(fam) then return nil end -- only acting on wisps
+    fam = fam:ToFamiliar()
     local player = fam.Player
     
-    if amount >= fam.HitPoints then -- a killing blow
-        --
-    end
+    -- eh, just here in case we need it
 end
 
 function chr:OnPreFamiliarCollision(fam, with, low, var)
@@ -670,19 +632,6 @@ function chr:OnFamiliarFireTear(tear)
     local w = tear.SpawnerEntity:ToFamiliar()
     if not wispType(w) then return end
     self:HandleTearGlamour(w, tear, true)
-end
-
-function chr:OnFireLaserAAA(laser)
-    --if not laser.FirstUpdate then return nil end
-    --print("laser firing")
-    local player = laser.SpawnerEntity:ToPlayer()
-    local wisps = self:GetWispList(player)
-    
-    if wisps[1] then -- we have wisps
-        --print("we have wisps")
-        local w = wisps[(Random() % #wisps)+1]
-        --laser.Position = w.Position
-    end
 end
 
 function chr:OnPreHUDRenderHearts(offset, sprite, position, scale, player)
