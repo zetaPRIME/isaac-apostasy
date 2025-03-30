@@ -253,8 +253,8 @@ do
     
     --- Breaks the according number of wisps, in order of priority.
     function chr:ApplyWispDamage(player, amount)
-        local normalWisps = chr:GetWispList(player, false)
-        local itemWisps = chr:GetWispList(player, true)
+        local normalWisps = self:GetWispList(player, false)
+        local itemWisps = self:GetWispList(player, true)
         
         while amount > 0 do
             local _ = dmg(normalWisps) or killLowestItem(itemWisps)
@@ -271,8 +271,8 @@ do
     
     --- Applies logic for a devil deal sacrifice; either three normal wisps or one item wisp.
     function chr:ApplyWispSacrifice(player)
-        local normalWisps = chr:GetWispList(player, false)
-        local itemWisps = chr:GetWispList(player, true)
+        local normalWisps = self:GetWispList(player, false)
+        local itemWisps = self:GetWispList(player, true)
         
         -- not enough normals but can sacrifice an item wisp
         if not normalWisps[3] and itemWisps[1] then
@@ -307,7 +307,7 @@ local orbitLMult = 15
 local orbitSpeedMult = 0.0333 -- -0.01666
 function chr:RearrangeWisps(player)
     --print "reshuffling wisps"
-    local wl = chr:GetWispList(player)
+    local wl = self:GetWispList(player)
     local ll = { }
     for _,w in pairs(wl) do -- separate into layers
         local l = self:GetWispType(w)
@@ -469,7 +469,7 @@ function chr:InitActiveData(player, ad)
 end
 
 function chr:OnRoomClear(player, rng, spawnPos)
-    local wl = chr:GetWispList(player)
+    local wl = self:GetWispList(player)
     if #wl < 3 then -- pinch recovery aid
         local sn = math.min(game:GetLevel():GetStage(), 3)
         if Random() % sn == 0 then -- 1 in (floor number) chance, up to 1/3 per room
@@ -510,8 +510,8 @@ function chr:OnEvaluateCache(player, cacheFlag)
     local wispAttenuation = 0.0
     if cacheFlag == CacheFlag.CACHE_DAMAGE
     or cacheFlag == CacheFlag.CACHE_FIREDELAY then
-        local normalWisps = chr:GetWispList(player, false)
-        local itemWisps = chr:GetWispList(player, true)
+        local normalWisps = self:GetWispList(player, false)
+        local itemWisps = self:GetWispList(player, true)
         wispAttenuation = (#normalWisps-3) * .05 + #itemWisps * .075
     end
     
@@ -565,7 +565,7 @@ function chr:OnUpdate(player)
         ad.wispCheckTimer = ad.wispCheckTimer - 1
         
         if ad.wispCheckTimer == 0 then
-            local wisps = chr:GetWispList(player)
+            local wisps = self:GetWispList(player)
             if not wisps[1] and not ad.devilGracePeriod then
                 player:Die() -- I has a dead
             end
@@ -626,7 +626,7 @@ end
 function chr:OnFireTear(tear)
     local player = tear.SpawnerEntity:ToPlayer()
     local ad = self:ActiveData(player)
-    local wisps = chr:GetWispList(player)
+    local wisps = self:GetWispList(player)
     
     if wisps[1] then -- we have wisps; our tears originate from them
         local w = wisps[(Random() % #wisps)+1]
@@ -655,7 +655,7 @@ function chr:OnFireLaserAAA(laser)
     --if not laser.FirstUpdate then return nil end
     --print("laser firing")
     local player = laser.SpawnerEntity:ToPlayer()
-    local wisps = chr:GetWispList(player)
+    local wisps = self:GetWispList(player)
     
     if wisps[1] then -- we have wisps
         --print("we have wisps")
