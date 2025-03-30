@@ -31,21 +31,20 @@ function Apostasy:GetCharacterForPlayer(player)
 end
 
 do
-    local activeData = { }
+    local activeData = setmetatable({ }, { __mode = "k" }) -- weakly keyed
     function Character:ActiveData(player)
-        local idx = player:GetCollectibleRNG(1):GetSeed()
-        if not activeData[idx] then
+        if not activeData[player] then
             local ad = { }
-            activeData[idx] = ad
+            activeData[player] = ad
             self:InitActiveData(player, ad)
         end
-        return activeData[idx]
+        return activeData[player]
     end
     function Character:InitActiveData() end -- dummy
     
     Apostasy:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.IMPORTANT,
     function(_, player)
-        activeData[player:GetCollectibleRNG(1):GetSeed()] = nil
+        activeData[player] = nil
     end)
 end
 
