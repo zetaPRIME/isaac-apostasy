@@ -58,6 +58,9 @@ do -- callback registration
         {ModCallbacks.MC_POST_PLAYER_INIT, "OnInit", 1},
         {ModCallbacks.MC_EVALUATE_CACHE, "OnEvaluateCache", 1, priority = CallbackPriority.LATE * 5},
         
+        {ModCallbacks.MC_FAMILIAR_INIT, "OnFamiliarInit", 1, type = "familiar", priority = CallbackPriority.LATE - 1},
+        {ModCallbacks.MC_POST_ENTITY_KILL, "OnFamiliarKilled", 1, type = "familiar"},
+        
         {ModCallbacks.MC_POST_PEFFECT_UPDATE, "OnEffectUpdate", 1},
         {ModCallbacks.MC_POST_PLAYER_UPDATE, "OnUpdate", 1},
         {ModCallbacks.MC_POST_PLAYER_RENDER, "OnRender", 1},

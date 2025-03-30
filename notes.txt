@@ -22,7 +22,7 @@ The Seeker ~lost soul, guiding light~ {
         on item use?
     }
     
-    !!! UNIFY WISP FETCHING AND TRACKING
+    > !!! UNIFY WISP FETCHING AND TRACKING
     
     hugely expand the wisp type system {
         damageTransfer

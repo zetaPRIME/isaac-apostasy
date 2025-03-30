@@ -21,7 +21,7 @@ local function wispType(e)
 end
 
 -- itemWisps: true for only, false for only not, nil for don't care
-function chr:GetWispList(player, itemWisps)
+function chr:oldGetWispList(player, itemWisps)
     local ents = Isaac.GetRoomEntities()
     
     local wl = { }
@@ -33,6 +33,42 @@ function chr:GetWispList(player, itemWisps)
                 local wisp = ent:ToFamiliar()
                 if wisp.Player and wisp.Player.Index == player.Index and not wisp:IsDead() then
                     table.insert(wl, wisp)
+                end
+            end
+        end
+        --print(ent.Type, ent.Variant, ent.SubType)
+    end
+    
+    return wl
+end
+
+-- TODO still working on it
+function chr:GetWispList(player, itemWisps)
+    local ad = self:ActiveData(player)
+    local wl = { }
+    
+    for wisp, t in pairs(ad.wispTracking) do
+        if itemWisps == nil or t == itemWisps then
+            table.insert(wl, wisp)
+        end
+    end
+    
+    return wl
+end
+
+-- re-fetch in case of reload
+function chr:_ForceFetchWispList(player, ad)
+    local ents = Isaac.GetRoomEntities()
+    
+    local wl = ad.wispTracking
+    
+    for i, ent in ipairs(ents) do
+        if ent.Type == 3 then
+            -- 206: normal, 237: item
+            if ent.Variant == 206 or ent.Variant == 237 then
+                local wisp = ent:ToFamiliar()
+                if wisp.Player and wisp.Player.Index == player.Index and not wisp:IsDead() then
+                    wl[wisp] = (wisp.Variant == 237)
                 end
             end
         end
@@ -415,11 +451,21 @@ function chr:OnInit(player)
     end)
 end
 
+local function __count(l)
+    local c = 0
+    for _ in pairs(l) do c = c + 1 end
+    return c
+end
+
 function chr:InitActiveData(player, ad)
     ad.wispCheckTimer = 1
     ad.itemCheckTimer = 1
     
     ad.queuedItemsSeen = { }
+    ad.wispTracking = { }
+    
+    -- for safety, assume reload
+    self:_ForceFetchWispList(player, ad)
 end
 
 function chr:OnRoomClear(player, rng, spawnPos)
@@ -431,6 +477,23 @@ function chr:OnRoomClear(player, rng, spawnPos)
             self:RearrangeWisps(player)
         end
     end
+end
+
+function chr:OnFamiliarInit(fam)
+    if not wispType(fam) then return end
+    local player = fam.Player
+    local ad = self:ActiveData(player)
+    ad.wispTracking[fam] = (fam.Variant == 237)
+    print("added wisp to tracking:", fam, "count", __count(ad.wispTracking))
+end
+
+function chr:OnFamiliarKilled(fam)
+    if not wispType(fam) then return end
+    fam = fam:ToFamiliar() -- coerce
+    local player = fam.Player
+    local ad = self:ActiveData(player)
+    ad.wispTracking[fam] = nil
+    print("removed wisp from tracking:", fam, "count", __count(ad.wispTracking))
 end
 
 function chr:OnUseItem(type, rng, player, flags, slot, data)
