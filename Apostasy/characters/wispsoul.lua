@@ -61,6 +61,7 @@ local wispTypes = { } do
     
     -- picked up items as Lemegeton wisps
     wispTypes.item = {
+        orbitLayer = -1, orbitSpeed = -1,
         tearColor = color.inverted {
             fill = c255 {166, 84, 242}, mult = 1.3,
             --outline = c255 {232, 175, 255},
@@ -72,6 +73,7 @@ local wispTypes = { } do
     -- just big red drippy wisps with a ton of contact health but no tears?
     wispTypes.blood = {
         subtype = CollectibleType.COLLECTIBLE_BERSERK,
+        orbitLayer = 1, orbitSpeed = 1.5,
         tearColor = color.inverted {
             fill = c255 {63, 0, 0},
             outline = c255 {225, 55, 55},
@@ -81,6 +83,7 @@ local wispTypes = { } do
     -- short range brimstone wisps
     wispTypes.brimstone = {
         subtype = CollectibleType.COLLECTIBLE_SULFUR,
+        orbitLayer = -0.5, orbitSpeed = -1.5,
         tearColor = color.inverted {
             fill = c255 {127, 0, 0},
             outline = c255 {225, 55, 55},
@@ -90,6 +93,7 @@ local wispTypes = { } do
     -- holy homing tear wisps a la Sacred Heart
     wispTypes.holy = {
         subtype = CollectibleType.COLLECTIBLE_BIBLE,
+        orbitLayer = -0.5, orbitSpeed = 1.5,
         tearColor = color.inverted {
             fill = c255 {245, 230, 200}, mult = 1.2,
             bias = c255 {5, 5, 5},
@@ -99,6 +103,7 @@ local wispTypes = { } do
     -- bony wisps that spawn skeleton minions on break~
     wispTypes.bone = {
         subtype = CollectibleType.COLLECTIBLE_BOOK_OF_THE_DEAD,
+        orbitLayer = 2, orbitSpeed = -1.75,
         tearColor = nullColor,
         tearVariant = TearVariant.BONE
     }
@@ -108,6 +113,7 @@ local wispTypes = { } do
         -- could be magic fingers, portable slot or wooden nickel
         -- we're using this one because best balance of damage, health and coin chance
         subtype = CollectibleType.COLLECTIBLE_WOODEN_NICKEL,
+        orbitLayer = 1.5, orbitSpeed = 0.75,
         tearColor = nullColor,
         tearVariant = TearVariant.COIN,
         
@@ -221,6 +227,7 @@ do
         end
         
         self:EvaluateWispStats(player)
+        self:RearrangeWisps(player)
     end
     
     --- Applies logic for a devil deal sacrifice; either three normal wisps or one item wisp.
@@ -243,6 +250,7 @@ do
         end
         
         self:EvaluateWispStats(player)
+        self:RearrangeWisps(player)
     end
 end
 
@@ -254,7 +262,10 @@ function chr:GiveWisps(player, amount, wt)
     end
 end
 
-local orbitMult = Vector(1, 3/4)
+local orbitVMult = Vector(1, 3/4)
+local baseOrbit = 40
+local orbitLMult = 15
+local orbitSpeedMult = 0.0333 -- -0.01666
 function chr:RearrangeWisps(player)
     --print "reshuffling wisps"
     local wl = getWispsFor(player)
@@ -265,6 +276,10 @@ function chr:RearrangeWisps(player)
         else table.insert(ll[l], w) end
     end
     for wt,wl in pairs(ll) do -- and shuffle offsets within each
+        -- precalc the stuff
+        local orbitDist = orbitVMult * (baseOrbit + orbitLMult * (wt.orbitLayer or 0))
+        local orbitSpeed = orbitSpeedMult * (wt.orbitSpeed or 1)
+        
         local wlc = #wl
         --print(wlc, "wisps of type", wt.id)
         local i for i = 1, wlc do
@@ -272,10 +287,10 @@ function chr:RearrangeWisps(player)
             --print("wisp of type:", wt.id, "layer:", w.OrbitLayer, "distance:", w.OrbitDistance, "speed:", w.OrbitSpeed) -- DEBUG
             
             -- distance proportion seems to be 4:3 naturally
-            --w.OrbitLayer = 573 -- reserved number, overridden
-            --w.OrbitDistance = Vector(40, 30)
-            --w.OrbitSpeed = -0.01333
-            --w.OrbitAngleOffset = (i-1) * math.pi*2 / wlc
+            w.OrbitLayer = 573 -- reserved number, overridden
+            w.OrbitDistance = orbitDist
+            w.OrbitSpeed = orbitSpeed
+            w.OrbitAngleOffset = (i-1) * math.pi*2 / wlc
         end
     end
 end
@@ -392,7 +407,9 @@ end
 function chr:OnInit(player)
     local ad = self:ActiveData(player)
     
-    --player:AddWisp(0, player.Position)
+    Apostasy:QueueUpdateRoutine(function()
+        self:RearrangeWisps(player) -- kick this immediately
+    end)
 end
 
 function chr:InitActiveData(player, ad)
@@ -518,6 +535,10 @@ function chr:OnFamiliarTakeDamage(e, amount, flags, source, inv)
     if amount >= fam.HitPoints then -- a killing blow
         onWispDeath(fam)
         self:ActiveData(player).wispCheckTimer = 3
+        Apostasy:QueueUpdateRoutine(function() -- kick wisp layout
+            coroutine.yield()
+            self:RearrangeWisps(player)
+        end)
     end
 end
 

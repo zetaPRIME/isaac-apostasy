@@ -2,7 +2,7 @@ local Apostasy = _ENV["::Apostasy"]
 
 do -- inserting this here for now
     local routineQueue = { }
-    function Apostasy:QueueRoutine(f)
+    function Apostasy:QueueUpdateRoutine(f)
         f = coroutine.create(f)
         routineQueue[f] = true
     end

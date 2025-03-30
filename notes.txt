@@ -25,9 +25,9 @@ The Seeker ~lost soul, guiding light~ {
     hugely expand the wisp type system {
         damageTransfer
         - override health etc.
-        orbitLayer, orbitSpeed
+        - orbitLayer, orbitSpeed
         
-        give them events!
+        - give them events!
         - OnSpawn
         - OnDeath
         - OnFireTear
@@ -61,8 +61,8 @@ The Seeker ~lost soul, guiding light~ {
         
         / reshuffle normal wisps on heart add
         - call this on gaining item wisps as well
-        ^ also probably try and do deterministic interleaving instead
-        ^ actually... might as well override their orbits entirely by wispType
+        x also probably try and do deterministic interleaving instead
+        - actually... might as well override their orbits entirely by wispType
         
         surrounding gfx checklist {
             menu
