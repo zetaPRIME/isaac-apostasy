@@ -533,12 +533,15 @@ function chr:OnEvaluateCache(player, cacheFlag)
     elseif cacheFlag == CacheFlag.CACHE_DAMAGE then
         -- slightly reduced base damage, to compensate for the fire rate ramp-up
         -- we also taper off the damage roughly proportional to the fire rate increase but slightly less
-        local div = 1.0 + wispAttenuation * 0.5
+        local div = 1.0 -- + wispAttenuation * 0.5
         player.Damage = (player.Damage - 0.25) / div
     elseif cacheFlag == CacheFlag.CACHE_FIREDELAY then
         -- more wisps, faster shots
         local div = 1.0 + wispAttenuation
         player.MaxFireDelay = (player.MaxFireDelay+1) / div - 1
+    elseif cacheFlag == CacheFlag.CACHE_RANGE then
+        -- this little wisp wants to be at a distance; bump up base range a bit for QoL
+        player.TearRange = player.TearRange + 40 * 1.5 -- 20 == .5 on the counter?
     end
 end
 
@@ -614,9 +617,7 @@ function chr:OnFamiliarTakeDamage(fam, amount, flags, source, inv)
     fam = fam:ToFamiliar()
     local player = fam.Player
     
-    -- eh, just here in case we need it
     if amount >= fam.HitPoints then -- wisp dies from impact
-        print("wisp took fatal damage:",amount)
         -- inv 10 for wisps, 30 for player
         player:TakeDamage(1, DamageFlag.DAMAGE_FAKE, source, 10) -- simulate hit
     end

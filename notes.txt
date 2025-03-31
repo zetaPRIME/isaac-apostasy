@@ -6,9 +6,6 @@ The Binding of Isaac: Apostasy
 The Seeker ~lost soul, guiding light~ {
     -
     
-    x redirect contact damage from item wisps into random normal wisp if present
-    - confer hit iframes for a wisp *dying from* contact damage
-    ^ though the power-yet-fragility is kind of part of the charm
     ! slow heal over time for wisps
     
     refactor when hearts are evaluated? {
@@ -20,7 +17,7 @@ The Seeker ~lost soul, guiding light~ {
     > !!! UNIFY WISP FETCHING AND TRACKING
     entityremove as backup
     
-    rework tears modifier (lower percentages, no damage penalty, no penalty for being below 3 total wisps)
+    > rework tears modifier (lower percentages, no damage penalty, no penalty for being below 3 total wisps)
     
     ! breakfast, dinner, stem cells
     ^ https://bindingofisaacrebirth.wiki.gg/wiki/Item_Tags_food
