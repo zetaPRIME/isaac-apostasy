@@ -7,7 +7,7 @@ The Seeker ~lost soul, guiding light~ {
     -
     
     x redirect contact damage from item wisps into random normal wisp if present
-    confer hit iframes for a wisp *dying from* contact damage
+    - confer hit iframes for a wisp *dying from* contact damage
     ^ though the power-yet-fragility is kind of part of the charm
     ! slow heal over time for wisps
     

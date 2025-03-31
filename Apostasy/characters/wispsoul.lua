@@ -595,7 +595,9 @@ function chr:OnTakeDamage(e, amount, flags, source, inv)
     local player = e:ToPlayer()
     player:AddSoulHearts(amount)
     
-    self:ApplyWispDamage(player, math.ceil(amount / 2))
+    if flags & DamageFlag.DAMAGE_FAKE == 0 then
+        self:ApplyWispDamage(player, math.ceil(amount / 2))
+    end
     
     -- replace hurt sound
     Apostasy:QueueUpdateRoutine(function()
@@ -613,6 +615,11 @@ function chr:OnFamiliarTakeDamage(fam, amount, flags, source, inv)
     local player = fam.Player
     
     -- eh, just here in case we need it
+    if amount >= fam.HitPoints then -- wisp dies from impact
+        print("wisp took fatal damage:",amount)
+        -- inv 10 for wisps, 30 for player
+        player:TakeDamage(1, DamageFlag.DAMAGE_FAKE, source, 10) -- simulate hit
+    end
 end
 
 function chr:OnPreFamiliarCollision(fam, with, low, var)
