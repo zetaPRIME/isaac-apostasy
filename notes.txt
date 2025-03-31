@@ -96,7 +96,7 @@ I suppose this can be done with just a: return Apostasy:DrawHealthlessHUD(player
 
 phase 1: alternative blessings {
     quest item (a la key/knife/polaroid/negative) found in a hidden place early on that turns angel/devil rooms into Something Else
-    "Sigil from Elsewhere": "You've grown weary of the same tired old stories."
+    "An Idea, Crystallized": "You've grown weary of the same tired old stories."
     thematically, these rooms should be a glimpse into worlds far beyond the mundane realm of the surface
     
     unlock method: as Seeker, do... something? after having taken both an angel and a devil deal in a run
