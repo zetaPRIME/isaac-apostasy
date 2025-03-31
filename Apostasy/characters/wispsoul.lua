@@ -598,7 +598,7 @@ function chr:OnTakeDamage(e, amount, flags, source, inv)
     local player = e:ToPlayer()
     player:AddSoulHearts(amount)
     
-    if flags & DamageFlag.DAMAGE_FAKE == 0 then
+    if amount >= 1 and flags & DamageFlag.DAMAGE_FAKE == 0 then
         self:ApplyWispDamage(player, math.ceil(amount / 2))
     end
     
