@@ -35,6 +35,19 @@ function chr:GetWispList(player, itemWisps)
     return wl
 end
 
+-- for when you want both lists separately
+function chr:GetWispLists(player)
+    local ad = self:ActiveData(player)
+    local n, i = { }, { }
+    
+    for k, wisp in pairs(ad.wispTracking) do
+        if wisp.Variant == 237 then table.insert(i, wisp)
+        else table.insert(n, wisp) end
+    end
+    
+    return n, i
+end
+
 -- re-fetch in case of reload
 function chr:_ForceFetchWispList(player, ad)
     local ents = Isaac.GetRoomEntities()
@@ -71,6 +84,7 @@ local wispTypes = { } do
             outline = c255 {231, 247, 255},
             bias = c255 {5, 5, 5},
         },
+        damageTransfer = 0.1,
     }
     
     -- picked up items as Lemegeton wisps
@@ -113,6 +127,8 @@ local wispTypes = { } do
             bias = c255 {5, 5, 5},
         },
         
+        damageTransfer = 0.333, -- these ones go hard thanks to their relative rarity
+        
         OnFireTear = function(wisp, tear, isAutonomous, isGlamoured)
             tear:AddTearFlags(TearFlags.TEAR_HOMING) -- to match what this wisp variant does by default
         end,
@@ -133,6 +149,8 @@ local wispTypes = { } do
         orbitLayer = 1.5, orbitSpeed = 0.75,
         tearColor = nullColor,
         tearVariant = TearVariant.COIN,
+        
+        damageTransfer = 0.25, -- slightly stronger
         
         OnFireTear = function(wisp, tear, isAutonomous, isGlamoured)
             tear:AddTearFlags(TearFlags.TEAR_GREED_COIN) -- chance to drop coins on hit a la Head of the Keeper
@@ -229,8 +247,7 @@ do
     
     --- Breaks the according number of wisps, in order of priority.
     function chr:ApplyWispDamage(player, amount)
-        local normalWisps = self:GetWispList(player, false)
-        local itemWisps = self:GetWispList(player, true)
+        local normalWisps, itemWisps = self:GetWispLists(player)
         
         while amount > 0 do
             local _ = dmg(normalWisps) or killLowestItem(itemWisps)
@@ -246,8 +263,7 @@ do
     
     --- Applies logic for a devil deal sacrifice; either three normal wisps or one item wisp.
     function chr:ApplyWispSacrifice(player)
-        local normalWisps = self:GetWispList(player, false)
-        local itemWisps = self:GetWispList(player, true)
+        local normalWisps, itemWisps = self:GetWispLists(player)
         
         -- not enough normals but can sacrifice an item wisp
         if not normalWisps[3] and itemWisps[1] then
@@ -505,8 +521,7 @@ function chr:OnEvaluateCache(player, cacheFlag)
     local wispAttenuation = 0.0
     if cacheFlag == CacheFlag.CACHE_DAMAGE
     or cacheFlag == CacheFlag.CACHE_FIREDELAY then
-        local normalWisps = self:GetWispList(player, false)
-        local itemWisps = self:GetWispList(player, true)
+        local normalWisps, itemWisps = self:GetWispLists(player)
         wispAttenuation = (#normalWisps-3) * .05 + #itemWisps * .075
     end
     
@@ -522,7 +537,7 @@ function chr:OnEvaluateCache(player, cacheFlag)
     elseif cacheFlag == CacheFlag.CACHE_FIREDELAY then
         -- more wisps, faster shots
         local div = 1.0 + wispAttenuation
-        player.MaxFireDelay = player.MaxFireDelay / div
+        player.MaxFireDelay = (player.MaxFireDelay+1) / div - 1
     end
 end
 
@@ -631,7 +646,18 @@ end
 function chr:OnFamiliarFireTear(tear)
     local w = tear.SpawnerEntity:ToFamiliar()
     if not wispType(w) then return end
+    
     self:HandleTearGlamour(w, tear, true)
+    local wt = self:GetWispType(w)
+    local dt = wt.damageTransfer or wispTypes.normal.damageTransfer
+    if dt and dt > 0 then
+        local player = w.Player
+        -- calculate statwise relative dps
+        local pfr = 30.0 / (player.MaxFireDelay+1)
+        local wfr = 30.0 / (w.FireCooldown+1)
+        local d = player.Damage * pfr/wfr
+        tear.CollisionDamage = tear.CollisionDamage + (d * wt.damageTransfer)
+    end
 end
 
 function chr:OnPreHUDRenderHearts(offset, sprite, position, scale, player)

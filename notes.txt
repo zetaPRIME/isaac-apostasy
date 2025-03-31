@@ -10,12 +10,6 @@ The Seeker ~lost soul, guiding light~ {
     confer slight iframes on body for a wisp taking contact damage?
     though the power-yet-fragility is kind of part of the charm
     
-    - what for half soul heart? why, a full soul wisp
-    - add a wisp type for gold hearts
-    
-    - use maybe more efficient but definitely more compact table sort method for item wisp priority
-    
-    - split the heart management into its own function
     refactor when hearts are evaluated? {
         after damage
         on item pickup
@@ -26,7 +20,7 @@ The Seeker ~lost soul, guiding light~ {
     entityremove as backup
     
     hugely expand the wisp type system {
-        damageTransfer
+        - damageTransfer
         - override health etc.
         - orbitLayer, orbitSpeed
         
