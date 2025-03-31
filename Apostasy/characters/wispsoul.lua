@@ -590,11 +590,19 @@ function chr:OnRender(player)
     end   if itmTranscendence then player:AddCostume(itmTranscendence, false) end
 end
 
+local sfx = SFXManager()
 function chr:OnTakeDamage(e, amount, flags, source, inv)
     local player = e:ToPlayer()
     player:AddSoulHearts(amount)
     
     self:ApplyWispDamage(player, math.ceil(amount / 2))
+    
+    -- replace hurt sound
+    Apostasy:QueueUpdateRoutine(function()
+        sfx:Stop(SoundEffect.SOUND_ISAAC_HURT_GRUNT)
+        -- SOUND_POWERUP_SPEWER, pitch 4.2
+        sfx:Play(SoundEffect.SOUND_SATAN_ROOM_APPEAR, 1, 0, false, 6.5)
+    end)
     
     return true
 end
