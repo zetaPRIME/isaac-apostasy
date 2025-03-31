@@ -208,8 +208,9 @@ end
 local function onWispSpawned(wisp, wt)
     if not wt then wt = chr:GetWispType(wisp) end
     if wt.maxHealth then
+        local hpm = wisp.HitPoints / wisp.MaxHitPoints
         wisp.MaxHitPoints = wt.maxHealth
-        wisp.HitPoints = wt.MaxHitPoints
+        wisp.HitPoints = wt.MaxHitPoints * hpm
     end
     if wt.OnSpawn then wt.OnSpawn(wisp) end
 end
