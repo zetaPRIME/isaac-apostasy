@@ -19,16 +19,7 @@ The Seeker ~lost soul, guiding light~ {
     > !!! UNIFY WISP FETCHING AND TRACKING
     entityremove as backup
     
-    hugely expand the wisp type system {
-        - damageTransfer
-        - override health etc.
-        - orbitLayer, orbitSpeed
-        
-        - give them events!
-        - OnSpawn
-        - OnDeath
-        - OnFireTear
-    }
+    rework tears modifier (lower percentages, no damage penalty, no penalty for being below 3 total wisps)
     
     ! breakfast, dinner, stem cells
     ^ https://bindingofisaacrebirth.wiki.gg/wiki/Item_Tags_food

@@ -522,7 +522,7 @@ function chr:OnEvaluateCache(player, cacheFlag)
     if cacheFlag == CacheFlag.CACHE_DAMAGE
     or cacheFlag == CacheFlag.CACHE_FIREDELAY then
         local normalWisps, itemWisps = self:GetWispLists(player)
-        wispAttenuation = (#normalWisps-3) * .05 + #itemWisps * .075
+        wispAttenuation = math.max(0, (#normalWisps-3) * .05 + #itemWisps * .075)
     end
     
     if cacheFlag == CacheFlag.CACHE_SPEED then
