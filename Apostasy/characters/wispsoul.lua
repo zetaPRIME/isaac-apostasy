@@ -403,6 +403,7 @@ chr.WispItemWhitelist = tableUtil.flagMap {
     CollectibleType.COLLECTIBLE_PAGEANT_BOY,
     CollectibleType.COLLECTIBLE_QUARTER,
     CollectibleType.COLLECTIBLE_DOLLAR,
+    CollectibleType.COLLECTIBLE_BOX,
 }
 
 -- process item conversion
