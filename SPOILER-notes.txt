@@ -1,0 +1,32 @@
+-- -- --
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+a story boss {
+    What's this? Something finds me in the long quiet. 
+    
+    You've been dreaming for a long time, haven't you?
+    Bereft of meaning in its final mortal moments, the soul turns inward for answers.
+    A ghost, haunting its own memories.
+    
+    But you've grown beyond that, haven't you? You've turned your gaze beyond. So, then...
+    
+    Come forth, lost child. Show me what you have learned.
+} cutscene on loss {
+    ... And yet, something still holds you back.
+    
+    You keep returning to the same memories, still. What are you looking for?
+    
+    Find your resolve. I will be here when you are ready.
+}
