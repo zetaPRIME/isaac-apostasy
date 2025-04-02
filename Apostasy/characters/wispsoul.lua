@@ -84,6 +84,7 @@ local wispTypes = { } do
             outline = c255 {231, 247, 255},
             bias = c255 {5, 5, 5},
         },
+        maxHealth = 5,
         damageTransfer = 0.1,
     }
     
@@ -101,11 +102,12 @@ local wispTypes = { } do
     -- just big red drippy wisps with a ton of contact health but no tears?
     wispTypes.blood = {
         subtype = CollectibleType.COLLECTIBLE_BERSERK,
-        orbitLayer = 1, orbitSpeed = 1.5,
+        orbitLayer = 1, orbitSpeed = -1.5,
         tearColor = color.inverted {
             fill = c255 {63, 0, 0},
             outline = c255 {225, 55, 55},
         },
+        maxHealth = 15,
     }
     
     -- short range brimstone wisps
@@ -116,6 +118,7 @@ local wispTypes = { } do
             fill = c255 {127, 0, 0},
             outline = c255 {225, 55, 55},
         },
+        maxHealth = 5,
     }
     
     -- holy homing tear wisps a la Sacred Heart
@@ -127,6 +130,7 @@ local wispTypes = { } do
             bias = c255 {5, 5, 5},
         },
         
+        maxHealth = 7,
         damageTransfer = 0.333, -- these ones go hard thanks to their relative rarity
         
         OnFireTear = function(wisp, tear, isAutonomous, isGlamoured)
@@ -137,9 +141,11 @@ local wispTypes = { } do
     -- bony wisps that spawn skeleton minions on break~
     wispTypes.bone = {
         subtype = CollectibleType.COLLECTIBLE_BOOK_OF_THE_DEAD,
-        orbitLayer = 2, orbitSpeed = -1.75,
+        orbitLayer = 2, orbitSpeed = 1.75,
         tearColor = nullColor,
-        tearVariant = TearVariant.BONE
+        tearVariant = TearVariant.BONE,
+        
+        maxHealth = 7,
     }
     
     wispTypes.gold = {
@@ -150,6 +156,7 @@ local wispTypes = { } do
         tearColor = nullColor,
         tearVariant = TearVariant.COIN,
         
+        maxHealth = 5,
         damageTransfer = 0.25, -- slightly stronger
         
         OnFireTear = function(wisp, tear, isAutonomous, isGlamoured)
@@ -210,7 +217,7 @@ local function onWispSpawned(wisp, wt)
     if wt.maxHealth then
         local hpm = wisp.HitPoints / wisp.MaxHitPoints
         wisp.MaxHitPoints = wt.maxHealth
-        wisp.HitPoints = wt.MaxHitPoints * hpm
+        wisp.HitPoints = wisp.MaxHitPoints * hpm
     end
     if wt.OnSpawn then wt.OnSpawn(wisp) end
 end
@@ -309,10 +316,10 @@ function chr:RearrangeWisps(player, frameDelay)
 end
 
 local orbitVMult = Vector(1, 3/4)
-local baseOrbit = 40
-local orbitLMult = 15
+local baseOrbit = 37
+local orbitLMult = 14
 local orbitSpeedMult = 0.0333 -- -0.01666
-function chr:_RearrangeWisps(player)
+function chr:_RearrangeWisps(player) -- and this is where the magic happens~
     --print "reshuffling wisps"
     local wl = self:GetWispList(player)
     table.sort(wl, function(a, b) return a.Index < b.Index end) -- consistent order
@@ -674,7 +681,7 @@ function chr:OnFamiliarFireTear(tear)
         local pfr = 30.0 / (player.MaxFireDelay+1)
         local wfr = 30.0 / (w.FireCooldown+1)
         local d = player.Damage * pfr/wfr
-        tear.CollisionDamage = tear.CollisionDamage + (d * wt.damageTransfer)
+        tear.CollisionDamage = tear.CollisionDamage + (d * dt)
     end
 end
 

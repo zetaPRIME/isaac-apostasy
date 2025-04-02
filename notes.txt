@@ -7,6 +7,11 @@ The Seeker ~lost soul, guiding light~ {
     -
     
     ! slow heal over time for wisps
+    - more contact health too
+    
+    adjust orbit width
+    maybe player size?
+    (default isaac size is 10.0)
     
     refactor when hearts are evaluated? {
         after damage
@@ -19,6 +24,10 @@ The Seeker ~lost soul, guiding light~ {
     
     > rework tears modifier (lower percentages, no damage penalty, no penalty for being below 3 total wisps)
     
+    !!!!! REWORK ITEM LOSS
+    chance to get it permanently on wisp death, scaling positively with quality
+    q4 75%, q3 50%, q2 25%, q1 10%?
+    
     ! breakfast, dinner, stem cells
     ^ https://bindingofisaacrebirth.wiki.gg/wiki/Item_Tags_food
     crack jacks
@@ -26,8 +35,6 @@ The Seeker ~lost soul, guiding light~ {
     make black hearts give the big brim wisps from mega blast if player has missing page 2?
     
     give wisps a 1 in 5 or so chance to block shots without taking damage??
-    
-    - early game help: chance of restoring a normal wisp on room clear if below 3
     
     pocket active: tear shield? timed recharge, gives 3-5sec of wisps being invulnerable and blocking all shots
     
