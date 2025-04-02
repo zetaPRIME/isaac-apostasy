@@ -115,6 +115,13 @@ local wispTypes = { } do
                     local i for i = 1,7 do coroutine.yield() end
                     sfx:Play(SoundEffect.SOUND_SOUL_PICKUP, 2)
                 end)
+            elseif REPENTOGON or EID then -- DEBUG log what you lost
+                local name
+                if EID then name = EID:getObjectName(5, 100, wisp.SubType)
+                else name = Isaac.GetString("Items", itm.Name)
+                end
+                
+                print ("Lost " .. name .. " (quality " .. itm.Quality .. ")...")
             end
         end,
     }
