@@ -74,9 +74,11 @@ The Seeker ~lost soul, guiding light~ {
         honestly, I'm probably keeping this one
         
         Missing Page 2 triggers on *any* direct body damage, but also *only* on direct body damage.
+        Dead Cat gives you three blood wisps because it *sets* your red health
+        Sacrificial Altar, uh, Just Kills You (I gave it enough time to show the animation, though~)
         
         Gnawed Leaf is just kind of casually incredible?
-        Unicorn Stump is also just incredibly silly once you have a bunch of wisps to deal damage for you
+        anything that gives you invuln is also just incredibly silly once you have a bunch of wisps to deal damage for you
     }
     
 } "Tainted" Seeker {

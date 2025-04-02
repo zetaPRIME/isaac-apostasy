@@ -536,9 +536,12 @@ function chr:OnFamiliarKilled(fam)
 end
 
 function chr:OnUseItem(type, rng, player, flags, slot, data)
+    local ad = self:ActiveData(player)
     if type == CollectibleType.COLLECTIBLE_LEMEGETON or player:HasCollectible(CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES) then
         -- used to be some logic here but we don't need it anymore
         -- keeping it in case we want to do something else later
+    elseif type == CollectibleType.COLLECTIBLE_SACRIFICIAL_ALTAR then
+        ad.devilGracePeriod = 15 -- Behold your folly! Unless...
     end
 end
 
