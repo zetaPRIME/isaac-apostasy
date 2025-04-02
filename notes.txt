@@ -24,7 +24,7 @@ The Seeker ~lost soul, guiding light~ {
     
     > rework tears modifier (lower percentages, no damage penalty, no penalty for being below 3 total wisps)
     
-    !!!!! REWORK ITEM LOSS
+    > !!!!! REWORK ITEM LOSS
     chance to get it permanently on wisp death, scaling positively with quality
     q4 75%, q3 50%, q2 25%, q1 10%?
     

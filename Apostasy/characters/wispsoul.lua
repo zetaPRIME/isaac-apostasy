@@ -7,6 +7,7 @@ local color = Apostasy:require "util.color"
 
 local itemConfig = Isaac.GetItemConfig()
 local game = Game()
+local sfx = SFXManager()
 
 local CHARACTER_NAME = "The Seeker"
 local chr = Apostasy:RegisterCharacter(CHARACTER_NAME)
@@ -88,6 +89,13 @@ local wispTypes = { } do
         damageTransfer = 0.1,
     }
     
+    local itemKeepChance = {
+        [0] = 5,
+        [1] = 10,
+        [2] = 25,
+        [3] = 50,
+        [4] = 75,
+    }
     -- picked up items as Lemegeton wisps
     wispTypes.item = {
         orbitLayer = -1, orbitSpeed = -1,
@@ -97,6 +105,18 @@ local wispTypes = { } do
             outline = c255 {231, 160, 255},
             bias = c255 {10, 10, 10},
         },
+        
+        OnDeath = function(wisp)
+            local itm = itemConfig:GetCollectible(wisp.SubType)
+            if itemKeepChance[itm.Quality] > (Random() % 10000)/100 then -- scaling chance per quality to keep
+                local player = wisp.Player
+                player:AddCollectible(wisp.SubType, 0, false) -- give it permanently but without one-time benefits
+                Apostasy:QueueUpdateRoutine(function()
+                    local i for i = 1,7 do coroutine.yield() end
+                    sfx:Play(SoundEffect.SOUND_SOUL_PICKUP, 2)
+                end)
+            end
+        end,
     }
     
     -- just big red drippy wisps with a ton of contact health but no tears?
@@ -421,20 +441,14 @@ function chr:ConvertItemsToWisps(player)
     local check = ad.queuedItemsSeen
     ad.queuedItemsSeen = { } -- clear out
     
-    -- if REPENTOGON is installed, grab the full list from it
-    if player.GetCollectiblesList then check = player:GetCollectiblesList() end
-    
     for id in pairs(check) do
         local itm = itemConfig:GetCollectible(id)
         local num = player:GetCollectibleNum(id, true)
         
         if num > 0 and (bflag(itm.Tags, ItemConfig.TAG_SUMMONABLE) or self.WispItemWhitelist[id]) and not self.WispItemBlacklist[id] then
-            local i
-            for i = 1, num do
-                player:AddItemWisp(id, player.Position, true)
-                player:RemoveCollectible(id, true, ActiveSlot.SLOT_POCKET, false)
-                gainedWisps = true
-            end
+            player:AddItemWisp(id, player.Position, true)
+            player:RemoveCollectible(id, true, ActiveSlot.SLOT_POCKET, false)
+            gainedWisps = true
         end
     end
     
@@ -604,7 +618,6 @@ function chr:OnRender(player)
     end   if itmTranscendence then player:AddCostume(itmTranscendence, false) end
 end
 
-local sfx = SFXManager()
 function chr:OnTakeDamage(e, amount, flags, source, inv)
     local player = e:ToPlayer()
     player:AddSoulHearts(amount)
