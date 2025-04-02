@@ -107,7 +107,7 @@ local wispTypes = { } do
             fill = c255 {63, 0, 0},
             outline = c255 {225, 55, 55},
         },
-        maxHealth = 15,
+        maxHealth = 12,
     }
     
     -- short range brimstone wisps
