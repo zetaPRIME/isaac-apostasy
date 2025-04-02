@@ -331,7 +331,8 @@ function chr:_RearrangeWisps(player) -- and this is where the magic happens~
     end
     for wt,wl in pairs(ll) do -- and shuffle offsets within each
         -- precalc the stuff
-        local orbitDist = orbitVMult * (baseOrbit + orbitLMult * (wt.orbitLayer or 0))
+        local base = baseOrbit * player.Size * 0.1
+        local orbitDist = orbitVMult * (base + orbitLMult * (wt.orbitLayer or 0))
         local orbitSpeed = orbitSpeedMult * (wt.orbitSpeed or 1)
         
         local wlc = #wl
@@ -550,6 +551,8 @@ function chr:OnEvaluateCache(player, cacheFlag)
     elseif cacheFlag == CacheFlag.CACHE_RANGE then
         -- this little wisp wants to be at a distance; bump up base range a bit for QoL
         player.TearRange = player.TearRange + 40 * 1.5 -- 20 == .5 on the counter?
+    elseif cacheFlag == CacheFlag.CACHE_SIZE then
+        self:RearrangeWisps(player) -- base orbit size is adjusted by player size
     end
 end
 

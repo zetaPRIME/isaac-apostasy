@@ -9,7 +9,7 @@ The Seeker ~lost soul, guiding light~ {
     ! slow heal over time for wisps
     - more contact health too
     
-    adjust orbit width
+    - adjust orbit width
     maybe player size?
     (default isaac size is 10.0)
     
