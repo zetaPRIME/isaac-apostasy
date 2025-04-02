@@ -486,6 +486,8 @@ end
 function chr:OnInit(player)
     local ad = self:ActiveData(player)
     
+    player:AddNullCostume(Isaac.GetCostumeIdByPath("gfx/characters/apostasy.bodiless.anm2"))
+    
     self:RearrangeWisps(player) -- kick this immediately
 end
 
@@ -621,12 +623,8 @@ function chr:OnUpdate(player)
     end
 end
 
-local itmTranscendence -- cache it
-function chr:OnRender(player)
-    -- for now we have to do this every frame in case Transcendence happens to be gained and then lost
-    if not itmTranscendence then -- force bodiless state using existing item
-        itmTranscendence = itemConfig:GetCollectible(CollectibleType.COLLECTIBLE_TRANSCENDENCE)
-    end   if itmTranscendence then player:AddCostume(itmTranscendence, false) end
+function chr:_OnRender(player)
+    -- disabled, kept for later
 end
 
 function chr:OnTakeDamage(e, amount, flags, source, inv)

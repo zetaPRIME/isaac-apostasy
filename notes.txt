@@ -49,13 +49,8 @@ The Seeker ~lost soul, guiding light~ {
         probably a high priority (100 or more) Head costume with both an animated and a static layer
         this way it *replaces* the head but prevents some extent of random complete design changes
         
-        figure out if there's a more efficient way of doing the Transcendence costume hack without losing collision-proofing
-        ^ just make a blank null costume for it and add it on init, duh
-        
-        / reshuffle normal wisps on heart add
-        - call this on gaining item wisps as well
-        x also probably try and do deterministic interleaving instead
-        - actually... might as well override their orbits entirely by wispType
+        - figure out if there's a more efficient way of doing the Transcendence costume hack without losing collision-proofing
+        - just make a blank null costume for it and add it on init, duh
         
         surrounding gfx checklist {
             menu
