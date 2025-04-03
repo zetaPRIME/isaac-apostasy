@@ -6,16 +6,9 @@ The Binding of Isaac: Apostasy
 The Seeker ~lost soul, guiding light~ {
     -
     
-    - slow heal over time for wisps
-    - more contact health too
-    
-    > adjust contact and base tear damages
     adjust how wisps are picked for firing tears
-    - temporary spectral
-    
-    - prevent instadeath on wisp contact kill while mirrored
-    
-    / rework tears modifier (lower percentages, no damage penalty, no penalty for being below 3 total wisps)
+    further tune stats
+    consider if flight?
     
     ! breakfast, dinner, stem cells
     ^ https://bindingofisaacrebirth.wiki.gg/wiki/Item_Tags_food
@@ -33,14 +26,12 @@ The Seeker ~lost soul, guiding light~ {
     maybe give Guppy's Paw a custom action
     
     visuals WIP {
-        flame glow effect (actual head is the "core")
-        ^ animated costume? or custom effect entity behind??
-        probably a high priority (100 or more) Head costume with both an animated and a static layer
-        this way it *replaces* the head but prevents some extent of random complete design changes
+        maybe bump bodiless costume priority
+        tweak wisp destruction sound
         
         surrounding gfx checklist {
-            menu
-            portrait
+            fix menu stats display
+            
             (boss) name
             death name
             controls splash

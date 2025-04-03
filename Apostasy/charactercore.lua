@@ -89,7 +89,8 @@ do -- callback registration
             local player = (par[pn]):ToPlayer()
             if not player then return nil end
             local chr = byType[player:GetPlayerType()]
-            if chr and chr[fname] then return (chr[fname])(chr, ...) end
+            local f = chr and chr[fname]
+            if f then return f(chr, ...) end
         end)
     end
     
@@ -100,7 +101,8 @@ do -- callback registration
             local player = se and se:ToPlayer()
             if not player then return nil end
             local chr = byType[player:GetPlayerType()]
-            if chr and chr[fname] then return (chr[fname])(chr, ...) end
+            local f = chr and chr[fname]
+            if f then return f(chr, ...) end
         end)
     end
     
@@ -112,7 +114,8 @@ do -- callback registration
             local player = fam.Player
             if not player then return nil end
             local chr = byType[player:GetPlayerType()]
-            if chr and chr[fname] then return (chr[fname])(chr, ...) end
+            local f = chr and chr[fname]
+            if f then return f(chr, ...) end
         end)
     end
     
@@ -125,7 +128,8 @@ do -- callback registration
             local player = fam.Player
             if not player then return nil end
             local chr = byType[player:GetPlayerType()]
-            if chr and chr[fname] then return (chr[fname])(chr, ...) end
+            local f = chr and chr[fname]
+            if f then return f(chr, ...) end
         end)
     end
     
@@ -147,7 +151,8 @@ Apostasy:AddPriorityCallback(ModCallbacks.MC_POST_TEAR_UPDATE, CallbackPriority.
     local player = fam.Player
     if not player then return end
     local chr = byType[player:GetPlayerType()]
-    if chr and chr.OnFamiliarFireTear then return chr:OnFamiliarFireTear(tear) end
+    local f = chr and chr.OnFamiliarFireTear
+    if f then return f(chr, tear) end
 end)
 
 
@@ -166,11 +171,12 @@ Apostasy:AddPriorityCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, CallbackPrio
     local pl = getPlayers()
     for _, player in pairs(pl) do
         local chr = Apostasy:GetCharacterForPlayer(player)
-        if chr and chr.OnRoomClear then chr:OnRoomClear(player, ...) end
+        local f = chr and chr.OnRoomClear
+        if f then return f(chr, ...) end
     end
 end)
 
-if false and ModCallbacks.MC_HUD_RENDER then -- REPENTOGON only
+if false and REPENTOGON then -- REPENTOGON only
     Apostasy:AddCallback(ModCallbacks.MC_HUD_RENDER, function()
         local pl = getPlayers()
         for _, player in pairs(pl) do
