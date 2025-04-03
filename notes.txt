@@ -6,12 +6,14 @@ The Binding of Isaac: Apostasy
 The Seeker ~lost soul, guiding light~ {
     -
     
-    ! slow heal over time for wisps
+    - slow heal over time for wisps
     - more contact health too
     
     > adjust contact and base tear damages
     adjust how wisps are picked for firing tears
     - temporary spectral
+    
+    prevent instadeath on wisp contact kill while mirrored
     
     / rework tears modifier (lower percentages, no damage penalty, no penalty for being below 3 total wisps)
     

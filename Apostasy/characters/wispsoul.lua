@@ -102,7 +102,7 @@ local wispTypes = { } do
         damageTransfer = 0.1,
         
         contactBaseDamage = 0,
-        contactDamageTransfer = 1,
+        contactDamageTransfer = 0.5,
     }
     
     -- picked up items as Lemegeton wisps
@@ -508,6 +508,7 @@ end
 function chr:InitActiveData(player, ad)
     ad.wispCheckTimer = 1
     ad.itemCheckTimer = 1
+    ad.wispHealTimer = 30
     
     ad.queuedItemsSeen = { }
     ad.wispTracking = setmetatable({ }, { __mode = "k" }) -- weakly keyed
@@ -595,6 +596,7 @@ function chr:OnEffectUpdate(player)
     --self:ProcessHearts(player)
 end
 
+chr.wispHealRate = 1/3
 function chr:OnUpdate(player)
     local ad = self:ActiveData(player)
     
@@ -627,6 +629,15 @@ function chr:OnUpdate(player)
             if not wisps[1] and not ad.devilGracePeriod then
                 player:Die() -- I has a dead
             end
+        end
+    end
+    
+    -- slow healing for wisps
+    ad.wispHealTimer = ad.wispHealTimer - 1
+    if ad.wispHealTimer <= 0 then
+        ad.wispHealTimer = 15
+        for k, wisp in pairs(ad.wispTracking) do
+            wisp.HitPoints = math.min(wisp.MaxHitPoints, wisp.HitPoints + self.wispHealRate / 2)
         end
     end
 end
@@ -669,13 +680,14 @@ function chr:OnPreFamiliarCollision(fam, with, low, var)
     if not wispType(fam) then return nil end -- only overriding wisps
     if with:ToProjectile() then
         return true -- don't block enemy shots
-    elseif with:ToNPC() then -- override contact damage
+    elseif with:ToNPC() and with:IsVulnerableEnemy() then -- override contact damage
         local wt = self:GetWispType(fam)
         local base = wt.contactBaseDamage or wispTypes.normal.contactBaseDamage
         local dt = wt.contactDamageTransfer or wispTypes.normal.contactDamageTransfer
-        local d = player.Damage * 10 / (player.MaxFireDelay+1) -- assuming 10 frames per hit
+        local d = player.Damage * 15 / (player.MaxFireDelay+1) -- assuming 10 frames per hit
+        --print("orig damage:", fam.CollisionDamage) -- DEBUG
         fam.CollisionDamage = base + (d * dt)
-        print("contact damage:", fam.CollisionDamage)
+        --print("contact damage:", fam.CollisionDamage) -- DEBUG
     end
 end
 
