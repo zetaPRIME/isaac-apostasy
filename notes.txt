@@ -49,9 +49,6 @@ The Seeker ~lost soul, guiding light~ {
         probably a high priority (100 or more) Head costume with both an animated and a static layer
         this way it *replaces* the head but prevents some extent of random complete design changes
         
-        - figure out if there's a more efficient way of doing the Transcendence costume hack without losing collision-proofing
-        - just make a blank null costume for it and add it on init, duh
-        
         surrounding gfx checklist {
             menu
             portrait
@@ -71,6 +68,7 @@ The Seeker ~lost soul, guiding light~ {
         Missing Page 2 triggers on *any* direct body damage, but also *only* on direct body damage.
         Dead Cat gives you three blood wisps because it *sets* your red health
         Sacrificial Altar, uh, Just Kills You (I gave it enough time to show the animation, though~)
+        Converter is just generally silly
         
         Gnawed Leaf is just kind of casually incredible?
         anything that gives you invuln is also just incredibly silly once you have a bunch of wisps to deal damage for you

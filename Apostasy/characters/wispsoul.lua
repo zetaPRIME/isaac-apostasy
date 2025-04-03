@@ -487,6 +487,7 @@ function chr:OnInit(player)
     local ad = self:ActiveData(player)
     
     player:AddNullCostume(Isaac.GetCostumeIdByPath("gfx/characters/apostasy.bodiless.anm2"))
+    player:AddNullCostume(Isaac.GetCostumeIdByPath("gfx/characters/apostasy.seeker.aura.anm2"))
     
     self:RearrangeWisps(player) -- kick this immediately
 end

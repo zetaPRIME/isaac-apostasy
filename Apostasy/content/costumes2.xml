@@ -4,5 +4,6 @@
     <costume anm2path="gabriel_stoles.anm2" type="none" priority="100" />
     
     <costume anm2path="apostasy.bodiless.anm2" type="none" priority="100" />
+    <costume anm2path="apostasy.seeker.aura.anm2" type="none" priority="1000" />
 
 </costumes>
