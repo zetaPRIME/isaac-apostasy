@@ -114,6 +114,10 @@ local wispTypes = { } do
             bias = c255 {10, 10, 10},
         },
         
+        -- durable to contact damage but less damage in return
+        maxHealth = 10,
+        contactDamageTransfer = 0.15,
+        
         OnDeath = function(wisp)
             local itm = itemConfig:GetCollectible(wisp.SubType)
             local name
@@ -153,7 +157,7 @@ local wispTypes = { } do
             fill = c255 {127, 0, 0},
             outline = c255 {225, 55, 55},
         },
-        maxHealth = 5,
+        maxHealth = 5.5,
     }
     
     -- holy homing tear wisps a la Sacred Heart
@@ -257,7 +261,7 @@ local function onWispSpawned(wisp, wt)
     end
     if wt.OnSpawn then wt.OnSpawn(wisp) end
     
-    --print("Wisp of type " .. wt.id .. " spawned; CollisionDamage is " .. wisp.CollisionDamage)
+    --print("Wisp of type " .. wt.id .. " spawned; max health is " .. wisp.MaxHitPoints)
 end
 
 local function onWispDeath(wisp, wt)
