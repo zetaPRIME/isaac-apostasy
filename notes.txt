@@ -9,7 +9,7 @@ The Seeker ~lost soul, guiding light~ {
     ! slow heal over time for wisps
     - more contact health too
     
-    adjust contact and base tear damages
+    > adjust contact and base tear damages
     adjust how wisps are picked for firing tears
     - temporary spectral
     

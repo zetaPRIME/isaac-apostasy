@@ -78,6 +78,14 @@ local wispTypes = { } do
     local c255 = color.from255
     local nullColor = Color(1,1,1)
     
+    local itemKeepChance = {
+        [0] = 10,
+        [1] = 25,
+        [2] = 50,
+        [3] = 62.5,
+        [4] = 75,
+    }
+    
     -- events:
     -- OnSpawn(wisp)
     -- OnFireTear(wisp, tear, isAutonomous, isGlamoured)
@@ -90,16 +98,13 @@ local wispTypes = { } do
             bias = c255 {5, 5, 5},
         },
         maxHealth = 5,
+        -- baseDamage = 1,
         damageTransfer = 0.1,
+        
+        contactBaseDamage = 0,
+        contactDamageTransfer = 1,
     }
     
-    local itemKeepChance = {
-        [0] = 10,
-        [1] = 25,
-        [2] = 50,
-        [3] = 62.5,
-        [4] = 75,
-    }
     -- picked up items as Lemegeton wisps
     wispTypes.item = {
         orbitLayer = -1, orbitSpeed = -1,
@@ -251,6 +256,8 @@ local function onWispSpawned(wisp, wt)
         wisp.MaxHitPoints = wt.maxHealth
     end
     if wt.OnSpawn then wt.OnSpawn(wisp) end
+    
+    --print("Wisp of type " .. wt.id .. " spawned; CollisionDamage is " .. wisp.CollisionDamage)
 end
 
 local function onWispDeath(wisp, wt)
@@ -662,6 +669,13 @@ function chr:OnPreFamiliarCollision(fam, with, low, var)
     if not wispType(fam) then return nil end -- only overriding wisps
     if with:ToProjectile() then
         return true -- don't block enemy shots
+    elseif with:ToNPC() then -- override contact damage
+        local wt = self:GetWispType(fam)
+        local base = wt.contactBaseDamage or wispTypes.normal.contactBaseDamage
+        local dt = wt.contactDamageTransfer or wispTypes.normal.contactDamageTransfer
+        local d = player.Damage * 10 / (player.MaxFireDelay+1) -- assuming 10 frames per hit
+        fam.CollisionDamage = base + (d * dt)
+        print("contact damage:", fam.CollisionDamage)
     end
 end
 
@@ -711,11 +725,12 @@ function chr:OnFamiliarFireTear(tear)
     
     self:HandleTearGlamour(w, tear, true)
     local wt = self:GetWispType(w)
+    tear.CollisionDamage = wt.baseDamage or wispTypes.normal.baseDamage or tear.CollisionDamage
     local dt = wt.damageTransfer or wispTypes.normal.damageTransfer
     if dt and dt > 0 then
         local player = w.Player
         -- calculate statwise relative dps
-        local d = player.Damage * (player.MaxFireDelay+1) / (w.FireCooldown+1)
+        local d = player.Damage * (w.FireCooldown+1) / (player.MaxFireDelay+1)
         tear.CollisionDamage = tear.CollisionDamage + (d * dt)
     end
 end
