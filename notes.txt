@@ -9,24 +9,11 @@ The Seeker ~lost soul, guiding light~ {
     ! slow heal over time for wisps
     - more contact health too
     
-    - adjust orbit width
-    maybe player size?
-    (default isaac size is 10.0)
+    adjust contact and base tear damages
+    adjust how wisps are picked for firing tears
+    temporary spectral
     
-    refactor when hearts are evaluated? {
-        after damage
-        on item pickup
-        on item use?
-    }
-    
-    > !!! UNIFY WISP FETCHING AND TRACKING
-    entityremove as backup
-    
-    > rework tears modifier (lower percentages, no damage penalty, no penalty for being below 3 total wisps)
-    
-    > !!!!! REWORK ITEM LOSS
-    chance to get it permanently on wisp death, scaling positively with quality
-    q4 75%, q3 50%, q2 25%, q1 10%?
+    / rework tears modifier (lower percentages, no damage penalty, no penalty for being below 3 total wisps)
     
     ! breakfast, dinner, stem cells
     ^ https://bindingofisaacrebirth.wiki.gg/wiki/Item_Tags_food
@@ -57,6 +44,8 @@ The Seeker ~lost soul, guiding light~ {
             controls splash
             co-op icon
         }
+        
+        rename things to new apostasy.seeker.whatever naming convention
     }
     
     known odd interactions {

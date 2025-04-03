@@ -344,8 +344,8 @@ function chr:RearrangeWisps(player, frameDelay)
 end
 
 local orbitVMult = Vector(1, 3/4)
-local baseOrbit = 37
-local orbitLMult = 14
+local baseOrbit = 38
+local orbitLMult = 13
 local orbitSpeedMult = 0.0333 -- -0.01666
 function chr:_RearrangeWisps(player) -- and this is where the magic happens~
     --print "reshuffling wisps"
