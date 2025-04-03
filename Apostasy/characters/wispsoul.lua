@@ -94,10 +94,10 @@ local wispTypes = { } do
     }
     
     local itemKeepChance = {
-        [0] = 5,
-        [1] = 10,
-        [2] = 25,
-        [3] = 50,
+        [0] = 10,
+        [1] = 25,
+        [2] = 50,
+        [3] = 62.5,
         [4] = 75,
     }
     -- picked up items as Lemegeton wisps
@@ -112,20 +112,20 @@ local wispTypes = { } do
         
         OnDeath = function(wisp)
             local itm = itemConfig:GetCollectible(wisp.SubType)
+            local name
+            if EID then name = EID:getObjectName(5, 100, wisp.SubType)
+            elseif REPENTOGON then name = Isaac.GetString("Items", itm.Name) end
             if itemKeepChance[itm.Quality] > (Random() % 10000)/100 then -- scaling chance per quality to keep
                 local player = wisp.Player
                 player:AddCollectible(wisp.SubType, 0, false) -- give it permanently but without one-time benefits
+                if name then print ("Rolled to keep " .. name .. " (quality " .. itm.Quality .. ")!") end -- DEBUG
                 Apostasy:QueueUpdateRoutine(function()
-                    sleep(8)
-                    sfx:Play(SoundEffect.SOUND_SOUL_PICKUP, 2)
+                    sleep(8) sfx:Play(SoundEffect.SOUND_SOUL_PICKUP, 2, 0)
+                    sleep(4) sfx:Play(SoundEffect.SOUND_SOUL_PICKUP, 1, 0)
+                    sleep(4) sfx:Play(SoundEffect.SOUND_SOUL_PICKUP, 0.5, 0)
                 end)
-            elseif REPENTOGON or EID then -- DEBUG log what you lost
-                local name
-                if EID then name = EID:getObjectName(5, 100, wisp.SubType)
-                else name = Isaac.GetString("Items", itm.Name)
-                end
-                
-                print ("Lost " .. name .. " (quality " .. itm.Quality .. ")...")
+            else
+                if name then print ("Lost " .. name .. " (quality " .. itm.Quality .. ")...") end -- DEBUG
             end
         end,
     }
