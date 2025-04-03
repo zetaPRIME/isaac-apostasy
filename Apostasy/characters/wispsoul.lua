@@ -671,7 +671,9 @@ function chr:OnFamiliarTakeDamage(fam, amount, flags, source, inv)
     
     if amount >= fam.HitPoints then -- wisp dies from impact
         -- inv 10 for wisps, 30 for player
-        player:TakeDamage(1, DamageFlag.DAMAGE_FAKE, source, 10) -- simulate hit
+        if not player:GetEffects():HasNullEffect(112) then -- don't kill if Lost'd
+            player:TakeDamage(1, DamageFlag.DAMAGE_FAKE, source, 10) -- simulate hit
+        end
     end
 end
 

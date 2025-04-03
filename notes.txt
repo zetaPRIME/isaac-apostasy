@@ -13,7 +13,7 @@ The Seeker ~lost soul, guiding light~ {
     adjust how wisps are picked for firing tears
     - temporary spectral
     
-    prevent instadeath on wisp contact kill while mirrored
+    - prevent instadeath on wisp contact kill while mirrored
     
     / rework tears modifier (lower percentages, no damage penalty, no penalty for being below 3 total wisps)
     
