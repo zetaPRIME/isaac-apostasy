@@ -105,7 +105,6 @@ local wispTypes = { } do
         orbitLayer = -1, orbitSpeed = -1,
         tearColor = color.inverted {
             fill = c255 {166, 84, 242}, mult = 1.3,
-            --outline = c255 {232, 175, 255},
             outline = c255 {231, 160, 255},
             bias = c255 {10, 10, 10},
         },
@@ -716,9 +715,7 @@ function chr:OnFamiliarFireTear(tear)
     if dt and dt > 0 then
         local player = w.Player
         -- calculate statwise relative dps
-        local pfr = 30.0 / (player.MaxFireDelay+1)
-        local wfr = 30.0 / (w.FireCooldown+1)
-        local d = player.Damage * pfr/wfr
+        local d = player.Damage * (player.MaxFireDelay+1) / (w.FireCooldown+1)
         tear.CollisionDamage = tear.CollisionDamage + (d * dt)
     end
 end
