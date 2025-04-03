@@ -11,7 +11,7 @@ The Seeker ~lost soul, guiding light~ {
     
     adjust contact and base tear damages
     adjust how wisps are picked for firing tears
-    temporary spectral
+    - temporary spectral
     
     / rework tears modifier (lower percentages, no damage penalty, no penalty for being below 3 total wisps)
     

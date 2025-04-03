@@ -13,6 +13,10 @@ local CHARACTER_NAME = "The Seeker"
 local chr = Apostasy:RegisterCharacter(CHARACTER_NAME)
 
 local function bflag(fd, fl) return fd & fl == fl end
+local function sleep(t)
+    if not t or t <= 0 then return end
+    local i for i = 1, t do coroutine.yield() end
+end
 
 local function wispType(e)
     if e.Type ~= 3 then return nil end
@@ -112,7 +116,7 @@ local wispTypes = { } do
                 local player = wisp.Player
                 player:AddCollectible(wisp.SubType, 0, false) -- give it permanently but without one-time benefits
                 Apostasy:QueueUpdateRoutine(function()
-                    local i for i = 1,7 do coroutine.yield() end
+                    sleep(8)
                     sfx:Play(SoundEffect.SOUND_SOUL_PICKUP, 2)
                 end)
             elseif REPENTOGON or EID then -- DEBUG log what you lost
@@ -332,11 +336,8 @@ function chr:RearrangeWisps(player, frameDelay)
     local ad = self:ActiveData(player)
     if not ad._queuedRearrange then
         ad._queuedRearrange = true
-        frameDelay = frameDelay or 0
         Apostasy:QueueUpdateRoutine(function()
-            for frameDelay = frameDelay, 0 do
-                coroutine.yield()
-            end
+            sleep(frameDelay)
             self:_RearrangeWisps(player)
             ad._queuedRearrange = nil
         end)
@@ -672,6 +673,7 @@ function chr:OnPreProjectileCollisionWithFamiliar(tear, with, low, var)
     return true -- wisps don't block enemy shots
 end
 
+chr.tearSpectralTime = 10
 function chr:OnFireTear(tear)
     local player = tear.SpawnerEntity:ToPlayer()
     local ad = self:ActiveData(player)
@@ -691,6 +693,16 @@ function chr:OnFireTear(tear)
         
         -- and change its appearance accordingly
         self:HandleTearGlamour(w, tear)
+        
+        -- turn non-spectral tears spectral for a short time
+        if not tear:HasTearFlags(TearFlags.TEAR_SPECTRAL) then
+            tear:AddTearFlags(TearFlags.TEAR_SPECTRAL)
+            Apostasy:QueueUpdateRoutine(function()
+                sleep(self.tearSpectralTime)
+                tear:ClearTearFlags(TearFlags.TEAR_SPECTRAL)
+                tear.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_BULLET -- force it to actually take
+            end)
+        end
     end
 end
 
