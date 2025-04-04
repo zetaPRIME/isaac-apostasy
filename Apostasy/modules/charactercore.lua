@@ -172,7 +172,7 @@ Apostasy:AddPriorityCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, CallbackPrio
     for _, player in pairs(pl) do
         local chr = Apostasy:GetCharacterForPlayer(player)
         local f = chr and chr.OnRoomClear
-        if f then return f(chr, ...) end
+        if f then return f(chr, player, ...) end
     end
 end)
 
