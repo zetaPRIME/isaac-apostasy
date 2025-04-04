@@ -2,7 +2,7 @@
 	<Info CreatedBy="catinsurance" CreatedOn="11/11/2023 12:01:26 AM" Version="39" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="deathname_gabriel.png" Id="0"/>
+			<Spritesheet Path="deathname seeker.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="Name" Id="0" SpritesheetId="0"/>

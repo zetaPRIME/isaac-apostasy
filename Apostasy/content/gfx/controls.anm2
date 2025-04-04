@@ -2,7 +2,7 @@
 	<Info CreatedBy="catinsurance" CreatedOn="10/12/2023 8:43:49 PM" Version="69" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="controls.png" Id="0"/>
+			<Spritesheet Path="controls seeker.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="main" Id="0" SpritesheetId="0"/>

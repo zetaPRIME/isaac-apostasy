@@ -2,7 +2,7 @@
 	<Info CreatedBy="catinsurance" CreatedOn="3/19/2024 4:57:59 PM" Version="3" Fps="30"/>
 	<Content>
 		<Spritesheets>
-			<Spritesheet Path="coop_icon.png" Id="0"/>
+			<Spritesheet Path="icon seeker.png" Id="0"/>
 		</Spritesheets>
 		<Layers>
 			<Layer Name="body" Id="0" SpritesheetId="0"/>

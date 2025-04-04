@@ -1,14 +1,14 @@
 <players root="gfx/characters/costumes/" portraitroot="gfx/ui/stage/" nameimageroot="gfx/ui/boss/">
     <player name="The Seeker"
-        skin="character_theseeker.png"
-        nameimage="playername_gabriel.png"
+        skin="apostasy.seeker.png"
+        nameimage="apostasy.seeker.name.png"
         hp="0"
         armor="8"
         black="0"
         bombs="1"
         keys="1"
         trinket="38"
-        portrait="playerportrait_gabriel.png"
+        portrait="apostasy.seeker.portrait.png"
         skinColor="0"
         birthright="I don't know yet"
     />
