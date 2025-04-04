@@ -6,6 +6,13 @@ The Binding of Isaac: Apostasy
 The Seeker ~lost soul, guiding light~ {
     -
     
+    luck-based chance to reroll failed item keep roll
+    rng lib
+    switch Size-based orbit to SpriteScale
+    
+    d4 costume reestablishment
+    attempt to fix knife piece 2 sequence aura (remove curse mist at the end of postupdate and assume it readds it?)
+    
     adjust how wisps are picked for firing tears
     further tune stats
     consider if flight?
@@ -24,6 +31,7 @@ The Seeker ~lost soul, guiding light~ {
     perhaps a defensive benefit
     
     maybe give Guppy's Paw a custom action
+    full health pill
     
     visuals WIP {
         maybe bump bodiless costume priority
@@ -39,6 +47,7 @@ The Seeker ~lost soul, guiding light~ {
         }
         
         rename things to new apostasy.seeker.whatever naming convention
+        ^ only needed for resources folder things; content is mod-local
     }
     
     known odd interactions {
