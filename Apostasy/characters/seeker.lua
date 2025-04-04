@@ -368,9 +368,10 @@ function chr:_RearrangeWisps(player) -- and this is where the magic happens~
         if not ll[l] then ll[l] = {w}
         else table.insert(ll[l], w) end
     end
-    for wt,wl in pairs(ll) do -- and shuffle offsets within each
+    for wt,wl in pairs(ll) do
         -- precalc the stuff
-        local base = baseOrbit * player.Size * 0.1
+        local base = baseOrbit * player.SpriteScale:Length()
+        base = base + math.floor(math.min(#wl/8, math.ceil(orbitLMult*.5)))
         local orbitDist = orbitVMult * (base + orbitLMult * (wt.orbitLayer or 0))
         local orbitSpeed = orbitSpeedMult * (wt.orbitSpeed or 1)
         
