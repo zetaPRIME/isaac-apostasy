@@ -11,6 +11,7 @@
         portrait="apostasy.seeker.portrait.png"
         skinColor="0"
         birthright="I don't know yet"
+        modcostume="1000"
     />
 
     <player name="The Seeker"

@@ -490,6 +490,11 @@ function chr:_EvaluateWispStats(player, inEval)
     player:EvaluateItems()
 end
 
+function chr:AssertCostumes(player)
+    player:AddNullCostume(Isaac.GetCostumeIdByPath("gfx/characters/apostasy.bodiless.anm2"))
+    player:AddNullCostume(Isaac.GetCostumeIdByPath("gfx/characters/apostasy.seeker.aura.anm2"))
+end
+
 -- -- -- -- -- --- --- --- --- -- -- -- -- --
 -- -- -- -- -- callbacks below -- -- -- -- --
 -- -- -- -- -- --- --- --- --- -- -- -- -- --
@@ -497,8 +502,7 @@ end
 function chr:OnInit(player)
     local ad = self:ActiveData(player)
     
-    player:AddNullCostume(Isaac.GetCostumeIdByPath("gfx/characters/apostasy.bodiless.anm2"))
-    player:AddNullCostume(Isaac.GetCostumeIdByPath("gfx/characters/apostasy.seeker.aura.anm2"))
+    self:AssertCostumes(player)
     
     self:RearrangeWisps(player) -- kick this immediately
 end
@@ -562,6 +566,8 @@ function chr:OnUseItem(type, rng, player, flags, slot, data)
     if type == CollectibleType.COLLECTIBLE_LEMEGETON or player:HasCollectible(CollectibleType.COLLECTIBLE_BOOK_OF_VIRTUES) then
         -- used to be some logic here but we don't need it anymore
         -- keeping it in case we want to do something else later
+    elseif type == CollectibleType.COLLECTIBLE_D4 then
+        self:AssertCostumes(player) -- don't lose our costumes
     elseif type == CollectibleType.COLLECTIBLE_SACRIFICIAL_ALTAR then
         ad.devilGracePeriod = 15 -- Behold your folly! Unless...
     end
