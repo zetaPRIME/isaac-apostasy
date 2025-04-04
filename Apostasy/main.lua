@@ -14,9 +14,7 @@ end
 
 -- functional modules
 Apostasy:require "modules.queue"
-
--- main dispatches
-Apostasy:require "charactercore"
+Apostasy:require "modules.charactercore"
 
 -- at end: list of all included content files
 Apostasy:require "content"

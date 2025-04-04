@@ -1,3 +1,3 @@
 local Apostasy = _ENV["::Apostasy"]
 
-Apostasy:require "characters.wispsoul"
+Apostasy:require "characters.seeker"
