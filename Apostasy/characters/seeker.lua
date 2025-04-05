@@ -682,7 +682,7 @@ function chr:OnFamiliarTakeDamage(fam, amount, flags, source, inv)
     local player = fam.Player
     
     -- they don't block shots, so also don't die to things like Mines fire pillars
-    if source:ToEffect() or source:ToLaser() then return false end
+    if source.Entity and ( source.Entity:ToEffect() or source.Entity:ToLaser() ) then return false end
     
     if amount >= fam.HitPoints then -- wisp dies from impact
         -- inv 10 for wisps, 30 for player
