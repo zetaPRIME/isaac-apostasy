@@ -12,6 +12,13 @@ do -- we're rolling our own require() because Nicalis Code
     end
 end
 
+-- pull in utilities
+for _,k in pairs {
+    "Color",
+    "Table",
+    "Random",
+} do end--Apostasy[k] = Apostasy:require("util." .. k:lower()) end
+
 -- functional modules
 Apostasy:require "modules.queue"
 Apostasy:require "modules.charactercore"

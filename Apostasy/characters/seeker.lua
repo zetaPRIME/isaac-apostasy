@@ -4,6 +4,7 @@
 local Apostasy = _ENV["::Apostasy"]
 local tableUtil = Apostasy:require "util.table"
 local color = Apostasy:require "util.color"
+local rand = Apostasy:require "util.random"
 
 local itemConfig = Isaac.GetItemConfig()
 local game = Game()
@@ -123,11 +124,11 @@ local wispTypes = { } do
             local name
             if EID then name = EID:getObjectName(5, 100, wisp.SubType)
             elseif REPENTOGON then name = Isaac.GetString("Items", itm.Name) end
-            if itemKeepChance[itm.Quality] > (Random() % 10000)/100 then -- scaling chance per quality to keep
-                local player = wisp.Player
+            local player = wisp.Player
+            if rand.RollPercent(itemKeepChance[itm.Quality], player) then -- scaling chance per quality to keep
                 player:AddCollectible(wisp.SubType, 0, false) -- give it permanently but without one-time benefits
                 if name then print ("Rolled to keep " .. name .. " (quality " .. itm.Quality .. ")!") end -- DEBUG
-                Apostasy:QueueUpdateRoutine(function()
+                Apostasy:QueueUpdateRoutine(function() -- slight wait, then echoing chime
                     sleep(8) sfx:Play(SoundEffect.SOUND_SOUL_PICKUP, 2, 0)
                     sleep(4) sfx:Play(SoundEffect.SOUND_SOUL_PICKUP, 1, 0)
                     sleep(4) sfx:Play(SoundEffect.SOUND_SOUL_PICKUP, 0.5, 0)
