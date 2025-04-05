@@ -35,7 +35,8 @@ The Seeker ~lost soul, guiding light~ {
             
             - (boss) name
             death name
-            controls splash
+            ... controls splash (will probably be more of a "letter")
+            ... stage transition portrait
             - co-op icon
         }
     }
