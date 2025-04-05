@@ -14,7 +14,7 @@
         modcostume="1000"
     />
 
-    <player name="The Seeker"
+    <!--player name="The Seeker"
         skin="character_gabriel_b.png"
         nameimage="playername_gabriel.png"
         hp="4"
@@ -25,5 +25,5 @@
         bSkinParent="The Seeker"
         costumeSuffix="gabrielb"
         costume="104"
-    />
+    /-->
 </players>
