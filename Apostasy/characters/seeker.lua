@@ -371,7 +371,7 @@ function chr:_RearrangeWisps(player) -- and this is where the magic happens~
     end
     for wt,wl in pairs(ll) do
         -- precalc the stuff
-        local base = baseOrbit * player.SpriteScale:Length()
+        local base = baseOrbit * player.SpriteScale.X
         base = base + math.floor(math.min(#wl/8, math.ceil(orbitLMult*.5)))
         local orbitDist = orbitVMult * (base + orbitLMult * (wt.orbitLayer or 0))
         local orbitSpeed = orbitSpeedMult * (wt.orbitSpeed or 1)
