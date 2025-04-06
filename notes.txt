@@ -31,13 +31,11 @@ The Seeker ~lost soul, guiding light~ {
         tweak wisp destruction sound
         
         surrounding gfx checklist {
-            fix menu stats display
+            - fix menu stats display
             
-            - (boss) name
             death name
             ... controls splash (will probably be more of a "letter")
             ... stage transition portrait
-            - co-op icon
         }
     }
     
