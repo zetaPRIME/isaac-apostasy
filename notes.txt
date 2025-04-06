@@ -33,7 +33,7 @@ The Seeker ~lost soul, guiding light~ {
         surrounding gfx checklist {
             - fix menu stats display
             
-            death name
+            - death name
             ... controls splash (will probably be more of a "letter")
             ... stage transition portrait
         }
