@@ -61,6 +61,48 @@ The Seeker ~lost soul, guiding light~ {
     perhaps make this the blindfolded one
 }
 
+Dryad? {
+    a mix of nature, elementalist and archer themes
+    
+    fights using a repeating crossbow
+    near-hitscan "tears" sort of deal
+    will need to figure out how to make the "hitscan" deal happen; normal tears aren't continuous
+    
+    Sheriff-style ammo counter but with a pocket active to manually reload
+    can be held down, in exchange for a longer reload time, to select an elemental shot?
+    
+    actually, maybe tapfire + charge fire, remap bomb button but have bombshots as a selectable charge
+    
+    ammo types {
+        normal ("wood") {
+            tap fire: plain shot, fast travel, mild knockback
+            charge fire: single powerful piercing shot
+        }
+        fire {
+            tap fire: slightly slower and less base damage than normal but with a chance to set enemy on fire?
+            charge: single non-piercing, never-spectral shot that explodes on impact, consuming a bomb (uses player's bomb explosion)
+            if no bomb to use, is just a moderate knockback slug
+        }
+        water?
+        earth/rock?
+    }
+    
+    spawn and take control of a blue flame effect (1000.10.0) to represent the crossbow
+    
+    
+    local p = Isaac.GetPlayer()
+    local b = Isaac.Spawn(EntityType.ENTITY_BOMB, p:GetBombVariant(TearFlags.TEAR_NORMAL, false), 0, p.Position - Vector(0, 96), Vector(0, -20), p):ToBomb()
+    b.Flags = p:GetBombFlags() b.Visible = false b:SetExplosionCountdown(0)
+    ...or could use Game():BombExplosionEffects(...)
+    
+    invisible tech laser works
+}
+
+Alchemist? {
+    alternate take on the general idea behind Silas, since that mod's dead
+    with Repentance shininess, of course
+}
+
 - - - - - Items/Trinkets - - - - -
 
 - - - - - System Mechanics - - - - -

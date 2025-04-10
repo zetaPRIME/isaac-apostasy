@@ -507,6 +507,10 @@ function chr:OnInit(player)
     self:AssertCostumes(player)
     
     self:RearrangeWisps(player) -- kick this immediately
+    
+    if game:GetFrameCount() == 0 then -- first starting a run
+        
+    end
 end
 
 local function __count(l)

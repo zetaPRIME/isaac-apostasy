@@ -2,16 +2,20 @@
     <player name="The Seeker"
         skin="apostasy.seeker.png"
         nameimage="apostasy.seeker.name.png"
+        portrait="apostasy.seeker.portrait.png"
+        skinColor="1"
+        
+        birthright="I don't know yet"
+        trinket="38"
+        
         hp="0"
         armor="8"
         black="0"
         bombs="1"
         keys="1"
-        trinket="38"
-        portrait="apostasy.seeker.portrait.png"
-        skinColor="0"
-        birthright="I don't know yet"
+        
         modcostume="1000"
+        noshake="true"
     />
 
     <!--player name="The Seeker"
@@ -26,4 +30,16 @@
         costumeSuffix="gabrielb"
         costume="104"
     /-->
+    
+    <player name="Dryad"
+        _skin=""
+        _nameimage=""
+        _portrait=""
+        skinColor="0"
+        
+        hp="6"
+        bombs="3"
+        
+        noshake="true"
+    />
 </players>
