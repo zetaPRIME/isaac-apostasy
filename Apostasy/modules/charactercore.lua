@@ -200,3 +200,71 @@ if false and REPENTOGON then -- REPENTOGON only
         end
     end)
 end
+
+-- -- -- -- --- --- --- --- --- --- -- -- -- --
+-- -- -- -- -- utility functions -- -- -- -- --
+-- -- -- -- --- --- --- --- --- --- -- -- -- --
+
+do -- encapsulate
+    local buttons = {
+        move = false,
+        moveLeft = ButtonAction.ACTION_LEFT,
+        moveDown = ButtonAction.ACTION_DOWN,
+        moveUp = ButtonAction.ACTION_UP,
+        moveRight = ButtonAction.ACTION_RIGHT,
+        
+        fire = false,
+        fireLeft = ButtonAction.ACTION_SHOOTLEFT,
+        fireDown = ButtonAction.ACTION_SHOOTDOWN,
+        fireUp = ButtonAction.ACTION_SHOOTUP,
+        fireRight = ButtonAction.ACTION_SHOOTRIGHT,
+        fireMouse = false,
+        
+        bomb = ButtonAction.ACTION_BOMB,
+        item = ButtonAction.ACTION_ITEM,
+        pocket = ButtonAction.ACTION_PILLCARD,
+        drop = ButtonAction.ACTION_DROP,
+    }
+    
+    function Character:QueryControls(player)
+        local ad = self:ActiveData(player)
+        local cid = player.ControllerIndex
+        
+        ad.controlsPrev = ad.controls or { }
+        ad.controls = { }
+        local c, cpv = ad.controls, ad.controlsPrev
+        
+        for k,v in pairs(buttons) do -- handle button queries
+            if v then -- button action specified
+                c[k] = Input.IsActionPressed(v, cid)
+            end
+        end
+        
+        -- set up combined actions
+        c.move = c.moveLeft or c.moveDown or c.moveUp or c.moveRight
+        c.fire = c.fireLeft or c.fireDown or c.fireUp or c.fireRight
+        
+        local fd = player:GetShootingInput()
+        if Options.MouseControls and player.Index == 0 then
+            local mb = Input.IsMouseBtnPressed(0)
+            c.fireMouse = mb
+            
+            if mb then -- and now we need to figure out fire direction
+                c.fire = true
+                local mp = Input.GetMousePosition(true)
+                fd = mp - player.Position
+            end
+        end
+        
+        c.fireDir = cpv.fireDir or Vector(0, 1)
+        if fd:Length() > 0 then c.fireDir = fd:Normalized() end
+        
+        for k,v in pairs(buttons) do -- handle press and release
+            c[k .. "P"] = c[k] and not cpv[k]
+            c[k .. "R"] = cpv[k] and not c[k]
+        end
+        
+        return ad.controls
+    end
+    
+end
