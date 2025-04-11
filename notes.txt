@@ -110,12 +110,8 @@ Dryad? {
     invisible tech laser works?
     or just. cap velocity at 32
     
-    handle controls and firing etc. in PostUpdate
+    - handle controls and firing etc. in PostUpdate
     skip firedelay cycle and such for EntityFlag.FLAG_INTERPOLATION_UPDATE
-    
-    self-contained function for handling controls
-    external array, key=name, val=ButtonAction or false
-    can automate press and release flags
 }
 
 Alchemist? {
