@@ -72,6 +72,8 @@ Dryad? {
     slower movement while reloading, so tactical decision when to do so
     15 bolts per reload?
     
+    if tear delay is too low (soy milk levels), a single buffer does three shots
+    
     magic meter! refills drop from enemies, with a small vacuum radius
     hold reload key and hit a fire direction to select from up to four spells
     cast spells through your bolts by holding the button to charge up and release
