@@ -245,7 +245,7 @@ do -- encapsulate
         c.fire = c.fireLeft or c.fireDown or c.fireUp or c.fireRight
         
         local fd = player:GetShootingInput()
-        if Options.MouseControls and player.Index == 0 then
+        if Options.MouseControl and player.Index == 0 then -- TODO handle subplayer??
             local mb = Input.IsMouseBtnPressed(0)
             c.fireMouse = mb
             
