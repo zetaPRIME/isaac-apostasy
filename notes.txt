@@ -66,26 +66,38 @@ Dryad? {
     
     fights using a repeating crossbow
     near-hitscan "tears" sort of deal
-    will need to figure out how to make the "hitscan" deal happen; normal tears aren't continuous
+    will need to figure out how to make the "hitscan" deal happen; normal tears aren't continuous collision
     
-    Sheriff-style ammo counter but with a pocket active to manually reload
-    can be held down, in exchange for a longer reload time, to select an elemental shot?
+    Sheriff-style ammo counter but with manual reload (tap bomb key)
+    slower movement while reloading, so tactical decision when to do so
+    15 bolts per reload?
     
-    actually, maybe tapfire + charge fire, remap bomb button but have bombshots as a selectable charge
+    magic meter! refills drop from enemies, with a small vacuum radius
+    hold reload key and hit a fire direction to select from up to four spells
+    cast spells through your bolts by holding the button to charge up and release
+    incomplete charge just fires a bolt
     
-    ammo types {
-        normal ("wood") {
-            tap fire: plain shot, fast travel, mild knockback
-            charge fire: single powerful piercing shot
+    firing is blocked after a shot by tear delay value
+    another bolt can be buffered at any time, but charging takes priority
+    
+    spells {
+        wind {
+            single powerful piercing shot
+            spectral?
         }
         fire {
-            tap fire: slightly slower and less base damage than normal but with a chance to set enemy on fire?
-            charge: single non-piercing, never-spectral shot that explodes on impact, consuming a bomb (uses player's bomb explosion)
-            if no bomb to use, is just a moderate knockback slug
+            single explosive shot, using player's normal bomb explosion
+            neither piercing nor spectral
+            figure out what to do with bombs
         }
         water?
-        earth/rock?
+        earth/rock? {
+            shotgun blast?
+        }
     }
+    
+    magic meter is "cherenkov blue"
+    also displays the cost of the selected spell
     
     spawn and take control of a blue flame effect (1000.10.0) to represent the crossbow
     
@@ -95,7 +107,15 @@ Dryad? {
     b.Flags = p:GetBombFlags() b.Visible = false b:SetExplosionCountdown(0)
     ...or could use Game():BombExplosionEffects(...)
     
-    invisible tech laser works
+    invisible tech laser works?
+    or just. cap velocity at 32
+    
+    handle controls and firing etc. in PostUpdate
+    skip firedelay cycle and such for EntityFlag.FLAG_INTERPOLATION_UPDATE
+    
+    self-contained function for handling controls
+    external array, key=name, val=ButtonAction or false
+    can automate press and release flags
 }
 
 Alchemist? {

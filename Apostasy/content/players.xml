@@ -37,6 +37,7 @@
         _portrait=""
         skinColor="0"
         
+        canShoot="false"
         hp="6"
         bombs="3"
         

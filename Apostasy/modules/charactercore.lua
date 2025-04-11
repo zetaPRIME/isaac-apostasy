@@ -62,9 +62,13 @@ do -- callback registration
         {ModCallbacks.MC_FAMILIAR_INIT, "OnFamiliarInit", 1, type = "familiar", priority = CallbackPriority.LATE - 1},
         {ModCallbacks.MC_POST_ENTITY_KILL, "OnFamiliarKilled", 1, type = "familiar"},
         
+        --{ModCallbacks.MC_POST_ENTITY_KILL, "OnEntityKilled", 1, type = "source"},
+        
         {ModCallbacks.MC_POST_PEFFECT_UPDATE, "OnEffectUpdate", 1},
         {ModCallbacks.MC_POST_PLAYER_UPDATE, "OnUpdate", 1},
         {ModCallbacks.MC_POST_PLAYER_RENDER, "OnRender", 1},
+        
+        {ModCallbacks.MC_INPUT_ACTION, "OnCheckInput", 1},
         
         {ModCallbacks.MC_ENTITY_TAKE_DMG, "OnTakeDamage", 1, priority = CallbackPriority.LATE - 1},
         {ModCallbacks.MC_ENTITY_TAKE_DMG, "OnFamiliarTakeDamage", 1, type = "familiar", priority = CallbackPriority.LATE - 1},
@@ -74,6 +78,7 @@ do -- callback registration
         --{ModCallbacks.MC_POST_LASER_UPDATE, "OnLaserUpdate", 1, type = "source"},
         {ModCallbacks.MC_USE_ITEM, "OnUseItem", 3},
         
+        {ModCallbacks.MC_PRE_TEAR_COLLISION, "OnPreTearCollision", 1, type = "source"},
         {ModCallbacks.MC_PRE_FAMILIAR_COLLISION, "OnPreFamiliarCollision", 1, type = "familiar"},
         {ModCallbacks.MC_PRE_PROJECTILE_COLLISION, "OnPreProjectileCollisionWithFamiliar", 2, type = "familiar"},
         
@@ -86,7 +91,9 @@ do -- callback registration
     function cbf:default(id, fname, pn)
         Apostasy:AddPriorityCallback(id, self.priority or 0, function(_, ...)
             local par = {...}
-            local player = (par[pn]):ToPlayer()
+            local player = (par[pn])
+            if not player then return nil end
+            player = player:ToPlayer()
             if not player then return nil end
             local chr = byType[player:GetPlayerType()]
             local f = chr and chr[fname]
