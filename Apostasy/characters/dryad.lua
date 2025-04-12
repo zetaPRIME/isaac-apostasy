@@ -60,7 +60,7 @@ function dryad:GetBoltsPerTap(player)
     -- calculate fire rate
     local fr = 30 / (player.MaxFireDelay + 1)
     
-    return math.max(1, math.min(math.floor(fr + 0.5), 30))
+    return math.max(1, math.min(math.floor(fr/2 + 0.5), 5))
 end
 
 -- this is the instant action of setting a reloaded magazine
@@ -167,19 +167,16 @@ function dryad:FiringBehavior(player)
         
         for i = 1, nf do
             ad.kickback = 5
-            player.FireDelay = player.MaxFireDelay
             self:DoFireBolt_(player)
             enterState "cooldown"
         end
     end
     
     function states.cooldown()
-        while player.FireDelay > 0 do
-            coroutine.yield()
+        if player.FireDelay < 0 then player.FireDelay = player.MaxFireDelay end
+        while player.FireDelay >= 0 do -- player object does the decrementing
             chkBuf()
-            if not player:HasEntityFlags(EntityFlag.FLAG_INTERPOLATION_UPDATE) then
-                player.FireDelay = player.FireDelay - 1
-            end
+            coroutine.yield()
         end
     end
     
