@@ -211,6 +211,28 @@ if false and REPENTOGON then -- REPENTOGON only
     end)
 end
 
+HudHelper.RegisterHUDElement({
+    Name = "apostasy:characterblock",
+    Priority = HudHelper.Priority.HIGHEST,
+    
+    Condition = function(player, idx, layout)
+        local chr = Apostasy:GetCharacterForPlayer(player)
+        if chr and chr.RenderHUDBlock then return true end
+        return false
+    end,
+    OnRender = function(player, idx, layout, pos)
+        local chr = Apostasy:GetCharacterForPlayer(player)
+        if chr and chr.RenderHUDBlock then
+            return chr:RenderHUDBlock(player, idx, layout, pos)
+        end
+    end,
+    YPadding = function(player, idx, layout)
+        local chr = Apostasy:GetCharacterForPlayer(player)
+        return chr.HUDBlockHeight or 32
+    end,
+    XPadding = 0,
+}, HudHelper.HUDType.EXTRA)
+
 -- -- -- -- --- --- --- --- --- --- -- -- -- --
 -- -- -- -- -- utility functions -- -- -- -- --
 -- -- -- -- --- --- --- --- --- --- -- -- -- --

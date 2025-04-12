@@ -391,6 +391,12 @@ function dryad:FiringBehavior(player)
     end
 end
 
+function dryad:OnCheckInput(player, hook, btn)
+    if btn == ButtonAction.ACTION_BOMB and hook == InputHook.IS_ACTION_TRIGGERED then
+        return false -- disable normal bomb placement while retaining counter
+    end
+end
+
 local fntNum = Font() fntNum:Load("font/pftempestasevencondensed.fnt")
 local fntSmall = Font() fntSmall:Load("font/luaminioutlined.fnt")
 
@@ -420,8 +426,43 @@ function dryad:OnPostRender(player)
     fntSmall:DrawString(str, pos.X - tw/2, pos.Y - lh, KColor(1,1,1,1), tw)
 end
 
-function dryad:OnCheckInput(player, hook, btn)
-    if btn == ButtonAction.ACTION_BOMB and hook == InputHook.IS_ACTION_TRIGGERED then
-        return false -- disable normal bomb placement while retaining counter
+do -- HUD block stuff
+    local manaBar = Sprite()
+    manaBar:Load("gfx/ui/apostasy/dryad.manabar.anm2", true)
+    manaBar:SetFrame("Default", 1)
+    
+    local barEnd = 5
+    local barWidth = 64
+    local intW = barWidth - (barEnd*2)
+    local function getBarRegion(from, to)
+        return Vector(barEnd + intW*from, 0), Vector(128-barWidth + barEnd + intW*(1-to), 0)
+    end
+    
+    local colNone = Color(1,1,1)
+    local colHighlight = Color(1,1,1,1, 0.4, 0.2, 0.2)
+    local colInsufficient = Color(1,1,1)
+    colInsufficient:SetColorize(1.5, 0.25, 0.25, 1)
+    
+    dryad.HUDBlockHeight = 32
+    function dryad:RenderHUDBlock(player, idx, layout, pos)
+        --fntNum:DrawString("Hello world!", pos.X, pos.Y, KColor(1,1,1,1))
+        local ad = self:ActiveData(player)
+        
+        local manaMax = 100
+        local mana = 75
+        local manaCost = self:GetSpellCost(player, ad.selectedSpell)
+        
+        local mbp = pos + Vector(-9, -5)
+        manaBar.Color = colNone
+        manaBar:RenderLayer(0, mbp)
+        
+        if mana >= manaCost then
+            manaBar:RenderLayer(1, mbp, getBarRegion(0, mana / manaMax))
+            manaBar.Color = colHighlight
+            manaBar:RenderLayer(1, mbp, getBarRegion((mana-manaCost) / manaMax, mana / manaMax))
+        else
+            manaBar.Color = colInsufficient
+            manaBar:RenderLayer(1, mbp, getBarRegion(0, mana / manaMax))
+        end
     end
 end
