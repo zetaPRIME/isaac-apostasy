@@ -56,13 +56,25 @@ function dryad:DoFireBolt_(player)
     end)
 end
 
+function dryad:GetBoltsPerTap(player)
+    -- calculate fire rate
+    local fr = 30 / (player.MaxFireDelay + 1)
+    
+    return math.max(1, math.min(math.floor(fr + 0.5), 30))
+end
+
+-- this is the instant action of setting a reloaded magazine
+function dryad:Reload(player)
+    
+end
+
 function dryad:HandleCrossbowSprite(player)
     local ad = self:ActiveData(player)
     
     local spr = ad.crossbowSprite
     if not spr or not spr:Exists() or spr:IsDead() then
-        print "spawning new flame"
-        spr = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.TARGET, 0, player.Position, Vector.Zero, player):ToEffect()
+        --print "new crossbow"
+        spr = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.BLUE_FLAME, 0, player.Position, Vector.Zero, nil and player):ToEffect()
         ad.crossbowSprite = spr
         
         spr.SpriteScale = Vector(0.5, 0.5)
@@ -70,7 +82,19 @@ function dryad:HandleCrossbowSprite(player)
     end
     
     spr:SetTimeout(2)
-    spr.Position = player.Position + Vector(32, 0)
+    --spr.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
+    local fd = ad.controls.fireDir:Normalized()
+    
+    if not ad.crossbowDir then ad.crossbowDir = fd end
+    ad.crossbowDir:Lerp(fd, 0.5)
+    ad.crossbowDir:Normalize()
+    
+    local np = (ad.crossbowDir * (28 - ad.kickback*0.75)) --* Vector(1, 3/4)
+    spr.Position = player.Position + np
+    
+    if ad.kickback > 0 then
+        ad.kickback = math.max(0, ad.kickback - 1)
+    end
 end
 
 -- -- -- -- -- --- --- --- --- -- -- -- -- --
@@ -78,6 +102,8 @@ end
 -- -- -- -- -- --- --- --- --- -- -- -- -- --
 
 function dryad:InitActiveData(player, ad)
+    ad.kickback = 0
+    
     ad.crFiring = coroutine.create(self.FiringBehavior)
     coroutine.resume(ad.crFiring, self, player)
 end
@@ -137,12 +163,10 @@ function dryad:FiringBehavior(player)
     end
     
     function states.fire()
-        local nf, i = 1 -- determine how many bolts per tap
-        if player.MaxFireDelay <= 5 then nf = 3
-        elseif player.MaxFireDelay <= 10 then nf = 2
-        end
+        local nf, i = self:GetBoltsPerTap(player)
         
         for i = 1, nf do
+            ad.kickback = 5
             player.FireDelay = player.MaxFireDelay
             self:DoFireBolt_(player)
             enterState "cooldown"
