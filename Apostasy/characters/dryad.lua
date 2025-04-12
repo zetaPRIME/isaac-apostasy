@@ -36,7 +36,7 @@ end
 
 local shotTypes = {
     normal = {
-        speedMult = 48,
+        speedMult = 36,
         
         variant = TearVariant.NAIL,
         hitboxScale = 2,
@@ -50,7 +50,9 @@ local shotTypes = {
         end,
     },
     explosive = {
-        speedMult = 42,
+        speedMult = 25,
+        
+        hitboxScale = 2.1,
         
         flags = TearFlags.TEAR_NORMAL,
         flagsRem = TearFlags.TEAR_SPECTRAL | TearFlags.TEAR_PIERCING | TearFlags.TEAR_HOMING,
@@ -94,8 +96,11 @@ do
         t.SpriteScale = Vector.One * (shotType.spriteScale or normal.spriteScale)
         
         -- and now we figure out speed
-        local spd = math.min(player.ShotSpeed * shotType.speedMult, 56)
-        t:AddVelocity(dir * spd)
+        local maxSpeed = 48
+        local sv = dir * (player.ShotSpeed * shotType.speedMult)
+        sv = sv + (player.Velocity * 0.75)
+        if sv:Length() > maxSpeed then sv = sv:Normalized() * maxSpeed end
+        t:AddVelocity(sv)
         t.Visible = false
         
         t.Height = -6
@@ -207,6 +212,11 @@ local spellTypes = {
             
             local t = self:FireShot(player, shotTypes.explosive, self:GetFireDirection(player))
             local dmg = dps(player) * 3
+            if withBomb then
+                local bombDmg = 100
+                if goldenBomb then bombDmg = 150 end
+                dmg = math.max(dmg, bombDmg)
+            end
             t.CollisionDamage = dmg
         end,
     },
