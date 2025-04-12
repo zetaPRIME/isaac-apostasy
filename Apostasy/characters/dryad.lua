@@ -27,64 +27,90 @@ end
 
 local shotTypes = {
     normal = {
+        speedMult = 48,
+        
+        variant = TearVariant.NAIL,
+        hitboxScale = 2,
+        spriteScale = 0.5,
+        
         flags = TearFlags.TEAR_NORMAL,
         flagsRem = TearFlags.TEAR_NORMAL,
         
-        OnInit = function(tear)
+        OnFired = function(self, tear)
             
         end,
     },
     explosive = {
-        flags = TearFlags.TEAR_NORMAL,
-        flagsRem = TearFlags.TEAR_SPECTRAL | TearFlags.TEAR_PIERCING,
+        speedMult = 42,
         
-        OnInit = function(tear)
+        flags = TearFlags.TEAR_NORMAL,
+        flagsRem = TearFlags.TEAR_SPECTRAL | TearFlags.TEAR_PIERCING | TearFlags.TEAR_HOMING,
+        
+        OnFired = function(self, tear)
             
         end,
-        OnKill = function(tear)
+        OnKill = function(self, tear)
+            local player = tear.SpawnerEntity:ToPlayer()
             
+            local b = Isaac.Spawn(EntityType.ENTITY_BOMB, player:GetBombVariant(TearFlags.TEAR_NORMAL, false), 0, tear.Position - tear.Velocity, Vector.Zero, player):ToBomb()
+            b.ExplosionDamage = player.Damage
+            b.Flags = player:GetBombFlags() b.Visible = false b:SetExplosionCountdown(0)
         end,
     }
 } for k,v in pairs(shotTypes) do v.id = k end
 
 do
-    function dryad:FireShot(player, shotType, dir)
+    local function trt(self, player, tear, shotType)
+        coroutine.yield()
+        tear.Visible = true
+        while not tear:IsDead() do
+            coroutine.yield()
+        end
+        if not tear:Exists() then return end
         
+        if shotType.OnKill then shotType.OnKill(self, tear) end
+    end
+    
+    function dryad:FireShot(player, shotType, dir)
+        if type(shotType) == "string" then shotType = shotTypes[shotType] end
+        local normal = shotTypes.normal
+        
+        local t = player:FireTear(player.Position, Vector.Zero)
+        t:ChangeVariant(shotType.variant or normal.variant)
+        sfx:Stop(SoundEffect.SOUND_TEARS_FIRE) -- no default sound, thanks
+        
+        -- we set our scales up manually to give a good hitbox size for the projectile speed
+        t.Scale = shotType.hitboxScale or normal.hitboxScale
+        t.SpriteScale = Vector.One * (shotType.spriteScale or normal.spriteScale)
+        
+        -- and now we figure out speed
+        local spd = math.min(player.ShotSpeed * shotType.speedMult, 56)
+        t:AddVelocity(dir * spd)
+        t.Visible = false
+        
+        t.Height = -6
+        t.FallingAcceleration = 0
+        t.FallingSpeed = -1
+        
+        if shotType.OnFired then shotType.OnFired(self, t) end
+        Apostasy:QueueUpdateRoutine(trt, self, player, t, shotType)
+                
+        return t
     end
 end
 
-function dryad:DoFireBolt_(player)
+function dryad:GetFireDirection(player)
     local ad = self:ActiveData(player)
-    local c = ad.controls
+    local fireDir = ad.controls.fireDir
     
-    local t = player:FireTear(player.Position, Vector.Zero)
-    t:ChangeVariant(TearVariant.NAIL)
-    local spd = math.min(player.ShotSpeed * 48, 56)
-    local fireDir = c.fireDir
-    fireDir = clampFireAngle(fireDir)
-    t:AddVelocity(fireDir * spd)
-    t.Visible = false
-    
-    -- we set our scales up manually to give a good hitbox size for the projectile speed
-    t.Scale = 2
-    t.SpriteScale = Vector(0.5, 0.5)
-    
-    t.Height = -6
-    t.FallingAcceleration = 0
-    t.FallingSpeed = -1
-    
-    Apostasy:QueueUpdateRoutine(function()
-        coroutine.yield()
-        t.Visible = true
-        while not t:IsDead() do
-            coroutine.yield()
-        end
-        if not t:Exists() then return end
-        
-        local b = Isaac.Spawn(EntityType.ENTITY_BOMB, player:GetBombVariant(TearFlags.TEAR_NORMAL, false), 0, t.Position - t.Velocity, Vector.Zero, player):ToBomb()
-        b.ExplosionDamage = player.Damage
-        b.Flags = player:GetBombFlags() b.Visible = false b:SetExplosionCountdown(0)
-    end)
+    -- clamp direction if player doesn't have an analog aim item
+    if not player:HasCollectible(CollectibleType.COLLECTIBLE_ANALOG_STICK)
+    and not player:HasCollectible(CollectibleType.COLLECTIBLE_MARKED)
+    and not player:HasCollectible(CollectibleType.COLLECTIBLE_REVELATION)
+    then
+        fireDir = clampFireAngle(fireDir)
+    end
+    return fireDir
 end
 
 function dryad:GetBoltsPerTap(player)
@@ -216,8 +242,7 @@ function dryad:FiringBehavior(player)
             end
             ad.bolts = ad.bolts - 1
             ad.kickback = 5
-            self:DoFireBolt_(player)
-            sfx:Stop(SoundEffect.SOUND_TEARS_FIRE)
+            self:FireShot(player, shotTypes.normal, self:GetFireDirection(player))
             sfx:Play(SoundEffect.SOUND_SWORD_SPIN, 0.42, 2, false, 2)
             sfx:Play(SoundEffect.SOUND_GFUEL_GUNSHOT, 0.37, 2, false, 1.5)
             enterState "cooldown"
