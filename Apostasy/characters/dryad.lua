@@ -25,6 +25,11 @@ local function clampFireAngle(vec)
     return Vector(vec.X, 0):Normalized()
 end
 
+local function dps(player)
+    local fr = 30 / (player.MaxFireDelay + 1)
+    return player.Damage * fr
+end
+
 local shotTypes = {
     normal = {
         speedMult = 48,
@@ -53,7 +58,7 @@ local shotTypes = {
             local player = tear.SpawnerEntity:ToPlayer()
             
             local b = Isaac.Spawn(EntityType.ENTITY_BOMB, player:GetBombVariant(TearFlags.TEAR_NORMAL, false), 0, tear.Position - tear.Velocity, Vector.Zero, player):ToBomb()
-            b.ExplosionDamage = player.Damage
+            b.ExplosionDamage = tear.CollisionDamage
             b.Flags = player:GetBombFlags() b.Visible = false b:SetExplosionCountdown(0)
         end,
     }
@@ -73,6 +78,7 @@ do
     
     function dryad:FireShot(player, shotType, dir)
         if type(shotType) == "string" then shotType = shotTypes[shotType] end
+        if not shotType then return end
         local normal = shotTypes.normal
         
         local t = player:FireTear(player.Position, Vector.Zero)
@@ -91,6 +97,12 @@ do
         t.Height = -6
         t.FallingAcceleration = 0
         t.FallingSpeed = -1
+        
+        print(shotType.flagsRem)
+        if shotType.flagsRem then t:ClearTearFlags(shotType.flagsRem) end
+        if shotType.flags then t:AddTearFlags(shotType.flags) end
+        t.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_BULLET
+        t:AddTearFlags(t.TearFlags) -- kick it
         
         if shotType.OnFired then shotType.OnFired(self, t) end
         Apostasy:QueueUpdateRoutine(trt, self, player, t, shotType)
@@ -129,6 +141,74 @@ function dryad:Reload(player)
     local ad = self:ActiveData(player)
     ad.boltsMax = mag
     ad.bolts = mag
+end
+
+local spellTypes = {
+    wind = {
+        
+    },
+    
+    fire = {
+        manaCost = 15,
+        chargeTime = 20,
+        
+        noBombManaCost = 40,
+        noBombChargeTime = 45,
+        
+        -- different properties if no bombs
+        GetCost = function(self, player, spellType)
+            if player:GetNumBombs() == 0 and not player:HasGoldenBomb() then return spellType.noBombManaCost end
+            return spellType.manaCost
+        end,
+        GetChargeTime = function(self, player, spellType)
+            if player:GetNumBombs() == 0 and not player:HasGoldenBomb() then return spellType.noBombChargeTime end
+            return spellType.chargeTime
+        end,
+        
+        OnCast = function(self, player, spellType)
+            local goldenBomb = player:HasGoldenBomb()
+            local withBomb = player:GetNumBombs() > 0 or goldenBomb
+            if withBomb and not goldenBomb then player:AddBombs(-1) end -- take the cost
+            
+            local ad = self:ActiveData(player)
+            ad.kickback = 15
+            
+            local t = self:FireShot(player, shotTypes.explosive, self:GetFireDirection(player))
+            local dmg = dps(player) * 3
+            t.CollisionDamage = dmg
+        end,
+    },
+    
+    wood = {
+        
+    },
+} for k, v in pairs(spellTypes) do v.id = k end
+
+function dryad:GetSpellCost(player, spellType)
+    if type(spellType) == "string" then spellType = spellTypes[spellType] end
+    if not spellType then return 0 end
+    
+    if spellType.GetCost then return spellType.GetCost(self, player, spellType) end
+    return spellType.manaCost or 0
+end
+function dryad:GetSpellChargeTime(player, spellType)
+    if type(spellType) == "string" then spellType = spellTypes[spellType] end
+    if not spellType then return 0 end
+    
+    if spellType.GetChargeTime then return spellType.GetChargeTime(self, player, spellType) end
+    return spellType.chargeTime or 30
+end
+function dryad:GetSpellBolts(player, spellType)
+    if type(spellType) == "string" then spellType = spellTypes[spellType] end
+    if not spellType then return 0 end
+    return spellType.boltCost or 1
+end
+
+function dryad:CastSpell(player, spellType)
+    if type(spellType) == "string" then spellType = spellTypes[spellType] end
+    if not spellType then return end
+    
+    if spellType.OnCast then spellType.OnCast(self, player, spellType) end
 end
 
 function dryad:HandleCrossbowSprite(player)
@@ -173,6 +253,8 @@ function dryad:InitActiveData(player, ad)
     ad.kickback = 0
     
     self:Reload(player)
+    
+    ad.selectedSpell = spellTypes.fire
     
     ad.crFiring = coroutine.create(self.FiringBehavior)
     coroutine.resume(ad.crFiring, self, player)
@@ -225,10 +307,25 @@ function dryad:FiringBehavior(player)
     end
     
     function states.charging()
+        local ct = self:GetSpellChargeTime(player, ad.selectedSpell)
+        ad.chargeTime = ct
+        ad.charge = 0
         while ad.controls.fire do
+            waitInterp()
+            local fc = ad.charge >= ad.chargeTime
+            ad.charge = math.min(ad.charge + 1, ad.chargeTime)
+            ad.kickback = 5 * (ad.charge / ad.chargeTime)
+            if ad.charge >= ad.chargeTime and not fc then
+                sfx:Play(SoundEffect.SOUND_SOUL_PICKUP)
+            end
             coroutine.yield()
         end
-        enterState "fire"
+        if ad.charge >= ad.chargeTime then
+            self:CastSpell(player, ad.selectedSpell)
+            enterState "cooldown"
+        else
+            enterState "fire"
+        end
     end
     
     function states.fire()
