@@ -183,6 +183,16 @@ Apostasy:AddPriorityCallback(ModCallbacks.MC_PRE_SPAWN_CLEAN_AWARD, CallbackPrio
     end
 end)
 
+-- PostRender (for just-under-HUD stuff)
+Apostasy:AddPriorityCallback(ModCallbacks.MC_POST_RENDER, CallbackPriority.LATE, function(_, ...)
+    local pl = getPlayers()
+    for _, player in pairs(pl) do
+        local chr = Apostasy:GetCharacterForPlayer(player)
+        local f = chr and chr.OnPostRender
+        if f then return f(chr, player, ...) end
+    end
+end)
+
 if false and REPENTOGON then -- REPENTOGON only
     Apostasy:AddCallback(ModCallbacks.MC_HUD_RENDER, function()
         local pl = getPlayers()

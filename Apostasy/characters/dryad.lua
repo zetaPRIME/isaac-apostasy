@@ -143,6 +143,17 @@ function dryad:Reload(player)
     ad.bolts = mag
 end
 
+function dryad:TryPayCosts(player, bolts, mana)
+    local ad = self:ActiveData(player)
+    if not mana then mana = 0 end
+    
+    if ad.bolts < bolts then return false end
+    
+    -- TODO mana cost
+    ad.bolts = math.max(0, ad.bolts - bolts)
+    return true
+end
+
 local spellTypes = {
     wind = {
         
@@ -152,12 +163,15 @@ local spellTypes = {
         manaCost = 15,
         chargeTime = 20,
         
+        goldenManaCost = 5, -- spammable!
+        
         noBombManaCost = 40,
         noBombChargeTime = 45,
         
         -- different properties if no bombs
         GetCost = function(self, player, spellType)
-            if player:GetNumBombs() == 0 and not player:HasGoldenBomb() then return spellType.noBombManaCost end
+            if player:HasGoldenBomb() then return spellType.goldenManaCost end
+            if player:GetNumBombs() == 0 then return spellType.noBombManaCost end
             return spellType.manaCost
         end,
         GetChargeTime = function(self, player, spellType)
@@ -310,6 +324,7 @@ function dryad:FiringBehavior(player)
         local ct = self:GetSpellChargeTime(player, ad.selectedSpell)
         ad.chargeTime = ct
         ad.charge = 0
+        
         while ad.controls.fire do
             waitInterp()
             local fc = ad.charge >= ad.chargeTime
@@ -320,7 +335,9 @@ function dryad:FiringBehavior(player)
             end
             coroutine.yield()
         end
+        
         if ad.charge >= ad.chargeTime then
+            
             self:CastSpell(player, ad.selectedSpell)
             enterState "cooldown"
         else
@@ -332,12 +349,11 @@ function dryad:FiringBehavior(player)
         local nf, i = self:GetBoltsPerTap(player)
         
         for i = 1, nf do
-            if ad.bolts <= 0 then
+            if not self:TryPayCosts(player, 1) then
                 sfx:Play(SoundEffect.SOUND_BUTTON_PRESS, 1, 2, false, 1)
                 sfx:Play(SoundEffect.SOUND_BONE_BOUNCE, 1, 2, false, 2.5)
                 break
             end
-            ad.bolts = ad.bolts - 1
             ad.kickback = 5
             self:FireShot(player, shotTypes.normal, self:GetFireDirection(player))
             sfx:Play(SoundEffect.SOUND_SWORD_SPIN, 0.42, 2, false, 2)
@@ -370,12 +386,12 @@ function dryad:FiringBehavior(player)
     end
 end
 
-function dryad:OnRender(player, offset)
+function dryad:OnPostRender(player)
     local ad = self:ActiveData(player)
-    local str = ad.bolts .. " / " .. ad.boltsMax
+    local str = ad.bolts .. "/" .. ad.boltsMax
     local scale = 0.5
     local tw = Isaac.GetTextWidth(str) * scale
-    local pos = Isaac.WorldToScreen(player.Position + Vector(0, -64))
+    local pos = Isaac.WorldToScreen(player.Position + Vector(0, -58))
     Isaac.RenderScaledText(str, pos.X - tw/2, pos.Y, scale, scale, 1, 1, 1, 1)
 end
 
