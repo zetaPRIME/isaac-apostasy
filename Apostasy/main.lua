@@ -12,6 +12,9 @@ do -- we're rolling our own require() because Nicalis Code
     end
 end
 
+-- init libraries
+Apostasy:require "lib.hud_helper"
+
 -- pull in utilities
 for _,k in pairs {
     "Color",
