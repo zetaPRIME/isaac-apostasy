@@ -25,6 +25,10 @@ local function clampFireAngle(vec)
     return Vector(vec.X, 0):Normalized()
 end
 
+local function roundVec(vec)
+    return Vector(math.floor(vec.X + 0.5), math.floor(vec.Y + 0.5))
+end
+
 local function dps(player)
     local fr = 30 / (player.MaxFireDelay + 1)
     return player.Damage * fr
@@ -98,7 +102,6 @@ do
         t.FallingAcceleration = 0
         t.FallingSpeed = -1
         
-        print(shotType.flagsRem)
         if shotType.flagsRem then t:ClearTearFlags(shotType.flagsRem) end
         if shotType.flags then t:AddTearFlags(shotType.flags) end
         t.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_BULLET
@@ -239,7 +242,7 @@ function dryad:HandleCrossbowSprite(player)
     end
     
     spr:SetTimeout(2)
-    local fd = ad.controls.fireDir:Normalized()
+    local fd = self:GetFireDirection(player)-- ad.controls.fireDir:Normalized()
     
     if not ad.crossbowDir then ad.crossbowDir = fd end
     if ad.controls.fire then
@@ -251,7 +254,7 @@ function dryad:HandleCrossbowSprite(player)
     ad.crossbowDir:Lerp(fd, 0.5)
     ad.crossbowDir:Normalize()
     
-    local np = (ad.crossbowDir * (28 - ad.kickback*0.75)) --* Vector(1, 3/4)
+    local np = (ad.crossbowDir * (28 - ad.kickback*0.75)) * Vector(1, 3/4)
     spr.Position = player.Position + np
     
     if ad.kickback > 0 then
@@ -329,11 +332,13 @@ function dryad:FiringBehavior(player)
             waitInterp()
             local fc = ad.charge >= ad.chargeTime
             ad.charge = math.min(ad.charge + 1, ad.chargeTime)
-            ad.kickback = 5 * (ad.charge / ad.chargeTime)
+            local kb = 5 * (ad.charge / ad.chargeTime)
+            ad.kickback = kb
             if ad.charge >= ad.chargeTime and not fc then
                 sfx:Play(SoundEffect.SOUND_SOUL_PICKUP)
             end
             coroutine.yield()
+            ad.kickback = kb
         end
         
         if ad.charge >= ad.chargeTime then
@@ -386,13 +391,33 @@ function dryad:FiringBehavior(player)
     end
 end
 
+local fntNum = Font() fntNum:Load("font/pftempestasevencondensed.fnt")
+local fntSmall = Font() fntSmall:Load("font/luaminioutlined.fnt")
+
 function dryad:OnPostRender(player)
     local ad = self:ActiveData(player)
+    
+    if ad.firingState == "charging" or ad.firingState == "reloading" then -- charge bar
+        if not ad.chargeBar then
+            local cb = Sprite() ad.chargeBar = cb
+            cb:Load("gfx/chargebar.anm2", true)
+        end
+        
+        if ad.crossbowSprite and ad.crossbowSprite:Exists() then
+            local pos = Isaac.WorldToScreen(ad.crossbowSprite.Position + Vector(0, -28))
+            
+            HudHelper.RenderChargeBar(ad.chargeBar, ad.charge, ad.chargeTime, pos)
+        end
+    end
+    
+    -- ammo counter
     local str = ad.bolts .. "/" .. ad.boltsMax
-    local scale = 0.5
-    local tw = Isaac.GetTextWidth(str) * scale
+    local wstr = ad.boltsMax .. "/" .. ad.boltsMax
+    
+    local tw = fntSmall:GetStringWidth(wstr)
+    local lh = fntSmall:GetLineHeight()
     local pos = Isaac.WorldToScreen(player.Position + Vector(0, -58))
-    Isaac.RenderScaledText(str, pos.X - tw/2, pos.Y, scale, scale, 1, 1, 1, 1)
+    fntSmall:DrawString(str, pos.X - tw/2, pos.Y - lh, KColor(1,1,1,1), tw)
 end
 
 function dryad:OnCheckInput(player, hook, btn)
