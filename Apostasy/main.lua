@@ -14,6 +14,7 @@ end
 
 -- init libraries
 Apostasy:require "lib.hud_helper"
+Apostasy:require("lib.save_manager").Init(Apostasy)
 
 -- pull in utilities
 for _,k in pairs {

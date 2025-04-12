@@ -146,14 +146,29 @@ function dryad:Reload(player)
     ad.bolts = mag
 end
 
+function dryad:GetMana(player)
+    local rd = self:RunData(player)
+    local max = 100
+    return (rd.mana or 0), max
+end
+
 function dryad:TryPayCosts(player, bolts, mana)
+    if type(bolts) == "table" then -- passed spell
+        return self:TryPayCosts(player, self:GetSpellBolts(player, bolts), self:GetSpellCost(player, bolts))
+    end
+    
     local ad = self:ActiveData(player)
+    local rd = self:RunData(player)
     if not mana then mana = 0 end
     
+    -- check both
     if ad.bolts < bolts then return false end
+    if rd.mana < mana then return false end
     
-    -- TODO mana cost
+    -- deduct cost
     ad.bolts = math.max(0, ad.bolts - bolts)
+    rd.mana = math.max(0, rd.mana - mana)
+    
     return true
 end
 
@@ -277,6 +292,13 @@ function dryad:InitActiveData(player, ad)
     coroutine.resume(ad.crFiring, self, player)
 end
 
+function dryad:InitRunData(player, rd, noHg)
+    if not noHg then
+        local _, manaMax = self:GetMana(player)
+        rd.mana = manaMax
+    end
+end
+
 function dryad:OnEffectUpdate(player)
     if player.FireDelay > 0 then
         --print("fire delay", player.FireDelay)
@@ -288,9 +310,14 @@ function dryad:OnEffectUpdate(player)
     
 end
 
+dryad.manaRegenRate = 5 -- per second
 function dryad:OnUpdate(player)
     local ad = self:ActiveData(player)
+    local rd = self:RunData(player)
     local c = self:QueryControls(player)
+    
+    local _, maxMana = self:GetMana()
+    rd.mana = math.min(rd.mana + self.manaRegenRate/60, maxMana)
     
     -- TODO: reload key
     if c.bombP then
@@ -342,9 +369,13 @@ function dryad:FiringBehavior(player)
         end
         
         if ad.charge >= ad.chargeTime then
-            
-            self:CastSpell(player, ad.selectedSpell)
-            enterState "cooldown"
+            if self:TryPayCosts(player, ad.selectedSpell) then
+                self:CastSpell(player, ad.selectedSpell)
+                enterState "cooldown"
+            else
+                sfx:Play(SoundEffect.SOUND_SOUL_PICKUP, 1, 2, false, 0.75)
+                sfx:Play(SoundEffect.SOUND_BONE_BOUNCE, 1, 2, false, 2.25)
+            end
         else
             enterState "fire"
         end
@@ -448,8 +479,7 @@ do -- HUD block stuff
         --fntNum:DrawString("Hello world!", pos.X, pos.Y, KColor(1,1,1,1))
         local ad = self:ActiveData(player)
         
-        local manaMax = 100
-        local mana = 75
+        local mana, manaMax = self:GetMana(player)
         local manaCost = self:GetSpellCost(player, ad.selectedSpell)
         
         local mbp = pos + Vector(-9, -5)

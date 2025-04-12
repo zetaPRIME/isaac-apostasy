@@ -1,5 +1,9 @@
 local Apostasy = _ENV["::Apostasy"]
 
+local saveManager = Apostasy:require "lib.save_manager"
+
+local NF = function() end -- null func
+
 local byId = { }
 local byType = { }
 
@@ -42,16 +46,29 @@ do
         end
         return ad
     end
-    function Character:InitActiveData() end -- dummy
+    Character.InitActiveData = NF -- dummy
     
     Apostasy:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.IMPORTANT,
     function(_, player)
         activeData[player:GetData()] = nil
     end)
+    
+    local rdKey = "characterData"
+    function Character:RunData(player, noHg)
+        local rdr = saveManager.GetRunSave(player, noHg)
+        local rd = rdr[rdKey]
+        if not rd then
+            rd = { }
+            rdr[rdKey] = rd
+            self:InitRunData(player, rd, noHg)
+        end
+        return rd
+    end
+    Character.InitRunData = NF -- dummy
 end
 
+
 do -- callback registration
-    local NF = function() end -- null func
     -- callback id, function name, test param number
     -- type = [string]
     -- priority = [num]
