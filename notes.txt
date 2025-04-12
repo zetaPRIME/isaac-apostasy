@@ -82,6 +82,8 @@ Dryad? {
     firing is blocked after a shot by tear delay value
     another bolt can be buffered at any time, but charging takes priority
     
+    !!! cancel charge by tap+release (queueReload)
+    
     spells {
         wind {
             single powerful piercing shot
@@ -112,8 +114,7 @@ Dryad? {
     invisible tech laser works?
     or just. cap velocity at 32
     
-    - handle controls and firing etc. in PostUpdate
-    skip firedelay cycle and such for EntityFlag.FLAG_INTERPOLATION_UPDATE
+    TODO: force head direction to stay while FireDelay >= 0
 }
 
 Alchemist? {

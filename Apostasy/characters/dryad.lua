@@ -25,6 +25,34 @@ local function clampFireAngle(vec)
     return Vector(vec.X, 0):Normalized()
 end
 
+local shotTypes = {
+    normal = {
+        flags = TearFlags.TEAR_NORMAL,
+        flagsRem = TearFlags.TEAR_NORMAL,
+        
+        OnInit = function(tear)
+            
+        end,
+    },
+    explosive = {
+        flags = TearFlags.TEAR_NORMAL,
+        flagsRem = TearFlags.TEAR_SPECTRAL | TearFlags.TEAR_PIERCING,
+        
+        OnInit = function(tear)
+            
+        end,
+        OnKill = function(tear)
+            
+        end,
+    }
+} for k,v in pairs(shotTypes) do v.id = k end
+
+do
+    function dryad:FireShot(player, shotType, dir)
+        
+    end
+end
+
 function dryad:DoFireBolt_(player)
     local ad = self:ActiveData(player)
     local c = ad.controls
@@ -35,6 +63,7 @@ function dryad:DoFireBolt_(player)
     local fireDir = c.fireDir
     fireDir = clampFireAngle(fireDir)
     t:AddVelocity(fireDir * spd)
+    t.Visible = false
     
     -- we set our scales up manually to give a good hitbox size for the projectile speed
     t.Scale = 2
@@ -42,17 +71,19 @@ function dryad:DoFireBolt_(player)
     
     t.Height = -6
     t.FallingAcceleration = 0
-    t.FallingSpeed = -0.25
+    t.FallingSpeed = -1
     
     Apostasy:QueueUpdateRoutine(function()
         coroutine.yield()
+        t.Visible = true
         while not t:IsDead() do
             coroutine.yield()
         end
         if not t:Exists() then return end
         
-        --local b = Isaac.Spawn(EntityType.ENTITY_BOMB, player:GetBombVariant(TearFlags.TEAR_NORMAL, false), 0, t.Position - t.Velocity, Vector.Zero, player):ToBomb()
-        --b.Flags = player:GetBombFlags() b.Visible = false b:SetExplosionCountdown(0)
+        local b = Isaac.Spawn(EntityType.ENTITY_BOMB, player:GetBombVariant(TearFlags.TEAR_NORMAL, false), 0, t.Position - t.Velocity, Vector.Zero, player):ToBomb()
+        b.ExplosionDamage = player.Damage
+        b.Flags = player:GetBombFlags() b.Visible = false b:SetExplosionCountdown(0)
     end)
 end
 
@@ -65,7 +96,13 @@ end
 
 -- this is the instant action of setting a reloaded magazine
 function dryad:Reload(player)
+    local nb = self:GetBoltsPerTap(player)
+    local mag = 15 + (nb-1) * 5
+    mag = math.ceil(mag/nb)*nb -- always even multiple
     
+    local ad = self:ActiveData(player)
+    ad.boltsMax = mag
+    ad.bolts = mag
 end
 
 function dryad:HandleCrossbowSprite(player)
@@ -82,10 +119,15 @@ function dryad:HandleCrossbowSprite(player)
     end
     
     spr:SetTimeout(2)
-    --spr.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_NONE
     local fd = ad.controls.fireDir:Normalized()
     
     if not ad.crossbowDir then ad.crossbowDir = fd end
+    if ad.controls.fire then
+        --
+    elseif player.FireDelay < 0 then
+        fd = Vector.FromAngle(player:GetHeadDirection() * 90 + 180)
+    end
+    
     ad.crossbowDir:Lerp(fd, 0.5)
     ad.crossbowDir:Normalize()
     
@@ -103,6 +145,8 @@ end
 
 function dryad:InitActiveData(player, ad)
     ad.kickback = 0
+    
+    self:Reload(player)
     
     ad.crFiring = coroutine.create(self.FiringBehavior)
     coroutine.resume(ad.crFiring, self, player)
@@ -124,12 +168,11 @@ function dryad:OnUpdate(player)
     local c = self:QueryControls(player)
     
     -- TODO: reload key
+    if c.bombP then
+        self:Reload(player)
+    end
     
     coroutine.resume(ad.crFiring)
-    
-    if c.bombP then
-        player:AddBombs(1)
-    end
     
     self:HandleCrossbowSprite(player)
 end
@@ -166,8 +209,17 @@ function dryad:FiringBehavior(player)
         local nf, i = self:GetBoltsPerTap(player)
         
         for i = 1, nf do
+            if ad.bolts <= 0 then
+                sfx:Play(SoundEffect.SOUND_BUTTON_PRESS, 1, 2, false, 1)
+                sfx:Play(SoundEffect.SOUND_BONE_BOUNCE, 1, 2, false, 2.5)
+                break
+            end
+            ad.bolts = ad.bolts - 1
             ad.kickback = 5
             self:DoFireBolt_(player)
+            sfx:Stop(SoundEffect.SOUND_TEARS_FIRE)
+            sfx:Play(SoundEffect.SOUND_SWORD_SPIN, 0.42, 2, false, 2)
+            sfx:Play(SoundEffect.SOUND_GFUEL_GUNSHOT, 0.37, 2, false, 1.5)
             enterState "cooldown"
         end
     end
@@ -194,6 +246,15 @@ function dryad:FiringBehavior(player)
         
         coroutine.yield()
     end
+end
+
+function dryad:OnRender(player, offset)
+    local ad = self:ActiveData(player)
+    local str = ad.bolts .. " / " .. ad.boltsMax
+    local scale = 0.5
+    local tw = Isaac.GetTextWidth(str) * scale
+    local pos = Isaac.WorldToScreen(player.Position + Vector(0, -64))
+    Isaac.RenderScaledText(str, pos.X - tw/2, pos.Y, scale, scale, 1, 1, 1, 1)
 end
 
 function dryad:OnCheckInput(player, hook, btn)
