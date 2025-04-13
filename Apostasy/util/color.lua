@@ -22,4 +22,10 @@ function color.inverted(p)
     return c
 end
 
+function color.colorize(...)
+    local c = Color(1,1,1)
+    c:SetColorize(...)
+    return c
+end
+
 return color

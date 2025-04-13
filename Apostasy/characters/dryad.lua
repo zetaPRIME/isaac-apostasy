@@ -34,11 +34,13 @@ local function dps(player)
     return player.Damage * fr
 end
 
+local c255 = color.from255
 local shotTypes = {
     normal = {
         speedMult = 36,
         
         variant = TearVariant.NAIL,
+        color = color.colorize(.75, .5, .25, 1),
         hitboxScale = 2,
         spriteScale = 0.5,
         
@@ -50,9 +52,14 @@ local shotTypes = {
         end,
     },
     explosive = {
-        speedMult = 25,
+        speedMult = 27,
         
+        variant = TearVariant.MYSTERIOUS,--ICE,
+        color = color.colorize(1.5, 0.75, 0.2, 1),
         hitboxScale = 2.1,
+        --spriteScale = Vector(0.333, 0.25),
+        spriteScale = Vector(0.75, 0.42),
+        --spriteScale = 0.333,
         
         flags = TearFlags.TEAR_NORMAL,
         flagsRem = TearFlags.TEAR_SPECTRAL | TearFlags.TEAR_PIERCING | TearFlags.TEAR_HOMING,
@@ -91,9 +98,16 @@ do
         t:ChangeVariant(shotType.variant or normal.variant)
         sfx:Stop(SoundEffect.SOUND_TEARS_FIRE) -- no default sound, thanks
         
+        if shotType.color then t.Color = shotType.color end
+        
         -- we set our scales up manually to give a good hitbox size for the projectile speed
         t.Scale = shotType.hitboxScale or normal.hitboxScale
-        t.SpriteScale = Vector.One * (shotType.spriteScale or normal.spriteScale)
+        local scale = shotType.spriteScale or normal.spriteScale
+        if type(scale) == "number" then
+            t.SpriteScale = Vector.One * scale
+        else
+            t.SpriteScale = scale
+        end
         
         -- and now we figure out speed
         local maxSpeed = 48
@@ -209,6 +223,9 @@ local spellTypes = {
             
             local ad = self:ActiveData(player)
             ad.kickback = 15
+            
+            sfx:Play(SoundEffect.SOUND_FLAMETHROWER_END, 1, 2, false, 1.5)
+            sfx:Play(SoundEffect.SOUND_SWORD_SPIN, 0.666, 2, false, 1.5)
             
             local t = self:FireShot(player, shotTypes.explosive, self:GetFireDirection(player))
             local dmg = dps(player) * 3
