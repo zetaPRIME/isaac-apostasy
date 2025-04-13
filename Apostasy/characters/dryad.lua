@@ -326,11 +326,16 @@ function dryad:SelectSpell(player, spellType, silent)
     
     local rd = self:RunData(player)
     local ad = self:ActiveData(player)
+    local prev = ad.selectedSpell
     ad.selectedSpell = spellType
     rd.selectedSpell = spellType.id
     
     if not silent then
-        sfx:Play(SoundEffect.SOUND_BEEP, 1, 2, false, 1.25)
+        if spellType ~= prev then
+            sfx:Play(SoundEffect.SOUND_BEEP, 1, 2, false, 1.25)
+        else
+            sfx:Play(SoundEffect.SOUND_BEEP, 1, 2, false, 0.9)
+        end
     end
 end
 
@@ -449,9 +454,11 @@ function dryad:OnUpdate(player)
     -- handle reload key
     if c.bombP then
         ad.spellMenu = true
+        ad.shouldQueueReload = true
     elseif ad.spellMenu and not c.bomb then
         ad.spellMenu = false
-        ad.shouldReload = ad.bolts < ad.boltsMax
+        ad.shouldReload = ad.shouldQueueReload and ad.bolts < ad.boltsMax
+        player.FireDelay = 1
     end
     
     if ad.spellMenu then
@@ -466,8 +473,8 @@ function dryad:OnUpdate(player)
             self:SelectSpell(player, "fire")
         else sel = false end
         if sel then
-            ad.spellMenu = false
-            player.FireDelay = 5
+            ad.shouldQueueReload = false
+            --player.FireDelay = 5
         end
     end
     
@@ -593,7 +600,7 @@ function dryad:FiringBehavior(player)
         if player.FireDelay >= 0 then -- if externally set firedelay,
             enterState "cooldown" -- enter cooldown
             buffered = ad.controls.fire -- but only start charging if holding as it ends
-        else chkBuf() end
+        elseif not ad.spellMenu then chkBuf() end
         if buffered and not player:HasEntityFlags(EntityFlag.FLAG_INTERPOLATION_UPDATE) then
             buffered = false
             if not ad.controls.fire then
