@@ -398,7 +398,21 @@ function dryad:OnUpdate(player)
     end
     
     if ad.spellMenu then
-        --
+        local sel = true
+        if c.fireLeftP then
+            ad.selectedSpell = spellTypes.ice
+        elseif c.fireDownP then
+            
+        elseif c.fireUpP then
+            
+        elseif c.fireRightP then
+            ad.selectedSpell = spellTypes.fire
+        else sel = false end
+        if sel then
+            ad.spellMenu = false
+            sfx:Play(SoundEffect.SOUND_BEEP)
+            player.FireDelay = 5
+        end
     end
     
     coroutine.resume(ad.crFiring)
@@ -434,7 +448,7 @@ function dryad:FiringBehavior(player)
         ad.charge = 0
         
         while ad.controls.fire do
-            if ad.controls.bomb then -- abort
+            if ad.spellMenu or ad.shouldReload then -- abort
                 ad.shouldReload = false
                 ad.spellMenu = false
                 sfx:Play(SoundEffect.SOUND_SOUL_PICKUP, 1, 2, false, 0.666)
@@ -518,7 +532,10 @@ function dryad:FiringBehavior(player)
     
     while true do -- main loop
         -- waiting for fire input
-        chkBuf()
+        if player.FireDelay >= 0 then -- if externally set firedelay,
+            enterState "cooldown" -- enter cooldown
+            buffered = ad.controls.fire -- but only start charging if holding as it ends
+        else chkBuf() end
         if buffered and not player:HasEntityFlags(EntityFlag.FLAG_INTERPOLATION_UPDATE) then
             buffered = false
             if not ad.controls.fire then
@@ -530,6 +547,7 @@ function dryad:FiringBehavior(player)
         
         if ad.shouldReload then
             enterState "reloading"
+            buffered = ad.controls.fire
         end
         
         coroutine.yield()
@@ -579,10 +597,10 @@ do -- HUD block stuff
     manaBar:SetFrame("Default", 1)
     
     local barEnd = 5
-    local barWidth = 64
+    local barWidth = 73 -- matches full row of hearts
     local intW = barWidth - (barEnd*2)
     local function getBarRegion(from, to)
-        return Vector(barEnd + intW*from, 0), Vector(128-barWidth + barEnd + intW*(1-to), 0)
+        return Vector(barEnd + intW*from, 0), Vector(127-barWidth + barEnd + intW*(1-to), 0)
     end
     
     local colNone = Color(1,1,1)
@@ -598,7 +616,7 @@ do -- HUD block stuff
         local mana, manaMax = self:GetMana(player)
         local manaCost = self:GetSpellCost(player, ad.selectedSpell)
         
-        local mbp = pos + Vector(-9, -5)
+        local mbp = pos + Vector(-9, -5 - 3)
         manaBar.Color = colNone
         manaBar:RenderLayer(0, mbp)
         

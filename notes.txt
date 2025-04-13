@@ -88,11 +88,11 @@ Dryad {
     - TODO -
     
     respect ControlsEnabled, CanShoot if possible
-    fix some cases of not being able to hold to charge after either reloading or casting a spell
+    - fix some cases of not being able to hold to charge after either reloading or casting a spell
     
     don't show ammo counter over boss screen??
     
-    spell selection
+    / spell selection
     slower movement while reloading, so tactical decision when to do so
     higher base damage
     bit lower base fire rate
