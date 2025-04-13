@@ -97,6 +97,16 @@ Dryad {
     
     force head direction to stay while FireDelay >= 0
     
+    graphics {
+        select screen
+        co-op icon
+        death name
+        boss name
+        
+        main sheet
+        hair
+    }
+    
     Synergy notes {
         Birthright {
             extra 50 max mana

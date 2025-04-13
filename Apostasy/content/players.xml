@@ -32,10 +32,13 @@
     /-->
     
     <player name="Dryad"
-        _skin=""
+        skin="apostasy.dryad.png"
         _nameimage=""
         _portrait=""
         skinColor="0"
+        
+        costumeSuffix="apostasy.dryad"
+        costume="104"
         
         canShoot="false"
         hp="6"
