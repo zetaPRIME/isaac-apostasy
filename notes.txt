@@ -93,7 +93,7 @@ Dryad {
     don't show ammo counter over boss screen??
     
     / spell selection
-    slower movement while reloading, so tactical decision when to do so
+    - slower movement while reloading, so tactical decision when to do so
     higher base damage
     bit lower base fire rate
     

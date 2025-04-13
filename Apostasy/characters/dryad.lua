@@ -309,6 +309,20 @@ function dryad:CastSpell(player, spellType)
     if spellType.OnCast then spellType.OnCast(self, player, spellType) end
 end
 
+function dryad:SelectSpell(player, spellType, silent)
+    if type(spellType) == "string" then spellType = spellTypes[spellType] end
+    if not spellType then return end
+    
+    local rd = self:RunData(player)
+    local ad = self:ActiveData(player)
+    ad.selectedSpell = spellType
+    rd.selectedSpell = spellType.id
+    
+    if not silent then
+        sfx:Play(SoundEffect.SOUND_BEEP, 1, 2, false, 1.25)
+    end
+end
+
 function dryad:HandleCrossbowSprite(player)
     local ad = self:ActiveData(player)
     
@@ -346,17 +360,32 @@ function dryad:HandleCrossbowSprite(player)
     end
 end
 
+function dryad:EvaluateActionStats(player) -- queue function
+    local ad = self:ActiveData(player)
+    if not ad._queuedEval then
+        ad._queuedEval = true
+        Apostasy:QueueUpdateRoutine(function()
+            self:_EvaluateActionStats(player)
+            ad._queuedEval = nil
+        end)
+    end
+end
+function dryad:_EvaluateActionStats(player, inEval)
+    player:AddCacheFlags(CacheFlag.CACHE_SPEED)
+    player:EvaluateItems()
+end
+
 -- -- -- -- -- --- --- --- --- -- -- -- -- --
 -- -- -- -- -- callbacks below -- -- -- -- --
 -- -- -- -- -- --- --- --- --- -- -- -- -- --
 
 function dryad:InitActiveData(player, ad)
+    local rd = self:RunData(player)
     ad.kickback = 0
     
     self:Reload(player)
     
-    ad.selectedSpell = spellTypes.fire
-    --ad.selectedSpell = spellTypes.ice
+    self:SelectSpell(player, rd.selectedSpell or "wind", true)
     
     ad.crFiring = coroutine.create(self.FiringBehavior)
     coroutine.resume(ad.crFiring, self, player)
@@ -367,6 +396,23 @@ function dryad:InitRunData(player, rd, noHg)
         local _, manaMax = self:GetMana(player)
         rd.mana = manaMax
     end
+end
+
+function dryad:OnEvaluateCache(player, cacheFlag)
+    local ad = self:ActiveData(player)
+    
+    if cacheFlag == CacheFlag.CACHE_SPEED then
+        player.MoveSpeed = player.MoveSpeed + 0.1
+        if ad.firingState == "reloading" then
+            player.MoveSpeed = player.MoveSpeed * 0.5
+        end
+    elseif cacheFlag == CacheFlag.CACHE_DAMAGE then
+        --player.Damage = player.Damage + 1.5
+    elseif cacheFlag == CacheFlag.CACHE_FIREDELAY then
+        --player.MaxFireDelay = player.MaxFireDelay + 5
+    end
+    
+    print("dps:", dps(player))
 end
 
 function dryad:OnEffectUpdate(player)
@@ -400,17 +446,16 @@ function dryad:OnUpdate(player)
     if ad.spellMenu then
         local sel = true
         if c.fireLeftP then
-            ad.selectedSpell = spellTypes.ice
+            self:SelectSpell(player, "ice")
         elseif c.fireDownP then
             
         elseif c.fireUpP then
-            
+            self:SelectSpell(player, "wind")
         elseif c.fireRightP then
-            ad.selectedSpell = spellTypes.fire
+            self:SelectSpell(player, "fire")
         else sel = false end
         if sel then
             ad.spellMenu = false
-            sfx:Play(SoundEffect.SOUND_BEEP)
             player.FireDelay = 5
         end
     end
@@ -470,7 +515,7 @@ function dryad:FiringBehavior(player)
             if self:TryPayCosts(player, ad.selectedSpell) then
                 self:CastSpell(player, ad.selectedSpell)
                 enterState "cooldown"
-            else
+            else -- error sounds
                 sfx:Play(SoundEffect.SOUND_SOUL_PICKUP, 1, 2, false, 0.75)
                 sfx:Play(SoundEffect.SOUND_BONE_BOUNCE, 1, 2, false, 2.25)
             end
@@ -480,10 +525,11 @@ function dryad:FiringBehavior(player)
     end
     
     function states.reloading()
-        -- TODO speed penalty
         ad.shouldReload = false
         ad.chargeTime = self.reloadTime
         ad.charge = 0
+        
+        self:EvaluateActionStats(player)
         
         sfx:Play(SoundEffect.SOUND_ULTRA_GREED_SLOT_STOP, 0.75, 2, false, 1.5)
         
@@ -502,6 +548,7 @@ function dryad:FiringBehavior(player)
         ad.shouldReload = false
         sfx:Play(SoundEffect.SOUND_ULTRA_GREED_SLOT_STOP, 0.75, 2, false, 1.27)
         self:Reload(player)
+        self:EvaluateActionStats(player)
     end
     
     function states.fire()
