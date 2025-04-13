@@ -87,17 +87,10 @@ Dryad {
     
     - TODO -
     
-    - respect ControlsEnabled, CanShoot if possible
-    - fix some cases of not being able to hold to charge after either reloading or casting a spell
-    
-    - don't show ammo counter over boss screen
-    - fix mirror world
     slight sound when charging
     
     / spell selection
-    - don't immediately close spell menu on selection
-    
-    - fix accidental cast on room change
+    actual display for this
     
     mana refill pickup with a small vacuum radius
     make enemies drop them
@@ -106,6 +99,7 @@ Dryad {
     
     Synergy notes {
         Birthright {
+            extra 50 max mana
             empowers each of her spells
             sad bombs effect for fire?
         }

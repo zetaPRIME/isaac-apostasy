@@ -247,7 +247,7 @@ local spellTypes = {
     },
     
     fire = {
-        name = "Fireball",
+        name = "Fireblast",
         
         manaCost = 15,
         chargeTime = 20,
