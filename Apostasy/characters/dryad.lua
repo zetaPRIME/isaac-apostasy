@@ -226,7 +226,7 @@ local spellTypes = {
             --sfx:Play(SoundEffect.SOUND_SWORD_SPIN, 0.42, 2, false, 2)
             
             local nproj = 5 -- how many projectiles
-            local ang = 3 -- spread degrees
+            local ang = 4 -- spread degrees
             local fst = math.floor(nproj/2) * ang * -1
             
             local dmg = dps(player) * 2
