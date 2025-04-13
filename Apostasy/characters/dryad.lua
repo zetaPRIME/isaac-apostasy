@@ -126,6 +126,10 @@ do
         t.GridCollisionClass = EntityGridCollisionClass.GRIDCOLL_BULLET
         t:AddTearFlags(t.TearFlags) -- kick it
         
+        if t:HasTearFlags(TearFlags.TEAR_HOMING) then
+            t.FallingSpeed = t.FallingSpeed - 1.5 -- last a bit longer
+        end
+        
         if shotType.OnFired then shotType.OnFired(self, t) end
         Apostasy:QueueUpdateRoutine(trt, self, player, t, shotType)
                 
@@ -292,6 +296,9 @@ function dryad:HandleCrossbowSprite(player)
     elseif player.FireDelay < 0 then
         fd = Vector.FromAngle(player:GetHeadDirection() * 90 + 180)
     end
+    if ad.firingState == "reloading" then
+        fd = Vector(0, 1)
+    end
     
     ad.crossbowDir:Lerp(fd, 0.5)
     ad.crossbowDir:Normalize()
@@ -346,9 +353,16 @@ function dryad:OnUpdate(player)
     local _, maxMana = self:GetMana()
     rd.mana = math.min(rd.mana + self.manaRegenRate/60, maxMana)
     
-    -- TODO: reload key
+    -- handle reload key
     if c.bombP then
-        self:Reload(player)
+        ad.spellMenu = true
+    elseif ad.spellMenu and not c.bomb then
+        ad.spellMenu = false
+        ad.shouldReload = ad.bolts < ad.boltsMax
+    end
+    
+    if ad.spellMenu then
+        --
     end
     
     coroutine.resume(ad.crFiring)
@@ -356,6 +370,7 @@ function dryad:OnUpdate(player)
     self:HandleCrossbowSprite(player)
 end
 
+dryad.reloadTime = 45
 function dryad:FiringBehavior(player)
     local ad = self:ActiveData(player)
     coroutine.yield() -- end lead-in so we're in update
@@ -383,6 +398,12 @@ function dryad:FiringBehavior(player)
         ad.charge = 0
         
         while ad.controls.fire do
+            if ad.controls.bomb then -- abort
+                ad.shouldReload = false
+                ad.spellMenu = false
+                sfx:Play(SoundEffect.SOUND_SOUL_PICKUP, 1, 2, false, 0.666)
+                return
+            end
             waitInterp()
             local fc = ad.charge >= ad.chargeTime
             ad.charge = math.min(ad.charge + 1, ad.chargeTime)
@@ -408,10 +429,36 @@ function dryad:FiringBehavior(player)
         end
     end
     
+    function states.reloading()
+        -- TODO speed penalty
+        ad.shouldReload = false
+        ad.chargeTime = self.reloadTime
+        ad.charge = 0
+        
+        sfx:Play(SoundEffect.SOUND_ULTRA_GREED_SLOT_STOP, 0.75, 2, false, 1.5)
+        
+        local kb = 20
+        while ad.charge < ad.chargeTime do
+            coroutine.yield()
+            ad.kickback = kb
+            waitInterp()
+            if ad.charge % 2 == 0 then
+                sfx:Play(SoundEffect.SOUND_BUTTON_PRESS, 0.75, 2, false, 1.5 + (ad.charge / ad.chargeTime) * 1.1)
+            end
+            ad.charge = math.min(ad.charge + 1, ad.chargeTime)
+            ad.kickback = kb
+        end
+        
+        ad.shouldReload = false
+        sfx:Play(SoundEffect.SOUND_ULTRA_GREED_SLOT_STOP, 0.75, 2, false, 1.27)
+        self:Reload(player)
+    end
+    
     function states.fire()
         local nf, i = self:GetBoltsPerTap(player)
         
         for i = 1, nf do
+            if ad.shouldReload then return end -- abort shot if reload triggered
             if not self:TryPayCosts(player, 1) then
                 sfx:Play(SoundEffect.SOUND_BUTTON_PRESS, 1, 2, false, 1)
                 sfx:Play(SoundEffect.SOUND_BONE_BOUNCE, 1, 2, false, 2.5)
@@ -445,6 +492,10 @@ function dryad:FiringBehavior(player)
             end
         end
         
+        if ad.shouldReload then
+            enterState "reloading"
+        end
+        
         coroutine.yield()
     end
 end
@@ -475,13 +526,15 @@ function dryad:OnPostRender(player)
     end
     
     -- ammo counter
-    local str = ad.bolts .. "/" .. ad.boltsMax
-    local wstr = ad.boltsMax .. "/" .. ad.boltsMax
-    
-    local tw = fntSmall:GetStringWidth(wstr)
-    local lh = fntSmall:GetLineHeight()
-    local pos = Isaac.WorldToScreen(player.Position + Vector(0, -58))
-    fntSmall:DrawString(str, pos.X - tw/2, pos.Y - lh, KColor(1,1,1,1), tw)
+    if ad.firingState ~= "reloading" then
+        local str = ad.bolts .. "/" .. ad.boltsMax
+        local wstr = ad.boltsMax .. "/" .. ad.boltsMax
+        
+        local tw = fntSmall:GetStringWidth(wstr)
+        local lh = fntSmall:GetLineHeight()
+        local pos = Isaac.WorldToScreen(player.Position + Vector(0, -58))
+        fntSmall:DrawString(str, pos.X - tw/2, pos.Y - lh, KColor(1,1,1,1), tw)
+    end
 end
 
 do -- HUD block stuff
