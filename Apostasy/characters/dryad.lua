@@ -510,7 +510,7 @@ function dryad:FiringBehavior(player)
         ad.chargeTime = ct
         ad.charge = 0
         
-        while ad.controls.fire do
+        while ad.controls.fire or not player.ControlsEnabled do
             if ad.spellMenu or ad.shouldReload then -- abort
                 ad.shouldReload = false
                 ad.spellMenu = false

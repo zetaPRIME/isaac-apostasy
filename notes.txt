@@ -97,7 +97,7 @@ Dryad {
     / spell selection
     - don't immediately close spell menu on selection
     
-    fix accidental cast on room change???
+    - fix accidental cast on room change
     
     mana refill pickup with a small vacuum radius
     make enemies drop them
