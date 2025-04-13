@@ -654,7 +654,7 @@ function dryad:OnPostRender(player)
     end
     
     -- ammo counter
-    if ad.firingState ~= "reloading" then
+    if ad.firingState ~= "reloading" and not ad.spellMenu then
         local str = ad.bolts .. "/" .. ad.boltsMax
         local wstr = ad.boltsMax .. "/" .. ad.boltsMax
         
