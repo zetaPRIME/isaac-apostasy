@@ -633,6 +633,12 @@ local fntSmall = Font() fntSmall:Load("font/luaminioutlined.fnt")
 function dryad:OnPostRender(player)
     if HudHelper.ShouldHideHUD() then return end
     local ad = self:ActiveData(player)
+    local room = game:GetRoom()
+    local function WorldToScreen(vec)
+        if not room:IsMirrorWorld() then return room:WorldToScreenPosition(vec) end
+        local w = room:GetCenterPos().X * 2
+        return room:WorldToScreenPosition(Vector(w - vec.X, vec.Y))
+    end
     
     if ad.firingState == "charging" or ad.firingState == "reloading" then -- charge bar
         if not ad.chargeBar then
@@ -641,7 +647,7 @@ function dryad:OnPostRender(player)
         end
         
         if ad.crossbowSprite and ad.crossbowSprite:Exists() then
-            local pos = Isaac.WorldToScreen(ad.crossbowSprite.Position + Vector(0, -28))
+            local pos = WorldToScreen(ad.crossbowSprite.Position + Vector(0, -28))
             
             HudHelper.RenderChargeBar(ad.chargeBar, ad.charge, ad.chargeTime, pos)
         end
@@ -654,7 +660,7 @@ function dryad:OnPostRender(player)
         
         local tw = fntSmall:GetStringWidth(wstr)
         local lh = fntSmall:GetLineHeight()
-        local pos = Isaac.WorldToScreen(player.Position + Vector(0, -58))
+        local pos = WorldToScreen(player.Position + Vector(0, -58))
         fntSmall:DrawString(str, pos.X - tw/2, pos.Y - lh, KColor(1,1,1,1), tw)
     end
 end
