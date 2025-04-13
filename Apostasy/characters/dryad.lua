@@ -52,6 +52,8 @@ local shotTypes = {
         end,
     },
     shotgunIce = {
+        speedMult = 30,
+        
         variant = TearVariant.ICE,
         color = Color(1,1,1),
         spriteScale = Vector(0.5, 0.333),
@@ -207,19 +209,24 @@ end
 
 local spellTypes = {
     wind = {
-        
+        name = "Galeshot",
     },
     
     ice = {
-        name = "Shotgun Ice",
+        name = "Frostburst",
         
         manaCost = 30,
         boltCost = 3,
         chargeTime = 25,
         
         OnCast = function(self, player, spellType)
+            sfx:Play(SoundEffect.SOUND_GFUEL_GUNSHOT, 1, 2, false, 1.5)
+            sfx:Play(SoundEffect.SOUND_FREEZE_SHATTER, 0.75, 2, false, 0.75)
+            sfx:Play(SoundEffect.SOUND_FREEZE, 0.5, 2, false, 0.75)
+            --sfx:Play(SoundEffect.SOUND_SWORD_SPIN, 0.42, 2, false, 2)
+            
             local nproj = 5 -- how many projectiles
-            local ang = 2.5 -- spread degrees
+            local ang = 3 -- spread degrees
             local fst = math.floor(nproj/2) * ang * -1
             
             local dmg = dps(player) * 2
@@ -231,12 +238,16 @@ local spellTypes = {
                 local t = self:FireShot(player, shotTypes.shotgunIce, nfd)
                 t.CollisionDamage = pdmg
                 t.KnockbackMultiplier = t.KnockbackMultiplier / 2
+                
+                if rand.RollPercent(10, player) then
+                    t:AddTearFlags(TearFlags.TEAR_ICE)
+                end
             end
         end,
     },
     
     fire = {
-        name = "Explosive Shot",
+        name = "Fireball",
         
         manaCost = 15,
         chargeTime = 20,
@@ -407,12 +418,12 @@ function dryad:OnEvaluateCache(player, cacheFlag)
             player.MoveSpeed = player.MoveSpeed * 0.5
         end
     elseif cacheFlag == CacheFlag.CACHE_DAMAGE then
-        --player.Damage = player.Damage + 1.5
+        player.Damage = player.Damage + 2
     elseif cacheFlag == CacheFlag.CACHE_FIREDELAY then
-        --player.MaxFireDelay = player.MaxFireDelay + 5
+        player.MaxFireDelay = player.MaxFireDelay + 4
     end
     
-    print("dps:", dps(player))
+    --print("dps:", dps(player))
 end
 
 function dryad:OnEffectUpdate(player)

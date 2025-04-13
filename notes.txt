@@ -91,16 +91,28 @@ Dryad {
     - fix some cases of not being able to hold to charge after either reloading or casting a spell
     
     don't show ammo counter over boss screen??
+    fix mirror world
+    slight sound when charging
     
     / spell selection
     - slower movement while reloading, so tactical decision when to do so
-    higher base damage
-    bit lower base fire rate
+    - higher base damage
+    - bit lower base fire rate
     
     mana refill pickup with a small vacuum radius
     make enemies drop them
     
     force head direction to stay while FireDelay >= 0
+    
+    Synergy notes {
+        Birthright {
+            empowers each of her spells
+            sad bombs effect for fire?
+        }
+        
+        Epiphora does nothing useful for normal shot, though does add an "overcharge" effect to spells... hmm.
+        Camo Undies actually goes incredibly hard?
+    }
 }
 
 Alchemist? {
