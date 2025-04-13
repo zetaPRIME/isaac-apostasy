@@ -90,7 +90,7 @@ Dryad {
     - respect ControlsEnabled, CanShoot if possible
     - fix some cases of not being able to hold to charge after either reloading or casting a spell
     
-    don't show ammo counter over boss screen??
+    - don't show ammo counter over boss screen
     fix mirror world
     slight sound when charging
     

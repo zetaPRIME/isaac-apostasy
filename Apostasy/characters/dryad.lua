@@ -631,6 +631,7 @@ local fntNum = Font() fntNum:Load("font/pftempestasevencondensed.fnt")
 local fntSmall = Font() fntSmall:Load("font/luaminioutlined.fnt")
 
 function dryad:OnPostRender(player)
+    if HudHelper.ShouldHideHUD() then return end
     local ad = self:ActiveData(player)
     
     if ad.firingState == "charging" or ad.firingState == "reloading" then -- charge bar
