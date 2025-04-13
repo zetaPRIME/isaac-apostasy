@@ -3,7 +3,7 @@
         skin="apostasy.seeker.png"
         nameimage="apostasy.seeker.name.png"
         portrait="apostasy.seeker.portrait.png"
-        skinColor="1"
+        skinColor="0"
         
         birthright="I don't know yet"
         trinket="38"
@@ -35,7 +35,7 @@
         skin="apostasy.dryad.png"
         _nameimage=""
         _portrait=""
-        skinColor="0"
+        skinColor="-1"
         
         costumeSuffix="apostasy.dryad"
         costume="104"
