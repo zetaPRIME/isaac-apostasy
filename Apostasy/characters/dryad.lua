@@ -600,7 +600,9 @@ function dryad:FiringBehavior(player)
         if player.FireDelay >= 0 then -- if externally set firedelay,
             enterState "cooldown" -- enter cooldown
             buffered = ad.controls.fire -- but only start charging if holding as it ends
-        elseif not ad.spellMenu then chkBuf() end
+        elseif not ad.spellMenu and not ad.controls.map then
+            chkBuf()
+        end
         if buffered and not player:HasEntityFlags(EntityFlag.FLAG_INTERPOLATION_UPDATE) then
             buffered = false
             if not ad.controls.fire then

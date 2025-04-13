@@ -273,11 +273,15 @@ do -- encapsulate
         item = ButtonAction.ACTION_ITEM,
         pocket = ButtonAction.ACTION_PILLCARD,
         drop = ButtonAction.ACTION_DROP,
+        
+        map = ButtonAction.ACTION_MAP,
     }
     
-    function Character:QueryControls(player)
+    function Character:QueryControls(player, forceEnable)
         local ad = self:ActiveData(player)
         local cid = player.ControllerIndex
+        
+        local enabled = player.ControlsEnabled or forceEnable
         
         ad.controlsPrev = ad.controls or { }
         ad.controls = { }
@@ -285,7 +289,7 @@ do -- encapsulate
         
         for k,v in pairs(buttons) do -- handle button queries
             if v then -- button action specified
-                c[k] = Input.IsActionPressed(v, cid)
+                c[k] = enabled and Input.IsActionPressed(v, cid)
             end
         end
         
@@ -295,7 +299,7 @@ do -- encapsulate
         
         local fd = player:GetShootingInput()
         if Options.MouseControl and player.Index == 0 then -- TODO handle subplayer??
-            local mb = Input.IsMouseBtnPressed(0)
+            local mb = enabled and Input.IsMouseBtnPressed(0)
             c.fireMouse = mb
             
             if mb then -- and now we need to figure out fire direction
