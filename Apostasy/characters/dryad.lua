@@ -51,6 +51,15 @@ local shotTypes = {
             
         end,
     },
+    shotgunIce = {
+        variant = TearVariant.ICE,
+        color = Color(1,1,1),
+        spriteScale = Vector(0.5, 0.333),
+        
+        OnFired = function(self, tear)
+            
+        end,
+    },
     explosive = {
         speedMult = 27,
         
@@ -74,7 +83,7 @@ local shotTypes = {
             b.ExplosionDamage = tear.CollisionDamage
             b.Flags = player:GetBombFlags() b.Visible = false b:SetExplosionCountdown(0)
         end,
-    }
+    },
 } for k,v in pairs(shotTypes) do v.id = k end
 
 do
@@ -111,7 +120,8 @@ do
         
         -- and now we figure out speed
         local maxSpeed = 48
-        local sv = dir * (player.ShotSpeed * shotType.speedMult)
+        local sm = shotType.speedMult or normal.speedMult
+        local sv = dir * (player.ShotSpeed * sm)
         sv = sv + (player.Velocity * 0.75)
         if sv:Length() > maxSpeed then sv = sv:Normalized() * maxSpeed end
         t:AddVelocity(sv)
@@ -200,7 +210,34 @@ local spellTypes = {
         
     },
     
+    ice = {
+        name = "Shotgun Ice",
+        
+        manaCost = 30,
+        boltCost = 3,
+        chargeTime = 25,
+        
+        OnCast = function(self, player, spellType)
+            local nproj = 5 -- how many projectiles
+            local ang = 2.5 -- spread degrees
+            local fst = math.floor(nproj/2) * ang * -1
+            
+            local dmg = dps(player) * 2
+            local pdmg = dmg/nproj
+            
+            local fd = self:GetFireDirection(player)
+            local i for i = 1, nproj do
+                local nfd = fd:Rotated(fst + (i-1) * ang)
+                local t = self:FireShot(player, shotTypes.shotgunIce, nfd)
+                t.CollisionDamage = pdmg
+                t.KnockbackMultiplier = t.KnockbackMultiplier / 2
+            end
+        end,
+    },
+    
     fire = {
+        name = "Explosive Shot",
+        
         manaCost = 15,
         chargeTime = 20,
         
@@ -242,9 +279,7 @@ local spellTypes = {
         end,
     },
     
-    wood = {
-        
-    },
+    --
 } for k, v in pairs(spellTypes) do v.id = k end
 
 function dryad:GetSpellCost(player, spellType)
@@ -321,6 +356,7 @@ function dryad:InitActiveData(player, ad)
     self:Reload(player)
     
     ad.selectedSpell = spellTypes.fire
+    --ad.selectedSpell = spellTypes.ice
     
     ad.crFiring = coroutine.create(self.FiringBehavior)
     coroutine.resume(ad.crFiring, self, player)
@@ -574,5 +610,9 @@ do -- HUD block stuff
             manaBar.Color = colInsufficient
             manaBar:RenderLayer(1, mbp, getBarRegion(0, mana / manaMax))
         end
+        
+        -- current spell info
+        local tp = mbp + Vector(5, 12)
+        fntSmall:DrawString(ad.selectedSpell.name or ad.selectedSpell.id, tp.X, tp.Y, KColor(1,1,1,1))
     end
 end

@@ -61,28 +61,13 @@ The Seeker ~lost soul, guiding light~ {
     perhaps make this the blindfolded one
 }
 
-Dryad? {
+Dryad {
     a mix of nature, elementalist and archer themes
+    similar vines to Terraria dryad
+    braided teal hair
     
     fights using a repeating crossbow
-    near-hitscan "tears" sort of deal
-    will need to figure out how to make the "hitscan" deal happen; normal tears aren't continuous collision
     
-    Sheriff-style ammo counter but with manual reload (tap bomb key)
-    slower movement while reloading, so tactical decision when to do so
-    15 bolts per reload?
-    
-    if tear delay is too low (soy milk levels), a single buffer does three shots
-    
-    magic meter! refills drop from enemies, with a small vacuum radius
-    hold reload key and hit a fire direction to select from up to four spells
-    cast spells through your bolts by holding the button to charge up and release
-    incomplete charge just fires a bolt
-    
-    firing is blocked after a shot by tear delay value
-    another bolt can be buffered at any time, but charging takes priority
-    
-    !!! cancel charge by tap+release (queueReload)
     
     spells {
         wind {
@@ -92,29 +77,30 @@ Dryad? {
         fire {
             single explosive shot, using player's normal bomb explosion
             neither piercing nor spectral
-            figure out what to do with bombs
+            uses a bomb if present to save mana, charge faster and do more damage
         }
-        water?
-        earth/rock? {
-            shotgun blast?
+        ice {
+            shotgun blast with a chance per projectile to be freezing
+            probably costs a decent amount of mana (30?)
         }
     }
     
-    magic meter is "cherenkov blue"
-    also displays the cost of the selected spell
+    - TODO -
     
-    spawn and take control of a blue flame effect (1000.10.0) to represent the crossbow
+    respect ControlsEnabled, CanShoot if possible
+    fix some cases of not being able to hold to charge after either reloading or casting a spell
     
+    don't show ammo counter over boss screen??
     
-    local p = Isaac.GetPlayer()
-    local b = Isaac.Spawn(EntityType.ENTITY_BOMB, p:GetBombVariant(TearFlags.TEAR_NORMAL, false), 0, p.Position - Vector(0, 96), Vector(0, -20), p):ToBomb()
-    b.Flags = p:GetBombFlags() b.Visible = false b:SetExplosionCountdown(0)
-    ...or could use Game():BombExplosionEffects(...)
+    spell selection
+    slower movement while reloading, so tactical decision when to do so
+    higher base damage
+    bit lower base fire rate
     
-    invisible tech laser works?
-    or just. cap velocity at 32
+    mana refill pickup with a small vacuum radius
+    make enemies drop them
     
-    TODO: force head direction to stay while FireDelay >= 0
+    force head direction to stay while FireDelay >= 0
 }
 
 Alchemist? {
