@@ -7,7 +7,7 @@ local function rawFloatRoll()
     return (Random() % 10000) / 10000
 end
 
-function random.RollPercent(chance, luck)
+function random.rollPercent(chance, luck)
     if type(luck) == "userdata" then luck = luck.Luck end
     
     local roll = rawPercentRoll()

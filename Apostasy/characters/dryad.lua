@@ -244,7 +244,7 @@ local spellTypes = {
                 t.CollisionDamage = pdmg
                 t.KnockbackMultiplier = t.KnockbackMultiplier / 2
                 
-                if rand.RollPercent(10, player) then
+                if rand.rollPercent(10, player) then
                     t:AddTearFlags(TearFlags.TEAR_ICE)
                 end
             end

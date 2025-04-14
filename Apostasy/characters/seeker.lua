@@ -125,7 +125,7 @@ local wispTypes = { } do
             if EID then name = EID:getObjectName(5, 100, wisp.SubType)
             elseif REPENTOGON then name = Isaac.GetString("Items", itm.Name) end
             local player = wisp.Player
-            if rand.RollPercent(itemKeepChance[itm.Quality], player) then -- scaling chance per quality to keep
+            if rand.rollPercent(itemKeepChance[itm.Quality], player) then -- scaling chance per quality to keep
                 player:AddCollectible(wisp.SubType, 0, false) -- give it permanently but without one-time benefits
                 if name then print ("Rolled to keep " .. name .. " (quality " .. itm.Quality .. ")!") end -- DEBUG
                 Apostasy:QueueUpdateRoutine(function() -- slight wait, then echoing chime
