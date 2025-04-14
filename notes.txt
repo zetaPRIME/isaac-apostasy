@@ -100,6 +100,8 @@ Dryad {
     
     force head direction to stay while FireDelay >= 0
     
+    make shots take range into account
+    
     graphics {
         select screen
         co-op icon

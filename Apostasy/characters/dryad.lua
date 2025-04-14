@@ -651,11 +651,13 @@ function dryad:OnPostRender(player)
     if HudHelper.ShouldHideHUD() then return end
     local ad = self:ActiveData(player)
     local room = game:GetRoom()
-    local function WorldToScreen(vec)
-        if not room:IsMirrorWorld() then return room:WorldToScreenPosition(vec) end
+    
+    local WorldToScreen
+    if not room:IsMirrorWorld() then WorldToScreen = Isaac.WorldToScreen
+    else WorldToScreen = function(vec)
         local w = room:GetCenterPos().X * 2
         return room:WorldToScreenPosition(Vector(w - vec.X, vec.Y))
-    end
+    end end
     
     if ad.firingState == "charging" or ad.firingState == "reloading" then -- charge bar
         if not ad.chargeBar then
