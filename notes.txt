@@ -98,7 +98,9 @@ Dryad {
     force head direction to stay while FireDelay >= 0
     
     make shots take range into account
-    ! MULTISHOT DPS CALC
+    / MULTISHOT DPS CALC
+    ^ need to do an estimation for non-Repentogon
+    ^ also hook up normal fire
     
     graphics {
         select screen
