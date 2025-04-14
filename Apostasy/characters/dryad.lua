@@ -519,7 +519,7 @@ function dryad:FiringBehavior(player)
         ad.chargeTime = ct
         ad.charge = 0
         
-        sfx:Play(SoundEffect.SOUND_ULTRA_GREED_SLOT_STOP, 0.666, 2, false, 1.75)
+        sfx:Play(SoundEffect.SOUND_ULTRA_GREED_SLOT_STOP, 0.666, 2, false, 2)
         
         while ad.controls.fire or not player.ControlsEnabled do
             if ad.spellMenu or ad.shouldReload then -- abort
@@ -535,8 +535,13 @@ function dryad:FiringBehavior(player)
             local kb = 5 * (ad.charge / ad.chargeTime)
             ad.kickback = kb
             
-            if ad.charge >= ad.chargeTime and not fc then
-                sfx:Play(SoundEffect.SOUND_SOUL_PICKUP)
+            if ad.charge >= ad.chargeTime then
+                if not fc then
+                    sfx:Play(SoundEffect.SOUND_ULTRA_GREED_SLOT_STOP, 0.35, 2, false, 2.25)
+                    sfx:Play(SoundEffect.SOUND_SOUL_PICKUP, 1.1)
+                end
+            elseif ad.charge % 3 == 0 then
+                sfx:Play(SoundEffect.SOUND_BUTTON_PRESS, 0.5, 2, false, 2.0 + (ad.charge / ad.chargeTime) * 1.75)
             end
             
             if ad.selectedSpell.WhileCharging then
