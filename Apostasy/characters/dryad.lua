@@ -693,7 +693,7 @@ do -- HUD block stuff
     local barWidth = 73 -- matches full row of hearts
     local intW = barWidth - (barEnd*2)
     local function getBarRegion(from, to)
-        return Vector(barEnd + intW*from, 0), Vector(127-barWidth + barEnd + intW*(1-to), 0)
+        return Vector(barEnd + intW*from, 0), Vector(128-barWidth + barEnd + intW*(1-to), 0)
     end
     
     local colNone = Color(1,1,1)
