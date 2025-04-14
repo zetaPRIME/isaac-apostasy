@@ -14,8 +14,8 @@ function random.RollPercent(chance, luck)
     -- luck weights for advantage/disadvantage in range -10 .. 10
     if luck and math.abs(luck*10) > rawPercentRoll() then
         local roll2 = rawPercentRoll()
-        if luck > 0 then roll = math.max(roll, roll2)
-        else roll = math.min(roll, roll2) end
+        if luck > 0 then roll = math.min(roll, roll2)
+        else roll = math.max(roll, roll2) end
     end
     
     if not chance then return roll end
