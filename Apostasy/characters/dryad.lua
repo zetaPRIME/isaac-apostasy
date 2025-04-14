@@ -701,7 +701,7 @@ do -- HUD block stuff
     local colInsufficient = Color(1,1,1)
     colInsufficient:SetColorize(1.5, 0.25, 0.25, 1)
     
-    dryad.HUDBlockHeight = 32
+    dryad.HUDBlockHeight = 22
     function dryad:RenderHUDBlock(player, idx, layout, pos)
         --fntNum:DrawString("Hello world!", pos.X, pos.Y, KColor(1,1,1,1))
         local ad = self:ActiveData(player)
@@ -723,7 +723,7 @@ do -- HUD block stuff
         end
         
         -- current spell info
-        local tp = mbp + Vector(5, 12)
+        local tp = mbp + Vector(5, 15)
         fntSmall:DrawString(ad.selectedSpell.name or ad.selectedSpell.id, tp.X, tp.Y, KColor(1,1,1,1))
     end
 end
