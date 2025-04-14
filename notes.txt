@@ -88,10 +88,10 @@ Dryad {
     - TODO -
     
     ! implement Galeshot next
-    increase Frostburst cost slightly
-    switch Frostburst fan angle calc to total widest spread
+    - increase Frostburst cost slightly
+    - switch Frostburst fan angle calc to total widest spread
     
-    slight sound when charging
+    - slight sound when charging
     
     / spell selection
     actual display for this

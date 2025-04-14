@@ -215,7 +215,7 @@ local spellTypes = {
     ice = {
         name = "Frostburst",
         
-        manaCost = 30,
+        manaCost = 35,
         boltCost = 3,
         chargeTime = 25,
         
@@ -232,15 +232,14 @@ local spellTypes = {
             --sfx:Play(SoundEffect.SOUND_SWORD_SPIN, 0.42, 2, false, 2)
             
             local nproj = 5 -- how many projectiles
-            local ang = 4 -- spread degrees
-            local fst = math.floor(nproj/2) * ang * -1
+            local fan = 10 -- total spread degrees
             
             local dmg = math.max(dps(player), ad.dpsCache) * 2
             local pdmg = dmg/nproj
             
             local fd = self:GetFireDirection(player)
             local i for i = 1, nproj do
-                local nfd = fd:Rotated(fst + (i-1) * ang)
+                local nfd = fd:Rotated(fan * ((i-1)/(nproj-1) - 0.5))
                 local t = self:FireShot(player, shotTypes.shotgunIce, nfd)
                 t.CollisionDamage = pdmg
                 t.KnockbackMultiplier = t.KnockbackMultiplier / 2
@@ -260,7 +259,7 @@ local spellTypes = {
         
         goldenManaCost = 5, -- spammable!
         
-        noBombManaCost = 40,
+        noBombManaCost = 50,
         noBombChargeTime = 45,
         
         -- different properties if no bombs
@@ -520,6 +519,8 @@ function dryad:FiringBehavior(player)
         ad.chargeTime = ct
         ad.charge = 0
         
+        sfx:Play(SoundEffect.SOUND_ULTRA_GREED_SLOT_STOP, 0.666, 2, false, 1.75)
+        
         while ad.controls.fire or not player.ControlsEnabled do
             if ad.spellMenu or ad.shouldReload then -- abort
                 ad.shouldReload = false
@@ -692,8 +693,9 @@ do -- HUD block stuff
     local barEnd = 5
     local barWidth = 73 -- matches full row of hearts
     local intW = barWidth - (barEnd*2)
+    local function rnd(n) return math.floor(n*2 + 0.5)/2 end
     local function getBarRegion(from, to)
-        return Vector(barEnd + intW*from, 0), Vector(128-barWidth + barEnd + intW*(1-to), 0)
+        return Vector(rnd(barEnd + intW*from), 0), Vector(128 - barEnd - rnd(intW*to), 0)
     end
     
     local colNone = Color(1,1,1)
