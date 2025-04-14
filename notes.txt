@@ -87,6 +87,9 @@ Dryad {
     
     - TODO -
     
+    ! implement Galeshot next
+    increase Frostburst cost slightly
+    
     slight sound when charging
     
     / spell selection
