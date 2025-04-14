@@ -19,6 +19,7 @@ do
         -- TODO: figure out conjoined??
         -- we could take keeper/keeperb into account but we're not using this in a place where that could be relevant yet
         -- (maybe once active items)
+        -- they seem to just add 1 and 2 shots respectively unless 20/20 is involved
         
         _baseMs = function(player)
             local ms = 1
