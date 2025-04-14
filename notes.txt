@@ -89,6 +89,7 @@ Dryad {
     
     ! implement Galeshot next
     increase Frostburst cost slightly
+    switch Frostburst fan angle calc to total widest spread
     
     slight sound when charging
     
@@ -101,6 +102,7 @@ Dryad {
     force head direction to stay while FireDelay >= 0
     
     make shots take range into account
+    ! MULTISHOT DPS CALC
     
     graphics {
         select screen
@@ -123,6 +125,9 @@ Dryad {
         ^ it's not super great though, even post-hackery
         
         Camo Undies actually goes incredibly hard?
+        
+        Monstro's Lung is a brick
+        multishot things generally don't work much?
     }
 }
 

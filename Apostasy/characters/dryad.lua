@@ -359,7 +359,7 @@ function dryad:HandleCrossbowSprite(player)
         ad.crossbowSprite = spr
         
         spr.SpriteScale = Vector(0.5, 0.5)
-        spr.DepthOffset = 0
+        spr.DepthOffset = 3
     end
     
     spr:SetTimeout(2)
