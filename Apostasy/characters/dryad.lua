@@ -599,8 +599,20 @@ function dryad:FiringBehavior(player)
                 sfx:Play(SoundEffect.SOUND_BONE_BOUNCE, 1, 2, false, 2.5)
                 break
             end
+            
+            local ms = util.playerMultishot(player)
+            --if ms > 1 then print("firing",ms,"tears") end
+            local spread = math.min(math.max(0, ms-1) * 0.5, 5)
+            local j for j = 1, ms do
+                local ra = (Random() % 200 / 100) - 1
+                local t = self:FireShot(player, shotTypes.normal, self:GetFireDirection(player):Rotated(ra * spread))
+                if ms > 4 then -- velocity spread
+                    local rv = Random() % 100 / 100
+                    t.Velocity = t.Velocity * (1.0 - rv * 0.25)
+                end
+            end
+            
             ad.kickback = 5
-            self:FireShot(player, shotTypes.normal, self:GetFireDirection(player))
             sfx:Play(SoundEffect.SOUND_SWORD_SPIN, 0.42, 2, false, 2)
             sfx:Play(SoundEffect.SOUND_GFUEL_GUNSHOT, 0.37, 2, false, 1.5)
             enterState "cooldown"

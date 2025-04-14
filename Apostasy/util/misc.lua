@@ -7,12 +7,26 @@ function util.playerDPS(player, useMultishot)
     return player.Damage * fr * ms
 end
 
-if REPENTOGON then
-    function util.playerMultishot(player)
-        return player:GetMultiShotParams(WeaponType.WEAPON_TEARS):GetNumTears()
+do
+    local _baseMs
+    
+    if REPENTOGON then
+        _baseMs = function(player)
+            local wt = WeaponType.WEAPON_TEARS
+            return player:GetMultiShotParams(wt):GetNumTears()
+        end
+    else
+        _baseMs = function() return 1 end -- TODO: non dummy
     end
-else
-    function util.playerMultishot() return 1 end -- TODO: non dummy
+    
+    function util.playerMultishot(player)
+        local ms = _baseMs(player)
+        if player:HasWeaponType(WeaponType.WEAPON_MONSTROS_LUNGS) then
+            ms = 14 + math.floor((ms-1) * 2.4) -- lung calc is done afterwards
+        end
+        return ms
+    end
 end
+
 
 return util

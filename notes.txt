@@ -100,7 +100,10 @@ Dryad {
     make shots take range into account
     / MULTISHOT DPS CALC
     ^ need to do an estimation for non-Repentogon
-    ^ also hook up normal fire
+    - also hook up normal fire
+    
+    manual tear delay value after spell cast
+    variable reload time depending on tear delay
     
     graphics {
         select screen
