@@ -4,6 +4,7 @@ local Apostasy = _ENV["::Apostasy"]
 local tableUtil = Apostasy:require "util.table"
 local color = Apostasy:require "util.color"
 local rand = Apostasy:require "util.random"
+local util = Apostasy:require "util.misc"
 
 local itemConfig = Isaac.GetItemConfig()
 local game = Game()
@@ -27,11 +28,6 @@ end
 
 local function roundVec(vec)
     return Vector(math.floor(vec.X + 0.5), math.floor(vec.Y + 0.5))
-end
-
-local function dps(player)
-    local fr = 30 / (player.MaxFireDelay + 1)
-    return player.Damage * fr
 end
 
 local c255 = color.from255
@@ -221,7 +217,7 @@ local spellTypes = {
         
         WhileCharging = function(self, player, spellType)
             local ad = self:ActiveData(player)
-            ad.dpsCache = dps(player) -- cache dps value for Epiphora-like effects
+            ad.dpsCache = util.playerDPS(player) -- cache dps value for Epiphora-like effects
         end,
         OnCast = function(self, player, spellType)
             local ad = self:ActiveData(player)
@@ -234,8 +230,8 @@ local spellTypes = {
             local nproj = 5 -- how many projectiles
             local fan = 10 -- total spread degrees
             
-            local dmg = math.max(dps(player), ad.dpsCache) * 2
-            local pdmg = dmg/nproj
+            local dmg = math.max(util.playerDPS(player), ad.dpsCache) * 2
+            local pdmg = dmg/nproj * util.playerMultishot(player)
             
             local fd = self:GetFireDirection(player)
             local i for i = 1, nproj do
@@ -275,7 +271,7 @@ local spellTypes = {
         
         WhileCharging = function(self, player, spellType)
             local ad = self:ActiveData(player)
-            ad.dpsCache = dps(player) -- cache dps value for Epiphora-like effects
+            ad.dpsCache = util.playerDPS(player) -- cache dps value for Epiphora-like effects
         end,
         OnCast = function(self, player, spellType)
             local goldenBomb = player:HasGoldenBomb()
@@ -289,7 +285,8 @@ local spellTypes = {
             sfx:Play(SoundEffect.SOUND_SWORD_SPIN, 0.666, 2, false, 1.5)
             
             local t = self:FireShot(player, shotTypes.explosive, self:GetFireDirection(player))
-            local dmg = math.max(dps(player), ad.dpsCache) * 3
+            local dmg = math.max(util.playerDPS(player), ad.dpsCache) * 3
+            dmg = dmg * util.playerMultishot(player)
             if withBomb then
                 local bombDmg = 100
                 if goldenBomb then bombDmg = 150 end
@@ -437,7 +434,7 @@ function dryad:OnEvaluateCache(player, cacheFlag)
         player.MaxFireDelay = player.MaxFireDelay + 4
     end
     
-    --print("dps:", dps(player))
+    --print("dps:", util.playerDPS(player))
 end
 
 function dryad:OnEffectUpdate(player)
