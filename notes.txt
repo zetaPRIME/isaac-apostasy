@@ -98,8 +98,8 @@ Dryad {
     force head direction to stay while FireDelay >= 0
     
     make shots take range into account
-    / MULTISHOT DPS CALC
-    ^ need to do an estimation for non-Repentogon
+    - MULTISHOT DPS CALC
+    - need to do an estimation for non-Repentogon
     - also hook up normal fire
     
     manual tear delay value after spell cast
@@ -127,8 +127,7 @@ Dryad {
         
         Camo Undies actually goes incredibly hard?
         
-        Monstro's Lung is a brick
-        multishot things generally don't work much?
+        figure out what to do for Cursed Eye
     }
 }
 

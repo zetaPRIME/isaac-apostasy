@@ -602,9 +602,13 @@ function dryad:FiringBehavior(player)
             
             local ms = util.playerMultishot(player)
             --if ms > 1 then print("firing",ms,"tears") end
-            local spread = math.min(math.max(0, ms-1) * 0.5, 5)
+            local spread = math.min(math.max(0, ms-1) * 1.5, 5)
             local j for j = 1, ms do
                 local ra = (Random() % 200 / 100) - 1
+                if ms > 1 and ms <= 4 then -- even spread if 1-4
+                    ra = (j-1)/(ms-1) * 2 - 1
+                    print("angle",j,"is",ra)
+                end
                 local t = self:FireShot(player, shotTypes.normal, self:GetFireDirection(player):Rotated(ra * spread))
                 if ms > 4 then -- velocity spread
                     local rv = Random() % 100 / 100

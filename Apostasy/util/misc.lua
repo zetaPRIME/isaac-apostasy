@@ -16,9 +16,43 @@ do
             return player:GetMultiShotParams(wt):GetNumTears()
         end
     else
-        _baseMs = function() return 1 end -- TODO: non dummy
+        -- TODO: figure out conjoined??
+        -- we could take keeper/keeperb into account but we're not using this in a place where that could be relevant yet
+        -- (maybe once active items)
+        
+        _baseMs = function(player)
+            local ms = 1
+            
+            local tt = player:GetCollectibleNum(CollectibleType.COLLECTIBLE_20_20)
+            local eye = player:GetCollectibleNum(CollectibleType.COLLECTIBLE_INNER_EYE)
+            local spider = player:GetCollectibleNum(CollectibleType.COLLECTIBLE_MUTANT_SPIDER)
+            local wiz = player:GetCollectibleNum(CollectibleType.COLLECTIBLE_THE_WIZ)
+            
+            -- single-copy behaviors
+            if eye > 0 and spider > 0 then
+                ms = 5
+            elseif spider > 0 then
+                ms = 4
+                if wiz > 0 then ms = ms + 1 end -- first wiz adds two if you don't have eye
+            elseif eye > 0 then
+                ms = 3
+            elseif tt > 0 then
+                -- single copy of 20/20 doesn't affect inner eye *or* mutant spider, alone or together
+                ms = 2
+                if wiz > 0 then ms = ms + 1 end -- first wiz adds two
+            end
+            
+            ms = ms -- account for additional copies
+                + math.max(0, wiz) -- ...and also the first copy of Wiz
+                + math.max(0, tt-1)
+                + math.max(0, eye-1)
+                + math.max(0, spider-1) * 2
+            
+            return math.min(ms, 16)
+        end
     end
     
+    -- monstro's lung effect is common to both routes
     function util.playerMultishot(player)
         local ms = _baseMs(player)
         if player:HasWeaponType(WeaponType.WEAPON_MONSTROS_LUNGS) then
