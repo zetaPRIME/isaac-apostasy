@@ -118,6 +118,9 @@ Dryad {
         }
         
         Epiphora does nothing useful for normal shot, though does add an "overcharge" effect to spells... hmm.
+        ^ doesn't actually work; tears stat gets reset *right* before cast >:|
+        - probably override the behavior somewhat via a while-charging hook?
+        
         Camo Undies actually goes incredibly hard?
     }
 }

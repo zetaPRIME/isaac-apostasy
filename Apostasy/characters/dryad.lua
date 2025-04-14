@@ -219,7 +219,13 @@ local spellTypes = {
         boltCost = 3,
         chargeTime = 25,
         
+        WhileCharging = function(self, player, spellType)
+            local ad = self:ActiveData(player)
+            ad.dpsCache = dps(player) -- cache dps value for Epiphora-like effects
+        end,
         OnCast = function(self, player, spellType)
+            local ad = self:ActiveData(player)
+            
             sfx:Play(SoundEffect.SOUND_GFUEL_GUNSHOT, 1, 2, false, 1.5)
             sfx:Play(SoundEffect.SOUND_FREEZE_SHATTER, 0.75, 2, false, 0.75)
             sfx:Play(SoundEffect.SOUND_FREEZE, 0.5, 2, false, 0.75)
@@ -229,7 +235,7 @@ local spellTypes = {
             local ang = 4 -- spread degrees
             local fst = math.floor(nproj/2) * ang * -1
             
-            local dmg = dps(player) * 2
+            local dmg = math.max(dps(player), ad.dpsCache) * 2
             local pdmg = dmg/nproj
             
             local fd = self:GetFireDirection(player)
@@ -268,6 +274,10 @@ local spellTypes = {
             return spellType.chargeTime
         end,
         
+        WhileCharging = function(self, player, spellType)
+            local ad = self:ActiveData(player)
+            ad.dpsCache = dps(player) -- cache dps value for Epiphora-like effects
+        end,
         OnCast = function(self, player, spellType)
             local goldenBomb = player:HasGoldenBomb()
             local withBomb = player:GetNumBombs() > 0 or goldenBomb
@@ -280,7 +290,7 @@ local spellTypes = {
             sfx:Play(SoundEffect.SOUND_SWORD_SPIN, 0.666, 2, false, 1.5)
             
             local t = self:FireShot(player, shotTypes.explosive, self:GetFireDirection(player))
-            local dmg = dps(player) * 3
+            local dmg = math.max(dps(player), ad.dpsCache) * 3
             if withBomb then
                 local bombDmg = 100
                 if goldenBomb then bombDmg = 150 end
@@ -520,11 +530,18 @@ function dryad:FiringBehavior(player)
             waitInterp()
             local fc = ad.charge >= ad.chargeTime
             ad.charge = math.min(ad.charge + 1, ad.chargeTime)
+            
             local kb = 5 * (ad.charge / ad.chargeTime)
             ad.kickback = kb
+            
             if ad.charge >= ad.chargeTime and not fc then
                 sfx:Play(SoundEffect.SOUND_SOUL_PICKUP)
             end
+            
+            if ad.selectedSpell.WhileCharging then
+                ad.selectedSpell.WhileCharging(self, player, ad.selectedSpell)
+            end
+            
             coroutine.yield()
             ad.kickback = kb
         end
