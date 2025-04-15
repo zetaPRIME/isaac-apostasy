@@ -91,6 +91,7 @@ Dryad {
     
     - probably switch bolts to saved data
     cancel reload on getting hit
+    REPENTOGON-ify her base stat changes
     
     / spell selection
     actual display for this

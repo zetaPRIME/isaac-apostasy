@@ -37,6 +37,9 @@ local shotTypes = {
         hitboxScale = 2,
         spriteScale = 0.5,
         
+        trailColor = Color(1, .875, .75, 0.666),
+        trailSize = 0.666,
+        
         flags = TearFlags.TEAR_NORMAL,
         flagsRem = TearFlags.TEAR_NORMAL,
         
@@ -65,6 +68,8 @@ local shotTypes = {
         spriteScale = Vector(0.75, 0.42),
         --spriteScale = 0.333,
         
+        trailSize = 1.5,
+        
         flags = TearFlags.TEAR_NORMAL,
         flagsRem = TearFlags.TEAR_SPECTRAL | TearFlags.TEAR_PIERCING | TearFlags.TEAR_HOMING,
         
@@ -82,10 +87,20 @@ local shotTypes = {
 } for k,v in pairs(shotTypes) do v.id = k end
 
 do
-    local function trt(self, player, tear, shotType)
+    local function trt(self, player, tear, shotType, trail)
+        if trail then
+            --trail.ParentOffset = tear.PositionOffset
+        end
         coroutine.yield()
         tear.Visible = true
+        if trail then
+            trail.Visible = true
+        end
         while not tear:IsDead() do
+            if trail then
+                trail.ParentOffset = tear.PositionOffset --+ Vector(0, -6.25)
+                trail:SetTimeout(10)
+            end
             coroutine.yield()
         end
         if not tear:Exists() then return end
@@ -135,9 +150,30 @@ do
             t.FallingSpeed = t.FallingSpeed - 1.5 -- last a bit longer
         end
         
-        if shotType.OnFired then util.lpcall(shotType.OnFired, self, t) end
-        Apostasy:QueueUpdateRoutine(trt, self, player, t, shotType)
-                
+        local tr
+        if not shotType.noTrail then
+            tr = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.SPRITE_TRAIL, 0, t.Position + t.PositionOffset, Vector.Zero, t):ToEffect()
+            tr.Parent = t
+            tr:FollowParent(t)
+            
+            tr.Position = t.Position
+            tr.ParentOffset = t.PositionOffset + Vector(0, -6)
+            
+            if shotType.trailColor then tr.Color = shotType.trailColor
+            else -- new Color on the left side because *someone* decided the multiplication operator should modify the left operand
+                tr.Color = Color(1,1,1, 0.75) * (shotType.color or Color(1,1,1))
+            end
+            
+            tr:GetSprite().Scale = Vector.One * (shotType.trailSize or normal.trailSize)
+            tr.MinRadius = 0.15
+            tr.DepthOffset = -5
+            
+            --tr:Update()
+        end
+        
+        if shotType.OnFired then util.lpcall(shotType.OnFired, self, t, tr) end
+        Apostasy:QueueUpdateRoutine(trt, self, player, t, shotType, tr)
+        
         return t
     end
 end
