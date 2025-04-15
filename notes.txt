@@ -89,19 +89,17 @@ Dryad {
     
     ! implement Galeshot next
     
-    - probably switch bolts to saved data
     cancel reload on getting hit
     REPENTOGON-ify her base stat changes
+    make shots take range into account
+    
+    force head direction to stay for a short time after fire/cast
     
     / spell selection
     actual display for this
     
     mana refill pickup with a small vacuum radius
     make enemies drop them
-    
-    force head direction to stay while FireDelay >= 0
-    
-    make shots take range into account
     
     graphics {
         select screen
@@ -112,10 +110,19 @@ Dryad {
         > main sheet
         > hair
         
-        - left facing braid
         flowers in hair
-        cutscene hair frames
         tear frames, just in case
+        
+        cutscene face+hair+vines frames {
+            - item pickup
+            trophy pickup
+            jumping
+            ...just standing there? (lead-in to both happy and sad animations)
+            thumbs up
+            AW DANGIT
+            ded
+            WHYYYYYY
+        }
         
         crossbow
         
