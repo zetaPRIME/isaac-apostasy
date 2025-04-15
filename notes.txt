@@ -111,9 +111,10 @@ Dryad {
         > main sheet
         > hair
         
-        left facing brad
+        - left facing braid
         flowers in hair
         cutscene hair frames
+        tear frames, just in case
         
         crossbow
         
