@@ -5,6 +5,7 @@ local Apostasy = _ENV["::Apostasy"]
 local tableUtil = Apostasy:require "util.table"
 local color = Apostasy:require "util.color"
 local rand = Apostasy:require "util.random"
+local util = Apostasy:require "util.misc"
 
 local itemConfig = Isaac.GetItemConfig()
 local game = Game()
@@ -14,10 +15,7 @@ local CHARACTER_NAME = "The Seeker"
 local chr = Apostasy:RegisterCharacter(CHARACTER_NAME)
 
 local function bflag(fd, fl) return fd & fl == fl end
-local function sleep(t)
-    if not t or t <= 0 then return end
-    local i for i = 1, t do coroutine.yield() end
-end
+local sleep = util.sleep
 
 local function wispType(e)
     if e.Type ~= 3 then return nil end

@@ -1,5 +1,29 @@
 local util = { }
 
+function util.printError(err)
+    if REPENTOGON then
+        Console.PrintError(err)
+    else print(err) end
+end
+
+-- logging pcall
+function util.lpcall(func, ...)
+    local res = {xpcall(func, util.printError, ...)}
+    return table.unpack(res, 2)
+end
+
+-- autologging coroutine resume
+function util.resume(cr, ...)
+    local res = {coroutine.resume(cr, ...)}
+    if not res[1] then util.printError(res[2]) end
+    return table.unpack(res)
+end
+
+function util.sleep(t)
+    if not t or t <= 0 then return end
+    local i for i = 1, t do coroutine.yield() end
+end
+
 function util.playerDPS(player, useMultishot)
     local ms = 1
     if useMultishot then ms = util.playerMultishot(player) end

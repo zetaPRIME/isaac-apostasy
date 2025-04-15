@@ -14,10 +14,7 @@ local CHARACTER_NAME = "Dryad"
 local dryad = Apostasy:RegisterCharacter(CHARACTER_NAME)
 
 local function bflag(fd, fl) return fd & fl == fl end
-local function sleep(t)
-    if not t or t <= 0 then return end
-    local i for i = 1, t do coroutine.yield() end
-end
+local sleep = util.sleep
 
 local function clampFireAngle(vec)
     if math.abs(vec.Y) >= math.abs(vec.X) then -- vertically firing
@@ -72,7 +69,7 @@ local shotTypes = {
         flagsRem = TearFlags.TEAR_SPECTRAL | TearFlags.TEAR_PIERCING | TearFlags.TEAR_HOMING,
         
         OnFired = function(self, tear)
-            
+            --print("lol", fnarb())
         end,
         OnKill = function(self, tear)
             local player = tear.SpawnerEntity:ToPlayer()
@@ -138,7 +135,7 @@ do
             t.FallingSpeed = t.FallingSpeed - 1.5 -- last a bit longer
         end
         
-        if shotType.OnFired then pcall(shotType.OnFired, self, t) end
+        if shotType.OnFired then util.lpcall(shotType.OnFired, self, t) end
         Apostasy:QueueUpdateRoutine(trt, self, player, t, shotType)
                 
         return t
@@ -324,7 +321,7 @@ function dryad:CastSpell(player, spellType)
     if not spellType then return end
     
     player.FireDelay = 4 -- 5 ticks
-    if spellType.OnCast then pcall(spellType.OnCast, self, player, spellType) end
+    if spellType.OnCast then util.lpcall(spellType.OnCast, self, player, spellType) end
 end
 
 function dryad:SelectSpell(player, spellType, silent)
@@ -485,7 +482,12 @@ function dryad:OnUpdate(player)
         end
     end
     
-    coroutine.resume(ad.crFiring)
+    local res, err = util.resume(ad.crFiring)
+    if not res then -- if the behavior routine errors, then...
+        -- restart it so the character isn't left bricked
+        ad.crFiring = coroutine.create(self.FiringBehavior)
+        coroutine.resume(ad.crFiring, self, player)
+    end
     
     self:HandleCrossbowSprite(player)
 end
