@@ -78,7 +78,7 @@ local shotTypes = {
             local player = tear.SpawnerEntity:ToPlayer()
             
             local b = Isaac.Spawn(EntityType.ENTITY_BOMB, player:GetBombVariant(TearFlags.TEAR_NORMAL, false), 0, tear.Position - tear.Velocity, Vector.Zero, player):ToBomb()
-            b.ExplosionDamage = tear.CollisionDamage
+            b.ExplosionDamage = tear.CollisionDamage * 2
             b.Flags = player:GetBombFlags() b.Visible = false b:SetExplosionCountdown(0)
         end,
     },
@@ -253,7 +253,7 @@ local spellTypes = {
         manaCost = 15,
         chargeTime = 20,
         
-        goldenManaCost = 5, -- spammable!
+        goldenManaCost = 10, -- spammable!
         
         noBombManaCost = 50,
         noBombChargeTime = 45,
@@ -285,12 +285,12 @@ local spellTypes = {
             sfx:Play(SoundEffect.SOUND_SWORD_SPIN, 0.666, 2, false, 1.5)
             
             local t = self:FireShot(player, shotTypes.explosive, self:GetFireDirection(player))
-            local dmg = math.max(util.playerDPS(player), ad.dpsCache) * 3
+            local dmg = math.max(util.playerDPS(player), ad.dpsCache) * 1.5
             dmg = dmg * util.playerMultishot(player)
             if withBomb then
                 local bombDmg = 100
                 if goldenBomb then bombDmg = 150 end
-                dmg = math.max(dmg, bombDmg)
+                dmg = math.max(dmg, bombDmg/2)
             end
             t.CollisionDamage = dmg
         end,
