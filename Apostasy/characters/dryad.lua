@@ -138,7 +138,7 @@ do
             t.FallingSpeed = t.FallingSpeed - 1.5 -- last a bit longer
         end
         
-        if shotType.OnFired then shotType.OnFired(self, t) end
+        if shotType.OnFired then pcall(shotType.OnFired, self, t) end
         Apostasy:QueueUpdateRoutine(trt, self, player, t, shotType)
                 
         return t
@@ -324,7 +324,7 @@ function dryad:CastSpell(player, spellType)
     if not spellType then return end
     
     player.FireDelay = 4 -- 5 ticks
-    if spellType.OnCast then spellType.OnCast(self, player, spellType) end
+    if spellType.OnCast then pcall(spellType.OnCast, self, player, spellType) end
 end
 
 function dryad:SelectSpell(player, spellType, silent)
@@ -490,7 +490,7 @@ function dryad:OnUpdate(player)
     self:HandleCrossbowSprite(player)
 end
 
-dryad.reloadTime = 45
+dryad.baseReloadTime = 36
 function dryad:FiringBehavior(player)
     local ad = self:ActiveData(player)
     coroutine.yield() -- end lead-in so we're in update
@@ -569,7 +569,7 @@ function dryad:FiringBehavior(player)
     
     function states.reloading()
         ad.shouldReload = false
-        ad.chargeTime = self.reloadTime
+        ad.chargeTime = self.baseReloadTime + math.ceil((player.MaxFireDelay+1) * 0.5)
         ad.charge = 0
         
         self:EvaluateActionStats(player)

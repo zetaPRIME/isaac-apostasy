@@ -88,7 +88,8 @@ Dryad {
     - TODO -
     
     ! implement Galeshot next
-    - adjust Fireblast damage (2/3 in the explosion, 1/3 in direct hit)
+    
+    probably switch bolts to saved data
     
     / spell selection
     actual display for this
@@ -101,7 +102,7 @@ Dryad {
     make shots take range into account
     
     - manual tear delay value after spell cast
-    variable reload time depending on tear delay
+    - variable reload time depending on tear delay
     - limit fire buffering for huge tear delays
     
     graphics {
@@ -110,24 +111,37 @@ Dryad {
         death name
         boss name
         
-        main sheet
-        hair
+        > main sheet
+        > hair
+        
+        left facing brad
+        flowers in hair
+        cutscene hair frames
+        
+        crossbow
+        
     }
     
     Synergy notes {
         Birthright {
             extra 50 max mana
             empowers each of her spells
-            sad bombs effect for fire?
+            force sad bombs effect for Fireblast?
         }
         
-        Epiphora does nothing useful for normal shot, though does add an "overcharge" effect to spells... hmm.
-        ^ it's not super great though, even post-hackery
+        Epiphora gives spells a slight "overcharge" effect due to DPS calculations...
+        ...but it's not super great due to how long it takes and not allowing you to re-aim
         
-        Camo Undies actually goes incredibly hard?
+        Chocolate Milk currently does nothing
+        
+        Camo Undies actually goes pretty hard for normal shots depending on what you have
+        
+        bomb synergies of course work for Fireblast
+        getting an early golden bomb makes your potential damage output kind of ridiculous >_>
         
         figure out what to do for Cursed Eye
         its risk factor is while holding fire, so... spell damage bonus?
+        
     }
 }
 
