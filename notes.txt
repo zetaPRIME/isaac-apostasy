@@ -89,7 +89,8 @@ Dryad {
     
     ! implement Galeshot next
     
-    probably switch bolts to saved data
+    - probably switch bolts to saved data
+    cancel reload on getting hit
     
     / spell selection
     actual display for this
@@ -100,10 +101,6 @@ Dryad {
     force head direction to stay while FireDelay >= 0
     
     make shots take range into account
-    
-    - manual tear delay value after spell cast
-    - variable reload time depending on tear delay
-    - limit fire buffering for huge tear delays
     
     graphics {
         select screen

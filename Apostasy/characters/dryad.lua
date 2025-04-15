@@ -169,9 +169,9 @@ function dryad:Reload(player)
     local mag = 15 + (nb-1) * 5
     mag = math.ceil(mag/nb)*nb -- always even multiple
     
-    local ad = self:ActiveData(player)
-    ad.boltsMax = mag
-    ad.bolts = mag
+    local rd = self:RunData(player)
+    rd.boltsMax = mag
+    rd.bolts = mag
 end
 
 function dryad:GetMana(player)
@@ -190,11 +190,11 @@ function dryad:TryPayCosts(player, bolts, mana)
     if not mana then mana = 0 end
     
     -- check both
-    if ad.bolts < bolts then return false end
+    if rd.bolts < bolts then return false end
     if rd.mana < mana then return false end
     
     -- deduct cost
-    ad.bolts = math.max(0, ad.bolts - bolts)
+    rd.bolts = math.max(0, rd.bolts - bolts)
     rd.mana = math.max(0, rd.mana - mana)
     
     return true
@@ -403,7 +403,9 @@ function dryad:InitActiveData(player, ad)
     local rd = self:RunData(player)
     ad.kickback = 0
     
-    self:Reload(player)
+    if not rd.bolts or not rd.boltsMax then
+        self:Reload(player)
+    end
     
     self:SelectSpell(player, rd.selectedSpell or "wind", true)
     
@@ -461,7 +463,7 @@ function dryad:OnUpdate(player)
         ad.shouldQueueReload = true
     elseif ad.spellMenu and not c.bomb then
         ad.spellMenu = false
-        ad.shouldReload = ad.shouldQueueReload and ad.bolts < ad.boltsMax
+        ad.shouldReload = ad.shouldQueueReload and rd.bolts < rd.boltsMax
         player.FireDelay = 1
     end
     
@@ -676,6 +678,7 @@ local fntSmall = Font() fntSmall:Load("font/luaminioutlined.fnt")
 function dryad:OnPostRender(player)
     if HudHelper.ShouldHideHUD() then return end
     local ad = self:ActiveData(player)
+    local rd = self:RunData(player)
     local room = game:GetRoom()
     
     local WorldToScreen
@@ -700,8 +703,8 @@ function dryad:OnPostRender(player)
     
     -- ammo counter
     if ad.firingState ~= "reloading" and not ad.spellMenu then
-        local str = ad.bolts .. "/" .. ad.boltsMax
-        local wstr = ad.boltsMax .. "/" .. ad.boltsMax
+        local str = rd.bolts .. "/" .. rd.boltsMax
+        local wstr = rd.boltsMax .. "/" .. rd.boltsMax
         
         local tw = fntSmall:GetStringWidth(wstr)
         local lh = fntSmall:GetLineHeight()
