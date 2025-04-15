@@ -323,6 +323,7 @@ function dryad:CastSpell(player, spellType)
     if type(spellType) == "string" then spellType = spellTypes[spellType] end
     if not spellType then return end
     
+    player.FireDelay = 4 -- 5 ticks
     if spellType.OnCast then spellType.OnCast(self, player, spellType) end
 end
 
@@ -505,7 +506,11 @@ function dryad:FiringBehavior(player)
     
     local buffered = false
     local function chkBuf()
-        if ad.controls.fireP then buffered = true end
+        if ad.controls.fireP then
+            buffered = true
+        elseif player.FireDelay >= 20 and not ad.controls.fire then
+            buffered = false -- don't leave lingering buffer for huge tear delays
+        end
     end
     local function waitInterp()
         while player:HasEntityFlags(EntityFlag.FLAG_INTERPOLATION_UPDATE) do coroutine.yield() end

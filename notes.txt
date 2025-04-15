@@ -88,6 +88,7 @@ Dryad {
     - TODO -
     
     ! implement Galeshot next
+    adjust Fireblast damage (2/3 in the explosion, 1/3 in direct hit)
     
     / spell selection
     actual display for this
@@ -98,12 +99,10 @@ Dryad {
     force head direction to stay while FireDelay >= 0
     
     make shots take range into account
-    - MULTISHOT DPS CALC
-    - need to do an estimation for non-Repentogon
-    - also hook up normal fire
     
-    manual tear delay value after spell cast
+    - manual tear delay value after spell cast
     variable reload time depending on tear delay
+    - limit fire buffering for huge tear delays
     
     graphics {
         select screen
@@ -128,6 +127,7 @@ Dryad {
         Camo Undies actually goes incredibly hard?
         
         figure out what to do for Cursed Eye
+        its risk factor is while holding fire, so... spell damage bonus?
     }
 }
 
