@@ -99,7 +99,7 @@ Dryad {
     assemble a blacklist for many of the worm effects
     
     cancel reload on getting hit
-    REPENTOGON-ify her base stat changes
+    - REPENTOGON-ify her base stat changes
     make shots take range into account
     
     - higher homing friction at base but null it out depending on velocity

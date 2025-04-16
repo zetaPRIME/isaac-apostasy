@@ -87,5 +87,10 @@ do
     end
 end
 
+function util.modifyFireRate(player, amt)
+    local fr = 30/(player.MaxFireDelay + 1)
+    player.MaxFireDelay = (30 / (fr+amt)) - 1
+end
+
 
 return util

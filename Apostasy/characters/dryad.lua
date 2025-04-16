@@ -480,17 +480,20 @@ function dryad:OnEvaluateCache(player, cacheFlag)
             player.MoveSpeed = player.MoveSpeed * 0.5
         end
     elseif cacheFlag == CacheFlag.CACHE_DAMAGE then
-        player.Damage = player.Damage + 2
+        if not REPENTOGON then player.Damage = player.Damage + 2 end
     elseif cacheFlag == CacheFlag.CACHE_FIREDELAY then
         if player:HasCollectible(CollectibleType.COLLECTIBLE_BRIMSTONE) then
             -- counteract the fire rate multiplier since normal brim mechanics don't apply here
             player.MaxFireDelay = (player.MaxFireDelay + 1) / 3 - 1
         end
         
-        player.MaxFireDelay = player.MaxFireDelay + 4
+        -- handle the base tears modifier in vanilla engine
+        if not REPENTOGON then util.modifyFireRate(player, -0.7272727272) end
         
         -- let's just. raise the minimum possible fire rate some <_< any longer than this just feels like the firing code broke
         player.MaxFireDelay = math.min(player.MaxFireDelay, 59) -- and if your tears are this low you're already oneshotting rooms
+        
+        --print("fire rate:", 30/(player.MaxFireDelay+1))
     end
     
     --print("dps:", util.playerDPS(player))

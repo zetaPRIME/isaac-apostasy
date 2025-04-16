@@ -47,6 +47,9 @@
         hp="6"
         bombs="3"
         
+        damagemodifier="2"
+        firedelaymodifier="-0.55188765"
+        
         noshake="true"
     />
 </players>
