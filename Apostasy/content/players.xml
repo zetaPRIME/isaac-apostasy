@@ -40,6 +40,9 @@
         costumeSuffix="apostasy.dryad"
         costume="104"
         
+        birthright="Magic up! [NYI]"
+        trinket="137"
+        
         canShoot="false"
         hp="6"
         bombs="3"

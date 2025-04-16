@@ -131,6 +131,7 @@ Dryad {
             3/4 view for side frames, but a bit more from-above in down-facing
         }
         
+        eventually give her a custom start-of-floor animation (superhero landing from above)
     }
     
     Synergy notes {
