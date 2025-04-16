@@ -122,7 +122,7 @@ Dryad {
         > hair
         
         - flowers in hair
-        tear frames, just in case
+        - tear frames, just in case
         
         cutscene face+hair+vines frames {
             - item pickup
