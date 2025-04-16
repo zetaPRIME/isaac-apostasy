@@ -482,7 +482,15 @@ function dryad:OnEvaluateCache(player, cacheFlag)
     elseif cacheFlag == CacheFlag.CACHE_DAMAGE then
         player.Damage = player.Damage + 2
     elseif cacheFlag == CacheFlag.CACHE_FIREDELAY then
+        if player:HasCollectible(CollectibleType.COLLECTIBLE_BRIMSTONE) then
+            -- counteract the fire rate multiplier since normal brim mechanics don't apply here
+            player.MaxFireDelay = (player.MaxFireDelay + 1) / 3 - 1
+        end
+        
         player.MaxFireDelay = player.MaxFireDelay + 4
+        
+        -- let's just. raise the minimum possible fire rate some <_< any longer than this just feels like the firing code broke
+        player.MaxFireDelay = math.min(player.MaxFireDelay, 59) -- and if your tears are this low you're already oneshotting rooms
     end
     
     --print("dps:", util.playerDPS(player))

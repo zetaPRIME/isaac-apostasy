@@ -162,7 +162,8 @@ Dryad {
         its risk factor is while holding fire, so... spell damage bonus?
         
         brimstone just cuts your fire rate to 1/3 for no actual benefit at base
-        counteract the multiplier and empower one of her spell slots?
+        - counteract the multiplier
+        ...and empower one of her spell slots??
         
         all the techs except zero do literally nothing
         zero is potentially pretty good for Frostburst
