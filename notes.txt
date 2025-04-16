@@ -120,7 +120,7 @@ Dryad {
             - just idle (lead-in to both happy and sad animations)
             - thumbs up
             AW DANGIT
-            pitfall
+            hurt/pitfall
             ded
             - WHYYYYYY
         }
