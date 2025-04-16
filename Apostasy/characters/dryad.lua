@@ -27,6 +27,13 @@ local function roundVec(vec)
     return Vector(math.floor(vec.X + 0.5), math.floor(vec.Y + 0.5))
 end
 
+local function getBombDamage(player) -- manual way because apparently not even REPENTOGON has anything
+    local dmg = 100 -- base
+    if player:HasCollectible(CollectibleType.COLLECTIBLE_MR_MEGA) then dmg = dmg + 85 end
+    if player:HasTrinket(TrinketType.TRINKET_SHORT_FUSE) then dmg = dmg + 15 end
+    return dmg
+end
+
 local c255 = color.from255
 local shotTypes = {
     normal = {
@@ -321,8 +328,8 @@ local spellTypes = {
             local dmg = math.max(util.playerDPS(player), ad.dpsCache) * 1.5
             dmg = dmg * util.playerMultishot(player)
             if withBomb then
-                local bombDmg = 100
-                if goldenBomb then bombDmg = 150 end
+                local bombDmg = getBombDamage(player)
+                if goldenBomb then bombDmg = bombDmg * 1.5 end
                 dmg = math.max(dmg, bombDmg/2)
             end
             t.CollisionDamage = dmg
