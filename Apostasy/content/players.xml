@@ -47,6 +47,7 @@
         hp="6"
         bombs="3"
         
+        speedmodifier="0.1"
         damagemodifier="2"
         firedelaymodifier="-0.55188765"
         

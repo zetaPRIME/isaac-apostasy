@@ -475,7 +475,7 @@ function dryad:OnEvaluateCache(player, cacheFlag)
     local ad = self:ActiveData(player)
     
     if cacheFlag == CacheFlag.CACHE_SPEED then
-        player.MoveSpeed = player.MoveSpeed + 0.1
+        if not REPENTOGON then player.MoveSpeed = player.MoveSpeed + 0.1 end
         if ad.firingState == "reloading" then
             player.MoveSpeed = player.MoveSpeed * 0.5
         end
