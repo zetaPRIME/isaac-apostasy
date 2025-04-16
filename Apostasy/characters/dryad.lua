@@ -86,7 +86,7 @@ local shotTypes = {
         OnKill = function(self, tear)
             local player = tear.SpawnerEntity:ToPlayer()
             
-            local b = Isaac.Spawn(EntityType.ENTITY_BOMB, player:GetBombVariant(TearFlags.TEAR_NORMAL, false), 0, tear.Position - tear.Velocity, Vector.Zero, player):ToBomb()
+            local b = Isaac.Spawn(EntityType.ENTITY_BOMB, player:GetBombVariant(TearFlags.TEAR_NORMAL, false), 0, tear.Position - (tear.Velocity * 1.5), Vector.Zero, player):ToBomb()
             b.ExplosionDamage = tear.CollisionDamage * 2
             b.Flags = player:GetBombFlags() b.Visible = false b:SetExplosionCountdown(0)
         end,
