@@ -110,21 +110,25 @@ Dryad {
         > main sheet
         > hair
         
-        flowers in hair
+        - flowers in hair
         tear frames, just in case
         
         cutscene face+hair+vines frames {
             - item pickup
-            trophy pickup
+            - trophy pickup
             jumping
-            ...just standing there? (lead-in to both happy and sad animations)
+            - just idle (lead-in to both happy and sad animations)
             thumbs up
             AW DANGIT
             ded
             WHYYYYYY
         }
         
-        crossbow
+        crossbow {
+            right and down, four frames each (charge states)
+            up can just be down flipped since it'll be behind her head most of the time
+            3/4 view for side frames, but a bit more from-above in down-facing
+        }
         
     }
     
@@ -141,6 +145,7 @@ Dryad {
         Chocolate Milk currently does nothing
         
         Camo Undies actually goes pretty hard for normal shots depending on what you have
+        How to Jump is actually a really nice pickup since she can keep firing during it
         
         bomb synergies of course work for Fireblast
         getting an early golden bomb makes your potential damage output kind of ridiculous >_>
