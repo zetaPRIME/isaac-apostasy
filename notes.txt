@@ -116,12 +116,13 @@ Dryad {
         cutscene face+hair+vines frames {
             - item pickup
             - trophy pickup
-            jumping
+            - jumping
             - just idle (lead-in to both happy and sad animations)
-            thumbs up
+            - thumbs up
             AW DANGIT
+            pitfall
             ded
-            WHYYYYYY
+            - WHYYYYYY
         }
         
         crossbow {
@@ -145,7 +146,9 @@ Dryad {
         Chocolate Milk currently does nothing
         
         Camo Undies actually goes pretty hard for normal shots depending on what you have
+        
         How to Jump is actually a really nice pickup since she can keep firing during it
+        it also gives extra mobility during reloads!
         
         bomb synergies of course work for Fireblast
         getting an early golden bomb makes your potential damage output kind of ridiculous >_>
