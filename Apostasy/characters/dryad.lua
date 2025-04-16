@@ -100,6 +100,7 @@ do
         end
         coroutine.yield()
         tear.Visible = true
+        local homing = tear:HasTearFlags(TearFlags.TEAR_HOMING)
         if trail then
             trail.Visible = true
         end
@@ -107,6 +108,13 @@ do
             if trail then
                 trail.ParentOffset = tear.PositionOffset --+ Vector(0, -6.25)
                 trail:SetTimeout(10)
+            end
+            if homing then
+                if tear.Velocity:Length() > 17 then
+                    tear.HomingFriction = 0.75
+                else
+                    tear.HomingFriction = 1.05
+                end
             end
             coroutine.yield()
         end

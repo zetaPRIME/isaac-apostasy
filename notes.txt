@@ -95,7 +95,7 @@ Dryad {
     REPENTOGON-ify her base stat changes
     make shots take range into account
     
-    higher homing friction at base but null it out depending on velocity
+    - higher homing friction at base but null it out depending on velocity
     
     force head direction to stay for a short time after fire/cast
     
@@ -161,8 +161,11 @@ Dryad {
         figure out what to do for Cursed Eye
         its risk factor is while holding fire, so... spell damage bonus?
         
-        brimstone just cuts your damage to 1/3 for no actual benefit at base
+        brimstone just cuts your fire rate to 1/3 for no actual benefit at base
         counteract the multiplier and empower one of her spell slots?
+        
+        all the techs except zero do literally nothing
+        zero is potentially pretty good for Frostburst
     }
 }
 
