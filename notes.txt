@@ -98,7 +98,7 @@ Dryad {
     
     assemble a blacklist for many of the worm effects
     
-    cancel reload on getting hit
+    - cancel reload on getting hit
     - REPENTOGON-ify her base stat changes
     make shots take range into account
     

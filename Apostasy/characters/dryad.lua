@@ -635,6 +635,7 @@ function dryad:FiringBehavior(player)
     
     function states.reloading()
         ad.shouldReload = false
+        ad.cancelReload = false
         ad.chargeTime = self.baseReloadTime + math.ceil((player.MaxFireDelay+1) * 0.5)
         ad.charge = 0
         
@@ -645,6 +646,12 @@ function dryad:FiringBehavior(player)
         local kb = 20
         while ad.charge < ad.chargeTime do
             coroutine.yield()
+            if ad.cancelReload then
+                ad.cancelReload = false
+                sfx:Play(SoundEffect.SOUND_ULTRA_GREED_SLOT_STOP, 1, 2, false, 1.0)
+                self:EvaluateActionStats(player)
+                return
+            end
             ad.kickback = kb
             waitInterp()
             if ad.charge % 2 == 0 then
@@ -725,6 +732,15 @@ function dryad:FiringBehavior(player)
         end
         
         coroutine.yield()
+    end
+end
+
+function dryad:OnTakeDamage(e, amount, flags, source, inv)
+    local player = e:ToPlayer()
+    local ad = self:ActiveData(player)
+    
+    if ad.firingState == "reloading" then
+        ad.cancelReload = true
     end
 end
 
