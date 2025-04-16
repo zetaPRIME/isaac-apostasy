@@ -70,7 +70,6 @@ Dryad {
     
     fights using a repeating crossbow
     
-    
     spells {
         wind {
             single powerful piercing shot
@@ -85,11 +84,19 @@ Dryad {
             shotgun blast with a chance per projectile to be freezing
             probably costs a decent amount of mana (30?)
         }
+        
+        we have one slot left over, don't 100% know what to do with it
+        definitely want some spells unlocked by specific items
+        reselect while slot already selected to cycle through?
+        
+        brimstone, tech
     }
     
     - TODO -
     
     ! implement Galeshot next
+    
+    assemble a blacklist for many of the worm effects
     
     cancel reload on getting hit
     REPENTOGON-ify her base stat changes
@@ -124,8 +131,8 @@ Dryad {
             - just idle (lead-in to both happy and sad animations)
             - thumbs up
             AW DANGIT
-            hurt/pitfall
-            ded
+            - hurt/pitfall
+            - ded
             - WHYYYYYY
         }
         
@@ -177,11 +184,15 @@ Alchemist? {
 
 - - - - - Items/Trinkets - - - - -
 
+Skull Mask - "Be quick, be clever"
+
 - - - - - System Mechanics - - - - -
 
 at some point make some fancy shared HUD stuff, such as unified health hiding?
 this way things such as Dead Cat and Holy Mantle can be displayed for healthless characters in a way not tied to the specific character
 I suppose this can be done with just a: return Apostasy:DrawHealthlessHUD(player)
+
+system for disabling/substituting costumes per character with REPENTOGON installed?
 
 - - - - - World Content? - - - - -
 
