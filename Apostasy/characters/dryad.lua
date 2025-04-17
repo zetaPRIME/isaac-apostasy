@@ -455,8 +455,10 @@ function dryad:HandleCrossbowSprite(player)
         sp.Rotation = fd:GetAngleDegrees() - 90
         sp.FlipX = false
     end
-    if ad.firingState == "charging" or ad.firingState == "reloading" then
-        frame = math.floor((ad.charge / ad.chargeTime) * 3 + 0.5)
+    if ad.firingState == "charging" then
+        frame = math.floor((ad.charge / ad.chargeTime) * 2.5 + 0.75)
+    elseif ad.firingState == "reloading" then
+        frame = math.floor((ad.charge / ad.chargeTime) * 4 - 0.01)
     end
     sp:SetFrame(anm, frame)
     
