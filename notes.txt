@@ -142,7 +142,7 @@ Dryad {
             3/4 view for side frames, but a bit more from-above in down-facing
             
             - down sprites
-            > side sprites
+            - side sprites
         }
         
         eventually give her a custom start-of-floor animation (superhero landing from above)
