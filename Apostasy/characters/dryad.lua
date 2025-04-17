@@ -89,6 +89,9 @@ local shotTypes = {
             local b = Isaac.Spawn(EntityType.ENTITY_BOMB, player:GetBombVariant(TearFlags.TEAR_NORMAL, false), 0, tear.Position - (tear.Velocity * 1.5), Vector.Zero, player):ToBomb()
             b.ExplosionDamage = tear.CollisionDamage * 2
             b.Flags = player:GetBombFlags() b.Visible = false b:SetExplosionCountdown(0)
+            if player:HasCollectible(CollectibleType.COLLECTIBLE_REMOTE_DETONATOR) then
+                player:UseActiveItem(CollectibleType.COLLECTIBLE_REMOTE_DETONATOR) -- I'm not asking.
+            end
         end,
     },
 } for k,v in pairs(shotTypes) do v.id = k end
