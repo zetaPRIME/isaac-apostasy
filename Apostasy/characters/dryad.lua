@@ -400,15 +400,23 @@ end
 function dryad:HandleCrossbowSprite(player)
     local ad = self:ActiveData(player)
     
-    local spr = ad.crossbowSprite
+    local spr, sp = ad.crossbowSprite
     if not spr or not spr:Exists() or spr:IsDead() then
         --print "new crossbow"
         spr = Isaac.Spawn(EntityType.ENTITY_EFFECT, EffectVariant.BLUE_FLAME, 0, player.Position, Vector.Zero, nil and player):ToEffect()
         ad.crossbowSprite = spr
         
-        spr.SpriteScale = Vector(0.5, 0.5)
-        spr.DepthOffset = 3
-    end
+        --spr.SpriteScale = Vector(0.5, 0.5)
+        spr.DepthOffset = 2
+        
+        if REPENTOGON then -- drop shadow is nice to have
+            spr:SetShadowSize(0.15)
+        end
+        
+        sp = spr:GetSprite()
+        sp:Load("gfx/characters/apostasy.dryad.crossbow.anm2", true)
+        spr.SpriteOffset = Vector(0, -9)
+    else sp = spr:GetSprite() end
     
     spr:SetTimeout(2)
     local fd = self:GetFireDirection(player)-- ad.controls.fireDir:Normalized()
@@ -426,8 +434,24 @@ function dryad:HandleCrossbowSprite(player)
     ad.crossbowDir:Lerp(fd, 0.5)
     ad.crossbowDir:Normalize()
     
-    local np = (ad.crossbowDir * (28 - ad.kickback*0.75)) * Vector(1, 3/4)
+    local np = (ad.crossbowDir * (28 - ad.kickback*0.75)) --* Vector(1, 3/4)
     spr.Position = player.Position + np
+    
+    local anm, frame = "Down", 0
+    if math.abs(fd.X) > math.abs(fd.Y) then
+        anm = "Side"
+        local rot = (fd:GetAngleDegrees() + 360 + 90) % 360
+        if rot >= 180 then rot = 360 - rot end
+        sp.Rotation = rot - 90
+        sp.FlipX = fd.X < 0
+    else
+        sp.Rotation = fd:GetAngleDegrees() - 90
+        sp.FlipX = false
+    end
+    if ad.firingState == "charging" or ad.firingState == "reloading" then
+        frame = math.floor((ad.charge / ad.chargeTime) * 3 + 0.5)
+    end
+    sp:SetFrame(anm, frame)
     
     if ad.kickback > 0 then
         ad.kickback = math.max(0, ad.kickback - 1)
@@ -646,7 +670,12 @@ function dryad:FiringBehavior(player)
         
         sfx:Play(SoundEffect.SOUND_ULTRA_GREED_SLOT_STOP, 0.75, 2, false, 1.5)
         
-        local kb = 20
+        local kbMax = 20
+        local function setKb()
+            local ch = ad.charge
+            if player:HasEntityFlags(EntityFlag.FLAG_INTERPOLATION_UPDATE) then ch = ch + 0.5 end
+            ad.kickback = math.max(ad.kickback, math.min(ch * 4, kbMax))
+        end
         while ad.charge < ad.chargeTime do
             coroutine.yield()
             if ad.cancelReload then
@@ -655,13 +684,13 @@ function dryad:FiringBehavior(player)
                 self:EvaluateActionStats(player)
                 return
             end
-            ad.kickback = kb
+            setKb()
             waitInterp()
             if ad.charge % 2 == 0 then
                 sfx:Play(SoundEffect.SOUND_BUTTON_PRESS, 0.75, 2, false, 1.5 + (ad.charge / ad.chargeTime) * 1.1)
             end
             ad.charge = math.min(ad.charge + 1, ad.chargeTime)
-            ad.kickback = kb
+            setKb()
         end
         
         ad.shouldReload = false
@@ -776,7 +805,7 @@ function dryad:OnPostRender(player)
         end
         
         if ad.crossbowSprite and ad.crossbowSprite:Exists() then
-            local pos = WorldToScreen(ad.crossbowSprite.Position + Vector(0, -28))
+            local pos = WorldToScreen(ad.crossbowSprite.Position + Vector(0.5, -28))
             
             HudHelper.RenderChargeBar(ad.chargeBar, ad.charge, ad.chargeTime, pos)
         end

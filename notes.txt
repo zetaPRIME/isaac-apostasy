@@ -136,10 +136,13 @@ Dryad {
             - WHYYYYYY
         }
         
-        crossbow {
+        > crossbow {
             right and down, four frames each (charge states)
             up can just be down flipped since it'll be behind her head most of the time
             3/4 view for side frames, but a bit more from-above in down-facing
+            
+            - down sprites
+            > side sprites
         }
         
         eventually give her a custom start-of-floor animation (superhero landing from above)
