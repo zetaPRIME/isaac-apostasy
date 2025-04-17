@@ -34,6 +34,13 @@ local function getBombDamage(player) -- manual way because apparently not even R
     return dmg
 end
 
+-- tear flags that just generally screw with a tear's path
+local flagsWormEtc = TearFlags.TEAR_SPIRAL | TearFlags.TEAR_BIG_SPIRAL | TearFlags.TEAR_FLAT | TearFlags.TEAR_SQUARE
+    | TearFlags.TEAR_ORBIT | TearFlags.TEAR_ORBIT_ADVANCED | TearFlags.TEAR_OCCULT | TearFlags.TEAR_DECELERATE
+-- TEAR_TURN_HORIZONTAL?
+local flagsBouncy = TearFlags.TEAR_BOUNCE | TearFlags.TEAR_BOUNCE_WALLSONLY
+local flagsSticky = TearFlags.TEAR_STICKY | TearFlags.TEAR_BOOGER
+
 local c255 = color.from255
 local shotTypes = {
     normal = {
@@ -78,7 +85,7 @@ local shotTypes = {
         trailSize = 1.5,
         
         flags = TearFlags.TEAR_NORMAL,
-        flagsRem = TearFlags.TEAR_SPECTRAL | TearFlags.TEAR_PIERCING | TearFlags.TEAR_HOMING,
+        flagsRem = TearFlags.TEAR_SPECTRAL | TearFlags.TEAR_PIERCING | TearFlags.TEAR_HOMING | flagsBouncy | flagsSticky | flagsWormEtc,
         
         OnFired = function(self, tear)
             --print("lol", fnarb())

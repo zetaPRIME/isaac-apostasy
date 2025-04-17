@@ -98,8 +98,8 @@ Dryad {
     further tweak Frostburst spread
     add further spread and multishot if player multishot gained?
     
-    assemble a blacklist for many of the worm effects
-    blacklist rubber cement on Fireblast
+    - assemble a blacklist for many of the worm effects
+    - blacklist rubber cement on Fireblast
     
     - cancel reload on getting hit
     - REPENTOGON-ify her base stat changes
@@ -184,6 +184,8 @@ Dryad {
         
         all the techs except zero do literally nothing
         zero is potentially pretty good for Frostburst
+        
+        My Reflection just kind of doesn't do much
         
         - remote detonator janks it up - fixed (now it just does nothing unless you have scatterbombs)
     }
