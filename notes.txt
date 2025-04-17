@@ -95,8 +95,11 @@ Dryad {
     - TODO -
     
     ! implement Galeshot next
+    further tweak Frostburst spread
+    add further spread and multishot if player multishot gained?
     
     assemble a blacklist for many of the worm effects
+    blacklist rubber cement on Fireblast
     
     - cancel reload on getting hit
     - REPENTOGON-ify her base stat changes
@@ -105,6 +108,10 @@ Dryad {
     - higher homing friction at base but null it out depending on velocity
     
     force head direction to stay for a short time after fire/cast
+    also disable it during spell menu
+    
+    figure out how to not show crossbow during level transition animations
+    4:3 angle-preserving shenanigans??
     
     / spell selection
     actual display for this

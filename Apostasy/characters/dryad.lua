@@ -805,7 +805,7 @@ function dryad:OnPostRender(player)
         end
         
         if ad.crossbowSprite and ad.crossbowSprite:Exists() then
-            local pos = WorldToScreen(ad.crossbowSprite.Position + Vector(0.5, -28))
+            local pos = WorldToScreen(ad.crossbowSprite.Position + Vector(0, -29)) + Vector(0.5, 0)
             
             HudHelper.RenderChargeBar(ad.chargeBar, ad.charge, ad.chargeTime, pos)
         end
