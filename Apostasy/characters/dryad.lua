@@ -434,7 +434,7 @@ function dryad:HandleCrossbowSprite(player)
     elseif player.FireDelay < 0 then
         fd = Vector.FromAngle(player:GetHeadDirection() * 90 + 180)
     end
-    if ad.firingState == "reloading" then
+    if ad.spellMenu or ad.firingState == "reloading" then
         fd = Vector(0, 1)
     end
     
@@ -791,7 +791,10 @@ function dryad:OnTakeDamage(e, amount, flags, source, inv)
 end
 
 function dryad:OnCheckInput(player, hook, btn)
-    if btn == ButtonAction.ACTION_BOMB and hook == InputHook.IS_ACTION_TRIGGERED then
+    if hook == InputHook.IS_ACTION_PRESSED and btn >= ButtonAction.ACTION_SHOOTLEFT and btn <= ButtonAction.ACTION_SHOOTDOWN then
+        local ad = self:ActiveData(player)
+        if ad.spellMenu then return false end
+    elseif btn == ButtonAction.ACTION_BOMB and hook == InputHook.IS_ACTION_TRIGGERED then
         return false -- disable normal bomb placement while retaining counter
     end
 end

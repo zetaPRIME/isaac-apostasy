@@ -101,7 +101,7 @@ Dryad {
     make shots take range into account
     
     force head direction to stay for a short time after fire/cast
-    also disable it during spell menu
+    - also disable it during spell menu
     
     - you probably shouldn't be able to shoot while dead
     - "IsIncapacitated" utility function
@@ -112,6 +112,7 @@ Dryad {
     
     / spell selection
     actual display for this
+    mouse control?
     
     mana refill pickup with a small vacuum radius
     make enemies drop them
