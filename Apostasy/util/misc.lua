@@ -92,5 +92,23 @@ function util.modifyFireRate(player, amt)
     player.MaxFireDelay = (30 / (fr+amt)) - 1
 end
 
+function util.multiplyFireRate(player, mul)
+    local fr = 30/(player.MaxFireDelay + 1)
+    player.MaxFireDelay = (30 / (fr*mul)) - 1
+end
+
+do local incapAnims = {
+        Death = true,
+        FallIn = true,
+        JumpOut = true,
+        Appear = true,
+        Trapdoor = true,
+        LightTravel = true,
+    }
+    function util.IsIncapacitated(player)
+        return not not incapAnims[player:GetSprite():GetAnimation()]
+    end
+end
+
 
 return util

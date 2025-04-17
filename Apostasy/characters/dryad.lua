@@ -461,6 +461,7 @@ function dryad:HandleCrossbowSprite(player)
         frame = math.floor((ad.charge / ad.chargeTime) * 4 - 0.01)
     end
     sp:SetFrame(anm, frame)
+    spr.Visible = player.Visible and not util.IsIncapacitated(player)
     
     if ad.kickback > 0 then
         ad.kickback = math.max(0, ad.kickback - 1)
@@ -632,6 +633,8 @@ function dryad:FiringBehavior(player)
                 sfx:Play(SoundEffect.SOUND_SOUL_PICKUP, 1, 2, false, 0.666)
                 return
             end
+            -- cancel charge if crossbow should be hidden
+            if util.IsIncapacitated(player) then return end
             waitInterp()
             local fc = ad.charge >= ad.chargeTime
             ad.charge = math.min(ad.charge + 1, ad.chargeTime)
@@ -751,6 +754,8 @@ function dryad:FiringBehavior(player)
     end
     
     while true do -- main loop
+        -- no firing if in an animation
+        while util.IsIncapacitated(player) do coroutine.yield() end
         -- waiting for fire input
         if player.FireDelay >= 0 then -- if externally set firedelay,
             enterState "cooldown" -- enter cooldown

@@ -103,10 +103,11 @@ Dryad {
     force head direction to stay for a short time after fire/cast
     also disable it during spell menu
     
-    you probably shouldn't be able to shoot while dead
-    "IsIncapacitated" utility function?
+    - you probably shouldn't be able to shoot while dead
+    - "IsIncapacitated" utility function
+    paralysis??
     
-    figure out how to not show crossbow during level transition animations
+    - figure out how to not show crossbow during level transition animations
     4:3 angle-preserving shenanigans??
     
     / spell selection
@@ -167,6 +168,8 @@ Dryad {
         
         How to Jump is actually a really nice pickup since she can keep firing during it
         it also gives extra mobility during reloads!
+        
+        tear-firing familiars are neat; they provide cover fire while charging spells or reloading
         
         bomb synergies of course work for Fireblast
         getting an early golden bomb makes your potential damage output kind of ridiculous >_>
