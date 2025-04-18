@@ -101,7 +101,7 @@ Elysia, the Dryad {
     - force head direction to stay for a short time after fire/cast
     incubus firing is slightly offsync from crossbow??
     
-    conjoined multishot: seems to be literally *only* two extra?
+    - conjoined multishot: seems to be literally *only* two extra?
     
     detect paralysis pill??
     

@@ -73,7 +73,11 @@ do
                 + math.max(0, eye-1)
                 + math.max(0, spider-1) * 2
             
-            return math.min(ms, 16)
+            ms = math.min(ms, 16) -- cap here
+            -- conjoined (working assumption): two tear streams that don't count toward the cap
+            if player:HasPlayerForm(PlayerForm.PLAYERFORM_BABY) then ms = ms + 2 end
+            
+            return ms
         end
     end
     
