@@ -115,7 +115,8 @@ Elysia, the Dryad {
     make enemies drop them
     
     graphics {
-        select screen
+        - select screen
+        portrait
         co-op icon
         death name
         boss name
