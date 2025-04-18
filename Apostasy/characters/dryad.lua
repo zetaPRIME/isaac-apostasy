@@ -429,9 +429,9 @@ function dryad:HandleCrossbowSprite(player)
     local fd = self:GetFireDirection(player)-- ad.controls.fireDir:Normalized()
     
     if not ad.crossbowDir then ad.crossbowDir = fd end
-    if ad.controls.fire then
-        --
-    elseif player.FireDelay < 0 then
+    if ad.fireHold > 0 then
+        fd = ad.fireHoldDir:Normalized()
+    else--if player.FireDelay < 0 then
         fd = Vector.FromAngle(player:GetHeadDirection() * 90 + 180)
     end
     if ad.spellMenu or ad.firingState == "reloading" then
@@ -483,6 +483,26 @@ function dryad:_EvaluateActionStats(player, inEval)
     player:EvaluateItems()
 end
 
+function dryad:SetFireHold(player, t, dir)
+    local ad = self:ActiveData(player)
+    if t <= 0 then ad.fireHold = 0 -- clear
+    else
+        ad.fireHold = math.max(ad.fireHold, t)
+        dir = dir or self:GetFireDirection(player)
+        ad.fireHoldDir = dir
+        
+        -- figure out button to hold
+        local x, y, btn = dir.X, dir.Y
+        if math.abs(x) > math.abs(y) then
+            if x >= 0 then btn = ButtonAction.ACTION_SHOOTRIGHT
+            else btn = ButtonAction.ACTION_SHOOTLEFT end
+        else
+            if y >= 0 then btn = ButtonAction.ACTION_SHOOTDOWN
+            else btn = ButtonAction.ACTION_SHOOTUP end
+        end ad.fireHoldButton = btn
+    end
+end
+
 -- -- -- -- -- --- --- --- --- -- -- -- -- --
 -- -- -- -- -- callbacks below -- -- -- -- --
 -- -- -- -- -- --- --- --- --- -- -- -- -- --
@@ -490,6 +510,7 @@ end
 function dryad:InitActiveData(player, ad)
     local rd = self:RunData(player)
     ad.kickback = 0
+    ad.fireHold = 0
     
     if not rd.bolts or not rd.boltsMax then
         self:Reload(player)
@@ -551,10 +572,14 @@ dryad.manaRegenRate = 5 -- per second
 function dryad:OnUpdate(player)
     local ad = self:ActiveData(player)
     local rd = self:RunData(player)
+    ad.fireHoldActive = false -- get the actual input direction
     local c = self:QueryControls(player)
+    ad.fireHoldActive = true
     
     local _, maxMana = self:GetMana()
     rd.mana = math.min(rd.mana + self.manaRegenRate/60, maxMana)
+    
+    if ad.fireHold > 0 then ad.fireHold = ad.fireHold - 1 end
     
     -- handle reload key
     if c.bombP then
@@ -623,6 +648,7 @@ function dryad:FiringBehavior(player)
         local ct = self:GetSpellChargeTime(player, ad.selectedSpell)
         ad.chargeTime = ct
         ad.charge = 0
+        self:SetFireHold(player, 0)
         
         sfx:Play(SoundEffect.SOUND_ULTRA_GREED_SLOT_STOP, 0.666, 2, false, 2)
         
@@ -655,12 +681,20 @@ function dryad:FiringBehavior(player)
                 ad.selectedSpell.WhileCharging(self, player, ad.selectedSpell)
             end
             
+            self:SetFireHold(player, 2) -- no frame of not holding
+            
             coroutine.yield()
             ad.kickback = kb
         end
         
         if ad.charge >= ad.chargeTime then
+            if REPENTOGON then -- paper over the single frame of not holding
+                player:SetHeadDirection(player:GetHeadDirection(), 1)
+            end
+            ad.fireHoldActive = false -- let familiars release their charge
+            
             if self:TryPayCosts(player, ad.selectedSpell) then
+                self:SetFireHold(player, 20)
                 self:CastSpell(player, ad.selectedSpell)
                 enterState "cooldown"
             else -- error sounds
@@ -739,6 +773,7 @@ function dryad:FiringBehavior(player)
             end
             
             ad.kickback = 5
+            self:SetFireHold(player, math.ceil((player.MaxFireDelay+1)*2 + 2))
             sfx:Play(SoundEffect.SOUND_SWORD_SPIN, 0.42, 2, false, 2)
             sfx:Play(SoundEffect.SOUND_GFUEL_GUNSHOT, 0.37, 2, false, 1.5)
             enterState "cooldown"
@@ -791,9 +826,18 @@ function dryad:OnTakeDamage(e, amount, flags, source, inv)
 end
 
 function dryad:OnCheckInput(player, hook, btn)
-    if hook == InputHook.IS_ACTION_PRESSED and btn >= ButtonAction.ACTION_SHOOTLEFT and btn <= ButtonAction.ACTION_SHOOTDOWN then
+    if btn >= ButtonAction.ACTION_SHOOTLEFT and btn <= ButtonAction.ACTION_SHOOTDOWN then
         local ad = self:ActiveData(player)
-        if ad.spellMenu then return false end
+        if hook == InputHook.IS_ACTION_PRESSED then
+            if ad.spellMenu then return false end
+            if ad.fireHold > 0 and ad.fireHoldActive then
+                return btn == ad.fireHoldButton
+            end
+        elseif hook == InputHook.GET_ACTION_VALUE then
+            if ad.fireHold > 0 and ad.fireHoldActive then
+                return (btn == ad.fireHoldButton) and 1 or 0
+            end
+        end
     elseif btn == ButtonAction.ACTION_BOMB and hook == InputHook.IS_ACTION_TRIGGERED then
         return false -- disable normal bomb placement while retaining counter
     end

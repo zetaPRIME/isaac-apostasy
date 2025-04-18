@@ -100,14 +100,13 @@ Dryad {
     
     make shots take range into account
     
-    force head direction to stay for a short time after fire/cast
-    - also disable it during spell menu
+    - force head direction to stay for a short time after fire/cast
+    incubus firing is slightly offsync from crossbow??
     
-    - you probably shouldn't be able to shoot while dead
-    - "IsIncapacitated" utility function
-    paralysis??
+    conjoined multishot: seems to be literally *only* two extra?
     
-    - figure out how to not show crossbow during level transition animations
+    detect paralysis pill??
+    
     4:3 angle-preserving shenanigans??
     
     / spell selection
