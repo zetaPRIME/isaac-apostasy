@@ -10,7 +10,7 @@ local itemConfig = Isaac.GetItemConfig()
 local game = Game()
 local sfx = SFXManager()
 
-local CHARACTER_NAME = "Dryad"
+local CHARACTER_NAME = "Elysia"
 local dryad = Apostasy:RegisterCharacter(CHARACTER_NAME)
 
 local function bflag(fd, fl) return fd & fl == fl end
