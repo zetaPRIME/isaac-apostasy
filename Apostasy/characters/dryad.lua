@@ -159,12 +159,15 @@ do
         local sv = dir * (player.ShotSpeed * sm)
         sv = sv + (player.Velocity * 0.75)
         if sv:Length() > maxSpeed then sv = sv:Normalized() * maxSpeed end
-        t:AddVelocity(sv)
         t.Visible = false
         
-        t.Height = -6
+        local height = -6
+        if player.CanFly then height = height - 4 end
+        t.Height = height -- we want this coming out of the crossbow
         t.FallingAcceleration = 0
-        t.FallingSpeed = -1
+        t.FallingSpeed = -1 -- TODO calculate stuff based on height+range
+        t:Update() -- kick offset
+        t:AddVelocity(sv)
         
         if shotType.flagsRem then t:ClearTearFlags(shotType.flagsRem) end
         if shotType.flags then t:AddTearFlags(shotType.flags) end
@@ -182,7 +185,7 @@ do
             tr:FollowParent(t)
             
             tr.Position = t.Position
-            tr.ParentOffset = t.PositionOffset + Vector(0, -6)
+            tr.ParentOffset = t.PositionOffset --+ Vector(0, -6)
             
             if shotType.trailColor then tr.Color = shotType.trailColor
             else -- new Color on the left side because *someone* decided the multiplication operator should modify the left operand
@@ -462,6 +465,7 @@ function dryad:HandleCrossbowSprite(player)
     end
     sp:SetFrame(anm, frame)
     spr.Visible = player.Visible and not util.IsIncapacitated(player)
+    spr.SpriteOffset = player.CanFly and Vector(0, -13) or Vector(0, -9)
     
     if ad.kickback > 0 then
         ad.kickback = math.max(0, ad.kickback - 1)
@@ -866,7 +870,7 @@ function dryad:OnPostRender(player)
         end
         
         if ad.crossbowSprite and ad.crossbowSprite:Exists() then
-            local pos = WorldToScreen(ad.crossbowSprite.Position + Vector(0, -29)) + Vector(0.5, 0)
+            local pos = WorldToScreen(ad.crossbowSprite.Position + ad.crossbowSprite.SpriteOffset + Vector(0, -20)) + Vector(0.5, 0)
             
             HudHelper.RenderChargeBar(ad.chargeBar, ad.charge, ad.chargeTime, pos)
         end
@@ -879,7 +883,8 @@ function dryad:OnPostRender(player)
         
         local tw = fntSmall:GetStringWidth(wstr)
         local lh = fntSmall:GetLineHeight()
-        local pos = WorldToScreen(player.Position + Vector(0, -58))
+        local fo = player.CanFly and 4 or 0 -- flying offset
+        local pos = WorldToScreen(player.Position + Vector(0, -58 - fo))
         fntSmall:DrawString(str, pos.X - tw/2, pos.Y - lh, KColor(1,1,1,1), tw)
     end
 end
