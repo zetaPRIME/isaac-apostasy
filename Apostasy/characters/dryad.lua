@@ -35,7 +35,7 @@ local function getBombDamage(player) -- manual way because apparently not even R
 end
 
 -- tear flags that just generally screw with a tear's path
-local flagsWormEtc = TearFlags.TEAR_SPIRAL | TearFlags.TEAR_BIG_SPIRAL | TearFlags.TEAR_FLAT | TearFlags.TEAR_SQUARE
+local flagsWormEtc = TearFlags.TEAR_WIGGLE | TearFlags.TEAR_SPIRAL | TearFlags.TEAR_BIG_SPIRAL | TearFlags.TEAR_FLAT | TearFlags.TEAR_SQUARE
     | TearFlags.TEAR_ORBIT | TearFlags.TEAR_ORBIT_ADVANCED | TearFlags.TEAR_OCCULT | TearFlags.TEAR_DECELERATE
 -- TEAR_TURN_HORIZONTAL?
 local flagsBouncy = TearFlags.TEAR_BOUNCE | TearFlags.TEAR_BOUNCE_WALLSONLY
