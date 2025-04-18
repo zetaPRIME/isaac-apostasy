@@ -122,8 +122,8 @@ Dryad {
         death name
         boss name
         
-        > main sheet
-        > hair
+        - main sheet
+        - hair
         
         - flowers in hair
         - tear frames, just in case
@@ -134,13 +134,13 @@ Dryad {
             - jumping
             - just idle (lead-in to both happy and sad animations)
             - thumbs up
-            AW DANGIT
+            - AW DANGIT
             - hurt/pitfall
             - ded
             - WHYYYYYY
         }
         
-        > crossbow {
+        - crossbow {
             right and down, four frames each (charge states)
             up can just be down flipped since it'll be behind her head most of the time
             3/4 view for side frames, but a bit more from-above in down-facing
@@ -150,6 +150,7 @@ Dryad {
         }
         
         eventually give her a custom start-of-floor animation (superhero landing from above)
+        level transition portrait is gonna be a tough one
     }
     
     Synergy notes {
