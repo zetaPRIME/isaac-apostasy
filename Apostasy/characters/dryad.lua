@@ -647,9 +647,9 @@ function dryad:OnUpdate(player)
             self:SelectSpell(player, "ice")
         elseif c.fireDownP then
             
-        elseif c.fireUpP then
-            self:SelectSpell(player, "wind")
         elseif c.fireRightP then
+            self:SelectSpell(player, "wind")
+        elseif c.fireDownP then
             self:SelectSpell(player, "fire")
         else sel = false end
         if sel then

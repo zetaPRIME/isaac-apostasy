@@ -107,8 +107,8 @@ Elysia, the Dryad {
     / spell selection
     actual display for this
     mouse control?
-    rearrange spells
-    ^ down: fire, right: wind, left: ice, up: unlocks?
+    - rearrange spells
+    - down: fire, right: wind, left: ice, up: unlocks?
     
     mana refill pickup with a small vacuum radius
     make enemies drop them
