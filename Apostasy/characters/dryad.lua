@@ -341,7 +341,7 @@ local spellTypes = {
             local pdmg = dmg/nproj * util.playerMultishot(player)
             
             local fd = self:GetFireDirection(player)
-            local i for i = 1, nproj do
+            for i = 1, nproj do
                 local nfd = fd:Rotated(fan * ((i-1)/(nproj-1) - 0.5))
                 local t = self:FireShot(player, shotTypes.shotgunIce, nfd)
                 t.CollisionDamage = pdmg
@@ -795,7 +795,7 @@ function dryad:FiringBehavior(player)
     end
     
     function states.fire()
-        local nf, i = self:GetBoltsPerTap(player)
+        local nf = self:GetBoltsPerTap(player)
         local hasLeadPencil = player:HasCollectible(CollectibleType.COLLECTIBLE_LEAD_PENCIL)
         
         for i = 1, nf do
@@ -813,7 +813,7 @@ function dryad:FiringBehavior(player)
             --if ms > 1 then print("firing",ms,"tears") end
             local spread = math.min(math.max(0, ms-1) * 1.5, 5)
             local threshold = 5 -- max tears before switching from even fan to Monstro-style cluster
-            local j for j = 1, ms do
+            for j = 1, ms do
                 local ra = (Random() % 200 / 100) - 1
                 if ms > 1 and ms <= threshold then -- even spread if under threshold
                     ra = (j-1)/(ms-1) * 2 - 1

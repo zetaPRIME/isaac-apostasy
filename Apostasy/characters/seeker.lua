@@ -318,7 +318,6 @@ do
         if not normalWisps[3] and itemWisps[1] then
             killLowestItem(itemWisps)
         else -- can either afford normals, or can't afford at all
-            local i
             for i = 1, 3 do dmg(normalWisps) end
         end
         
@@ -335,7 +334,7 @@ end
 function chr:GiveWisps(player, amount, wt)
     if amount <= 0 then return nil end
     wt = wt or wispTypes.normal
-    local i for i = 1, amount do
+    for i = 1, amount do
         player:AddWisp(wt.subtype or 0, player.Position, true)
     end
 end
@@ -376,7 +375,7 @@ function chr:_RearrangeWisps(player) -- and this is where the magic happens~
         
         local wlc = #wl
         --print(wlc, "wisps of type", wt.id)
-        local i for i = 1, wlc do
+        for i = 1, wlc do
             local w = wl[i]
             --print("wisp of type:", wt.id, "layer:", w.OrbitLayer, "distance:", w.OrbitDistance, "speed:", w.OrbitSpeed) -- DEBUG
             
@@ -411,7 +410,6 @@ function chr:ProcessHearts(player)
     if total > 0 then -- health update needed
         -- count up black hearts
         local black = 0
-        local i
         for i = 0, 20 do if player:IsBlackHeart(i) then black = black + 1 end end
         
         -- reset actual health

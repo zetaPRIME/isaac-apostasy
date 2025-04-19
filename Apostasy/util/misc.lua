@@ -21,7 +21,7 @@ end
 
 function util.sleep(t)
     if not t or t <= 0 then return end
-    local i for i = 1, t do coroutine.yield() end
+    for i = 1, t do coroutine.yield() end
 end
 
 function util.playerDPS(player, useMultishot)

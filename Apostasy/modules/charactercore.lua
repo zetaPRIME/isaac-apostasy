@@ -184,7 +184,7 @@ local game = Game()
 local function getPlayers()
     local r = { }
     local pn = game:GetNumPlayers()
-    local i for i = 0, pn-1 do
+    for i = 0, pn-1 do
         table.insert(r, Isaac.GetPlayer(i))
     end
     return r
