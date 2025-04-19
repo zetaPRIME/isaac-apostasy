@@ -61,6 +61,24 @@ local shotTypes = {
             
         end,
     },
+    wind = {
+        speedMult = 40,
+        variant = TearVariant.PUPULA,
+        color = color.colorize(0.9, 1.75, 0.9, 1),
+        hitboxScale = 3.5,
+        spriteScale = Vector(1, 0.75),
+        
+        trailSize = 4,
+        --trailColor = Color(0.5, 1.0, 0.75, 0.75),
+        
+        flags = TearFlags.TEAR_PIERCING | TearFlags.TEAR_SPECTRAL,
+        flagsRem = flagsBouncy | flagsSticky | (flagsWormEtc ~ TearFlags.TEAR_WIGGLE),
+        
+        OnFired = function(self, tear)
+            tear.SpriteOffset = tear.Velocity:Normalized() * -5
+            tear.KnockbackMultiplier = tear.KnockbackMultiplier * 0.5
+        end
+    },
     shotgunIce = {
         speedMult = 30,
         
@@ -267,6 +285,33 @@ end
 local spellTypes = {
     wind = {
         name = "Galeshot",
+        
+        manaCost = 20,
+        chargeTime = 15,
+        
+        WhileCharging = function(self, player, spellType)
+            local ad = self:ActiveData(player)
+            ad.dpsCache = util.playerDPS(player) -- cache dps value for Epiphora-like effects
+        end,
+        OnCast = function(self, player, spellType)
+            local ad = self:ActiveData(player)
+            ad.kickback = 15
+            
+            -- bit of a silly stack of sounds, but
+            sfx:Play(SoundEffect.SOUND_GFUEL_GUNSHOT, 1, 2, false, 1.5)
+            --sfx:Play(SoundEffect.SOUND_SWORD_SPIN, 0.666, 0, false, 1.5)
+            sfx:Play(SoundEffect.SOUND_SWORD_SPIN, 0.75, 0, false, 1.25)
+            sfx:Play(SoundEffect.SOUND_FLAMETHROWER_END, 0.75, 2, false, 1.75)
+            
+            local dmg = math.max(util.playerDPS(player), ad.dpsCache) * 1.1
+            local pdmg = dmg * util.playerMultishot(player)
+            
+            local t = self:FireShot(player, shotTypes.wind, self:GetFireDirection(player))
+            t.CollisionDamage = pdmg
+            
+            player.FireDelay = 14
+            ad.fireHold = 32
+        end,
     },
     
     ice = {
@@ -282,6 +327,7 @@ local spellTypes = {
         end,
         OnCast = function(self, player, spellType)
             local ad = self:ActiveData(player)
+            ad.kickback = 15
             
             sfx:Play(SoundEffect.SOUND_GFUEL_GUNSHOT, 1, 2, false, 1.5)
             sfx:Play(SoundEffect.SOUND_FREEZE_SHATTER, 0.75, 2, false, 0.75)

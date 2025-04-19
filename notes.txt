@@ -92,7 +92,7 @@ Elysia, the Dryad {
     
     - TODO -
     
-    ! implement Galeshot next
+    - implement Galeshot next
     further tweak Frostburst spread
     add further spread and multishot if player multishot gained?
     
@@ -158,8 +158,11 @@ Elysia, the Dryad {
         
         all the techs except zero do literally nothing
         zero is potentially pretty good for Frostburst
+        Mom's Knife also does Literally Nothing... probably good for our purposes
         
         My Reflection just kind of doesn't do much
+        Anti-Gravity... ??? does the stat increase but doesn't affect bolts (yet)
+        ^ probably reimplement in the coroutine
         
         - remote detonator janks it up - fixed (now it just does nothing unless you have scatterbombs)
     }
