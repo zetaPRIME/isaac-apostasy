@@ -115,7 +115,7 @@ Elysia, the Dryad {
     
     graphics {
         - select screen
-        portrait
+        - portrait
         co-op icon
         death name
         boss name
