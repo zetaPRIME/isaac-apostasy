@@ -335,7 +335,7 @@ local spellTypes = {
             --sfx:Play(SoundEffect.SOUND_SWORD_SPIN, 0.42, 2, false, 2)
             
             local nproj = 5 -- how many projectiles
-            local fan = 15 -- total spread degrees
+            local fan = 20 -- total spread degrees
             
             local dmg = math.max(util.playerDPS(player), ad.dpsCache) * 2
             local pdmg = dmg/nproj * util.playerMultishot(player)

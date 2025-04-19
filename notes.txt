@@ -93,15 +93,12 @@ Elysia, the Dryad {
     - TODO -
     
     - implement Galeshot next
-    further tweak Frostburst spread
+    - further tweak Frostburst spread
     add further spread and multishot if player multishot gained?
     
     make shots take range into account
     
-    - force head direction to stay for a short time after fire/cast
-    incubus firing is slightly offsync from crossbow??
-    
-    - conjoined multishot: seems to be literally *only* two extra?
+    investigate: incubus firing is slightly offsync from crossbow??
     
     detect paralysis pill??
     
@@ -110,6 +107,8 @@ Elysia, the Dryad {
     / spell selection
     actual display for this
     mouse control?
+    rearrange spells
+    ^ down: fire, right: wind, left: ice, up: unlocks?
     
     mana refill pickup with a small vacuum radius
     make enemies drop them
