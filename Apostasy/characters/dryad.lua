@@ -646,11 +646,10 @@ function dryad:OnUpdate(player)
         if c.fireLeftP then
             self:SelectSpell(player, "ice")
         elseif c.fireDownP then
-            
+            self:SelectSpell(player, "fire")
         elseif c.fireRightP then
             self:SelectSpell(player, "wind")
-        elseif c.fireDownP then
-            self:SelectSpell(player, "fire")
+        elseif c.fireUpP then -- TODO
         else sel = false end
         if sel then
             ad.shouldQueueReload = false
@@ -797,6 +796,7 @@ function dryad:FiringBehavior(player)
     
     function states.fire()
         local nf, i = self:GetBoltsPerTap(player)
+        local hasLeadPencil = player:HasCollectible(CollectibleType.COLLECTIBLE_LEAD_PENCIL)
         
         for i = 1, nf do
             if ad.shouldReload then return end -- abort shot if reload triggered
@@ -807,6 +807,9 @@ function dryad:FiringBehavior(player)
             end
             
             local ms = util.playerMultishot(player)
+            if hasLeadPencil then
+                if rand.rollFloat(1/15, player) then ms = ms + 11 end
+            end
             --if ms > 1 then print("firing",ms,"tears") end
             local spread = math.min(math.max(0, ms-1) * 1.5, 5)
             local threshold = 5 -- max tears before switching from even fan to Monstro-style cluster

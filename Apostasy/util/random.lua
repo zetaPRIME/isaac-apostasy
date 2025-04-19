@@ -4,7 +4,7 @@ local function rawPercentRoll()
     return (Random() % 10000) * .01
 end
 local function rawFloatRoll()
-    return (Random() % 10000) / 10000
+    return (Random() % 65536) / 65536
 end
 
 function rollBase(rndFunc, chance, luck)
