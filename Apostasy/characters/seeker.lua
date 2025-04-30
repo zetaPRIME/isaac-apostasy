@@ -18,9 +18,9 @@ local function bflag(fd, fl) return fd & fl == fl end
 local sleep = util.sleep
 
 local function wispType(e)
-    if e.Type ~= 3 then return nil end
-    if     e.Variant == 206 then return 1
-    elseif e.Variant == 237 then return 2
+    if e.Type ~= EntityType.ENTITY_FAMILIAR then return nil end
+    if     e.Variant == FamiliarVariant.WISP then return 1
+    elseif e.Variant == FamiliarVariant.ITEM_WISP then return 2
     else return nil end
 end
 
