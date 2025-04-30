@@ -25,6 +25,7 @@ for _,k in pairs {
 
 -- functional modules
 Apostasy:require "modules.queue"
+Apostasy:require "modules.itemcore"
 Apostasy:require "modules.charactercore"
 
 -- at end: list of all included content files

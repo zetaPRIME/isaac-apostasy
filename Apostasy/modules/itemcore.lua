@@ -62,13 +62,13 @@ local updQ = setmetatable({ }, { __mode = "k" })
 function Apostasy:UpdateItemsFor(player)
     local pd = player:GetData()
     updQ[pd] = nil
-    if not player:AsPlayer() or not player:Exists() then
+    if not player:ToPlayer() or not player:Exists() then
         forPlayer[pd] = nil
     else
-        player = player:AsPlayer()
+        player = player:ToPlayer()
         local l = { }
-        for k,itm in byName do
-            if itm:IsHeldBy(player) then l[itm] = [itm] end
+        for k,itm in pairs(byName) do
+            if itm:IsHeldBy(player) then l[itm] = itm end
         end
         forPlayer[pd] = l
     end
@@ -94,10 +94,16 @@ Apostasy:AddCallback(ModCallbacks.MC_FAMILIAR_INIT, function(_, fam)
     local pd = player:GetData()
     local l = forPlayer[pd]
     if not l then l = { } forPlayer[pd] = l end
-    l[itm] = [itm]
+    l[itm] = itm
 end, FamiliarVariant.ITEM_WISP)
 
+-- and removing
 Apostasy:AddCallback(ModCallbacks.MC_POST_ENTITY_KILL, function(_, ent)
+    if ent.Variant ~= FamiliarVariant.ITEM_WISP then return end
+    Apostasy:QueueUpdateItemsFor(ent.SpawnerEntity:ToPlayer())
+end, EntityType.ENTITY_FAMILIAR)
+
+Apostasy:AddCallback(ModCallbacks.MC_POST_ENTITY_REMOVE, function(_, ent)
     if ent.Variant ~= FamiliarVariant.ITEM_WISP then return end
     Apostasy:QueueUpdateItemsFor(ent.SpawnerEntity:ToPlayer())
 end, EntityType.ENTITY_FAMILIAR)
@@ -111,7 +117,7 @@ if REPENTOGON then -- set up our added/removed hooks
             local pd = player:GetData()
             local l = forPlayer[pd]
             if not l then l = { } forPlayer[pd] = l end
-            l[itm] = [itm]
+            l[itm] = itm
         end
     end)
     
@@ -128,7 +134,7 @@ if REPENTOGON then -- set up our added/removed hooks
             local pd = player:GetData()
             local l = forPlayer[pd]
             if not l then l = { } forPlayer[pd] = l end
-            l[itm] = [itm]
+            l[itm] = itm
         end
     end)
     
@@ -158,4 +164,143 @@ else -- we get the Hacky Way for vanilla...
     Apostasy:AddPriorityCallback(ModCallbacks.MC_POST_PLAYER_INIT, CallbackPriority.LATE * 5, function(_, player)
         Apostasy:QueueUpdateRoutine(playerTracking, player)
     end)
+end
+
+-- pick up players after a luamod
+Apostasy:QueueUpdateRoutine(function()
+    local pn = Game():GetNumPlayers()
+    for i = 0, pn-1 do
+        Apostasy:UpdateItemsFor(Isaac.GetPlayer(i))
+    end
+end)
+
+
+
+-- TODO: split this kind of stuff out
+
+do -- callback registration
+    -- callback id, function name, test param number
+    -- type = [string]
+    -- priority = [num]
+    local callbackRegistry = {
+        --{ModCallbacks.MC_POST_PLAYER_INIT, "OnInit", 1},
+        {ModCallbacks.MC_EVALUATE_CACHE, "OnEvaluateCache", 1},
+        
+        --{ModCallbacks.MC_FAMILIAR_INIT, "OnFamiliarInit", 1, type = "familiar", priority = CallbackPriority.LATE - 1},
+        --{ModCallbacks.MC_POST_ENTITY_KILL, "OnFamiliarKilled", 1, type = "familiar"},
+        
+        --{ModCallbacks.MC_POST_ENTITY_KILL, "OnEntityKilled", 1, type = "source"},
+        
+        {ModCallbacks.MC_POST_PEFFECT_UPDATE, "OnEffectUpdate", 1},
+        {ModCallbacks.MC_POST_PLAYER_UPDATE, "OnUpdate", 1},
+        {ModCallbacks.MC_POST_PLAYER_RENDER, "OnRender", 1},
+        
+        --{ModCallbacks.MC_INPUT_ACTION, "OnCheckInput", 1},
+        
+        {ModCallbacks.MC_ENTITY_TAKE_DMG, "OnTakeDamage", 1},
+        --{ModCallbacks.MC_ENTITY_TAKE_DMG, "OnFamiliarTakeDamage", 1, type = "familiar", priority = CallbackPriority.LATE - 1},
+        
+        {ModCallbacks.MC_POST_FIRE_TEAR, "OnFireTear", 1, type = "source", priority = CallbackPriority.LATE},
+        {ModCallbacks.MC_POST_LASER_INIT, "OnFireLaser", 1, type = "source"},
+        --{ModCallbacks.MC_POST_LASER_UPDATE, "OnLaserUpdate", 1, type = "source"},
+        {ModCallbacks.MC_USE_ITEM, "OnUseItem", 3},
+        
+        --{ModCallbacks.MC_PRE_TEAR_COLLISION, "OnPreTearCollision", 1, type = "source"},
+        --{ModCallbacks.MC_PRE_FAMILIAR_COLLISION, "OnPreFamiliarCollision", 1, type = "familiar"},
+        --{ModCallbacks.MC_PRE_PROJECTILE_COLLISION, "OnPreProjectileCollisionWithFamiliar", 2, type = "familiar"},
+        
+        -- REPENTOGON only
+        --{ModCallbacks.MC_PRE_PLAYERHUD_RENDER_HEARTS, "OnPreHUDRenderHearts", 5},
+        --{ModCallbacks.MC_POST_PLAYERHUD_RENDER_HEARTS, "OnPostHUDRenderHearts", 5},
+    }
+    
+    local function itemsFor(player)
+        if not player then return { } end
+        local pd = player:GetData()
+        return forPlayer[pd] or { }
+    end
+    local function hasEntries(t)
+        if not t then return false end
+        for _ in pairs(t) do return true end
+        return false
+    end
+    
+    local cbf = { }
+    function cbf:default(id, fname, pn)
+        Apostasy:AddPriorityCallback(id, self.priority or 0, function(_, ...)
+            local par = {...}
+            local player = (par[pn])
+            
+            for itm in pairs(itemsFor(player)) do
+                local f = itm[fname]
+                if f then
+                    local r = {f(itm, ...)}
+                    if hasEntries(r) then return table.unpack(r) end
+                end
+            end
+        end)
+    end
+    
+    function cbf:source(id, fname, pn)
+        Apostasy:AddPriorityCallback(id, self.priority or 0, function(_, ...)
+            local par = {...}
+            local se = (par[pn]).SpawnerEntity
+            
+            for itm in pairs(itemsFor(se)) do
+                local f = itm[fname]
+                if f then
+                    local r = {f(itm, ...)}
+                    if hasEntries(r) then return table.unpack(r) end
+                end
+            end
+        end)
+    end
+    
+    function cbf:familiar(id, fname, pn)
+        Apostasy:AddPriorityCallback(id, self.priority or 0, function(_, ...)
+            local par = {...}
+            local fam = (par[pn]):ToFamiliar()
+            if not fam then return nil end
+            for itm in pairs(itemsFor(fam.Player)) do
+                local f = itm[fname]
+                if f then
+                    local r = {f(itm, ...)}
+                    if hasEntries(r) then return table.unpack(r) end
+                end
+            end
+        end)
+    end
+    
+    function cbf:familiarSource(id, fname, pn)
+        Apostasy:AddPriorityCallback(id, self.priority or 0, function(_, ...)
+            local par = {...}
+            local se = (par[pn]).SpawnerEntity
+            local fam = se and se:ToFamiliar()
+            if not fam then return nil end
+            for itm in pair(itemsFor(fam.Player)) do
+                local f = itm[fname]
+                if f then
+                    local r = {f(itm, ...)}
+                    if hasEntries(r) then return table.unpack(r) end
+                end
+            end
+        end)
+    end
+    
+    -- and set up callbacks
+    for _, r in pairs(callbackRegistry) do
+        if r[1] then -- don't error on missing REPENTOGON callbacks
+            cbf[r.type or "default"](r, table.unpack(r))
+        end
+    end
+end
+
+-- Adds an EID description
+function Item:AddDescription(desc)
+    if not EID then return end
+    if self.isTrinket then
+        EID:addTrinket(self.id, desc)
+    else
+        EID:addCollectible(self.id, desc)
+    end
 end

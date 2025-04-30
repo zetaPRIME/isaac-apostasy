@@ -1,4 +1,11 @@
 <items gfxroot="gfx/items/" version="1">
     <!-- Collectibles -->
     <active name="Holy Outburst" description="Make a mess!" gfx="holy_outburst.png" tags="offensive" maxcharges="90" chargetype="timed" quality="4" />
+    
+    
+    <trinket name="Skull Mask"
+        description="Be quick, be clever"
+        __gfx="holy_outburst.png"
+        cache="speed"
+    />
 </items>

@@ -184,6 +184,8 @@ I suppose this can be done with just a: return Apostasy:DrawHealthlessHUD(player
 
 system for disabling/substituting costumes per character with REPENTOGON installed?
 
+- CATCH LUAMOD FOR ITEMCORE!!!
+
 - - - - - World Content? - - - - -
 
 phase 1: alternative blessings {
